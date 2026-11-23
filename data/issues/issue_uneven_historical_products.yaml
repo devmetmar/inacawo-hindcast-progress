@@ -1,11 +1,13 @@
 id: issue_uneven_historical_products
 title: Uneven CLS historical product coverage
 description: >
-  ocean2d postprocessed ends 2001-12-31 while ocean3d/wrf2d/wrf3d extend to
-  2015-01-31. A uniform "1995-2014 complete" claim is not supported by directory
-  inventory alone.
+  Initial inventory only inspected postprocessed/ocean2d (ends 2001-12-31).
+  Re-inventory 2026-11-23 found postprocessed/ocean2d_with_tm01 covering
+  2002-01-01..2015-01-31. Combined day-folder coverage now resembles
+  ocean3d/wrf2d/wrf3d, but integrity is still NOT_VERIFIED and acceptance
+  rules remain open (OPEN_QUESTIONS Q2/Q3).
 severity: HIGH
-impact: Historical baseline acceptance and delivery narrative are uncertain.
+impact: Historical baseline acceptance and delivery narrative remain uncertain until verification/acceptance rules are set.
 owner: member_04
 status: OPEN
 resolution: null
@@ -16,5 +18,7 @@ related_period_ids: []
 evidence:
   - type: dataset_path
     reference: $SCRATCH_HISTORICAL/data/postprocessed
-    notes: See data/datasets/dataset_cls_post_*.yaml
-notes: null
+    notes: See data/datasets/dataset_cls_post_*.yaml including ocean2d_with_tm01
+notes: >
+  Folder layout split is operational (ocean2d vs ocean2d_with_tm01), not proof
+  of scientific acceptance.

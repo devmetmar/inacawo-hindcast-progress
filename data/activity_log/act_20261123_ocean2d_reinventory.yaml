@@ -1,0 +1,13 @@
+id: act_20261123_ocean2d_reinventory
+timestamp: "2026-11-23T16:50:00+07:00"
+actor: tracking_setup
+entity_type: dataset
+entity_id: dataset_cls_post_ocean2d_with_tm01
+action: discovery_completed
+previous_state: null
+new_state: CATALOGUED
+evidence_reference: $SCRATCH_HISTORICAL/data/postprocessed/ocean2d_with_tm01
+notes: >
+  Read-only re-inventory found CLS ocean2d 2002-2015 under ocean2d_with_tm01
+  (separate from postprocessed/ocean2d 1995-2001). No files were modified.
+  Integrity remains NOT_VERIFIED. Catalog record registered.

@@ -21,6 +21,7 @@ completion_criteria:
   - Period fully_complete policy documented
 related_dataset_ids:
   - dataset_cls_post_ocean2d
+  - dataset_cls_post_ocean2d_with_tm01
   - dataset_cls_post_ocean3d
   - dataset_cls_post_wrf2d
   - dataset_cls_post_wrf3d
@@ -29,4 +30,5 @@ related_period_ids: []
 related_product: null
 completed_date: null
 last_updated: "2026-11-23"
-notes: null
+notes: >
+  2026-11-23 re-inventory: ocean2d continuation lives under ocean2d_with_tm01.

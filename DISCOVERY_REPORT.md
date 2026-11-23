@@ -70,6 +70,7 @@
 | Product | `fYYYYMMDD` span | Distinct years |
 |---------|------------------|----------------|
 | `postprocessed/ocean2d` | 1995-01-01 … **2001-12-31** | 7 |
+| `postprocessed/ocean2d_with_tm01` | **2002-01-01 … 2015-01-31** | 14 (re-inventory 2026-11-23) |
 | `postprocessed/ocean3d` | 1995-01-01 … **2015-01-31** | 21 |
 | `postprocessed/wrf2d` | 1995-01-01 … **2015-01-31** | 21 |
 | `postprocessed/wrf3d` | 1995-01-01 … **2015-01-31** | 21 |
@@ -77,7 +78,7 @@
 | `cawo_hindcast_run` | 1996-12-30 … **2024-12-31** (~8403 dirs) | 24 |
 | `era5` | ~1995-01-01 … 2016-01-01 | forcing archive |
 
-**Critical observation:** A uniform claim that 1995–2014 is fully delivered is **not** supported by on-disk postprocessed products (`ocean2d` ends 2001; 3D/WRF streams extend into January 2015). Presence of `cawo_hindcast_run` directories through 2024 does **not** imply verified scientific completion.
+**Critical observation (updated 2026-11-23):** CLS `ocean2d` is split across two folders (`ocean2d` for 1995–2001 and `ocean2d_with_tm01` for 2002–2015-01). Combined day-folder coverage aligns with ocean3d/WRF spans, but **integrity remains NOT_VERIFIED** and human acceptance rules are still open. Presence of `cawo_hindcast_run` directories through 2024 does **not** imply verified scientific completion.
 
 **Unknown:** Exact byte sizes of each `$SCRATCH_HISTORICAL/data/*` subtree (background `du` was aborted).
 

@@ -33,10 +33,10 @@ def test_dataset_counts_by_origin_and_product() -> None:
     store = TrackingStore.load(ROOT)
     catalog = build_catalog_view(store)
     s = catalog["summary"]
-    assert s["catalogued_datasets"] == len(store.datasets) == 7
-    assert s["by_origin"]["cls_brazil"] == 5
+    assert s["catalogued_datasets"] == len(store.datasets) == 8
+    assert s["by_origin"]["cls_brazil"] == 6
     assert s["by_origin"]["internal"] == 2
-    assert s["by_product"]["ocean2d"] == 1
+    assert s["by_product"]["ocean2d"] == 2  # ocean2d + ocean2d_with_tm01
     assert s["by_product"]["ocean3d"] == 1
     assert s["by_product"]["wrf2d"] == 1
     assert s["by_product"]["wrf3d"] == 1
@@ -57,13 +57,16 @@ def test_missing_metadata_and_unknown_creation_dates() -> None:
 
 
 def test_lifecycle_derivation_incomplete_and_catalogued() -> None:
-    ocean2d = {
+    # Free-text notes must not flip lifecycle; use explicit field.
+    noted = {
         "integrity_status": "NOT_VERIFIED",
         "validation_status": "UNKNOWN",
         "notes": "incomplete relative to claimed span",
         "created_at": None,
     }
-    assert derive_lifecycle(ocean2d) == "INCOMPLETE"
+    assert derive_lifecycle(noted) == "CATALOGUED"
+    noted["lifecycle_status"] = "INCOMPLETE"
+    assert derive_lifecycle(noted) == "INCOMPLETE"
 
     plain = {
         "integrity_status": "NOT_VERIFIED",
@@ -100,7 +103,10 @@ def test_lifecycle_not_auto_advanced_without_evidence() -> None:
     catalog = build_catalog_view(store)
     assert catalog["summary"]["verified_datasets"] == 0
     assert catalog["summary"]["accepted_datasets"] == 0
-    assert catalog["summary"]["incomplete_datasets"] >= 1
+    # Directory presence alone must not mark VERIFIED/ACCEPTED
+    assert all(
+        r["lifecycle"] not in {"VERIFIED", "ACCEPTED"} for r in catalog["datasets"]
+    )
 
 
 def test_timeline_ordering_known_before_unknown() -> None:
@@ -150,15 +156,17 @@ def test_historical_internal_separation_in_matrix() -> None:
         assert row_2015["cells"][product] not in {"VERIFIED", "ACCEPTED"}
 
 
-def test_year_product_matrix_ocean2d_gap() -> None:
+def test_year_product_matrix_ocean2d_split_folders() -> None:
     store = TrackingStore.load(ROOT)
     catalog = build_catalog_view(store)
     row_1996 = next(r for r in catalog["historical_matrix"] if r["year"] == 1996)
     row_2005 = next(r for r in catalog["historical_matrix"] if r["year"] == 2005)
-    assert row_1996["cells"]["ocean2d"] == "INCOMPLETE"
-    assert row_2005["cells"]["ocean2d"] == "MISSING"
-    # Presence of ocean3d for a year must not imply ocean2d complete
+    # 1995-2001 from ocean2d; 2002+ from ocean2d_with_tm01 — both catalogued, not verified
+    assert row_1996["cells"]["ocean2d"] == "CATALOGUED"
+    assert row_2005["cells"]["ocean2d"] == "CATALOGUED"
     assert row_2005["cells"]["ocean3d"] in {"CATALOGUED", "INCOMPLETE", "NOT_VERIFIED"}
+    ids = {d["id"] for d in store.datasets}
+    assert "dataset_cls_post_ocean2d_with_tm01" in ids
 
 
 def test_no_overall_percent_when_provisional() -> None:

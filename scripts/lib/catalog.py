@@ -17,17 +17,14 @@ ORIGIN_LABEL = {
 
 
 def derive_lifecycle(dataset: dict[str, Any]) -> str:
-    """Conservative lifecycle from explicit field or evidenced statuses."""
+    """Conservative lifecycle from explicit field or evidenced statuses.
+
+    INCOMPLETE is never inferred from free-text notes (too fragile). Set
+    lifecycle_status=INCOMPLETE explicitly when coverage is known incomplete.
+    """
     explicit = dataset.get("lifecycle_status")
     if explicit:
         return str(explicit)
-
-    notes = (dataset.get("notes") or "").lower()
-    if "incomplete" in notes:
-        # Catalogued but coverage/integrity incomplete relative to claimed span.
-        base = "INCOMPLETE"
-    else:
-        base = None
 
     if dataset.get("validation_status") == "ACCEPTED":
         return "ACCEPTED"
@@ -37,9 +34,9 @@ def derive_lifecycle(dataset: dict[str, Any]) -> str:
         return "NOT_VERIFIED"
     if dataset.get("created_at"):
         # Evidenced creation but not yet verified.
-        return base or "CREATED"
+        return "CREATED"
     # Presence in data/datasets means the record is catalogued.
-    return base or "CATALOGUED"
+    return "CATALOGUED"
 
 
 def display_date(value: Any) -> str:

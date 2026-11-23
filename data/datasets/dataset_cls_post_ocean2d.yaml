@@ -14,7 +14,7 @@ manifest_ref: null
 checksum_ref: null
 integrity_status: NOT_VERIFIED
 validation_status: UNKNOWN
-lifecycle_status: INCOMPLETE
+lifecycle_status: null
 owner: null
 created_at: null
 created_at_provenance: null
@@ -25,6 +25,9 @@ last_inventory_scan: "2026-11-23"
 related_task_ids:
   - task_historical_inventory_acceptance
 notes: >
-  Verified from directory names on 2026-11-23. Ends 2001-12-31 — incomplete
-  relative to a claimed 1995-2014 ocean2d delivery. Scientific creation date
-  UNKNOWN (directory mtime not used as created_at).
+  Directory inventory: continuous daily fYYYYMMDD coverage 1995-01-01..2001-12-31
+  (2557 days). Earlier catalog marked this INCOMPLETE vs a claimed 1995-2014
+  delivery because only this folder was inspected. Re-inventory found the
+  2002+ continuation under postprocessed/ocean2d_with_tm01
+  (dataset_cls_post_ocean2d_with_tm01). Scientific creation date UNKNOWN.
+  Integrity NOT_VERIFIED.

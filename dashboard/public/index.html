@@ -121,7 +121,7 @@
 <body>
   <header>
     <h1>INACAWO Dataset Catalog Progress</h1>
-    <div class="muted">Generated 2026-11-23T09:52:31+00:00 · source of truth: data/*.yaml</div>
+    <div class="muted">Generated 2026-11-23T13:33:50+00:00 · source of truth: data/*.yaml</div>
     <div class="banner">Scope: PROVISIONAL / NOT CONFIRMED</div>
     <p class="muted" style="margin:0.5rem 0 0">
       Overall acceptance: <strong>NOT CONFIRMED — overall % suppressed</strong>
@@ -137,13 +137,13 @@
         <div class="card"><div class="label">Created (evidenced)</div><div class="stat">0</div><div class="muted">created_at recorded</div></div>
         <div class="card"><div class="label">Verified</div><div class="stat">0</div><div class="muted">integrity VERIFIED</div></div>
         <div class="card"><div class="label">Accepted</div><div class="stat">0</div><div class="muted">validation ACCEPTED</div></div>
-        <div class="card"><div class="label">Incomplete</div><div class="stat">0</div><div class="muted">lifecycle INCOMPLETE</div></div>
+        <div class="card"><div class="label">Incomplete</div><div class="stat">2</div><div class="muted">lifecycle INCOMPLETE</div></div>
         <div class="card"><div class="label">Open TODOs</div><div class="stat">3</div><div class="muted">tasks not completed</div></div>
       </div>
       <p class="muted" style="margin-top:0.75rem">
         Origins: {&quot;cls_brazil&quot;: 6, &quot;internal&quot;: 2}
         · Products: {&quot;forcing&quot;: 1, &quot;ocean2d&quot;: 2, &quot;ocean3d&quot;: 1, &quot;other&quot;: 1, &quot;run_dirs&quot;: 1, &quot;wrf2d&quot;: 1, &quot;wrf3d&quot;: 1}
-        · Lifecycles: {&quot;CATALOGUED&quot;: 8}
+        · Lifecycles: {&quot;CATALOGUED&quot;: 6, &quot;INCOMPLETE&quot;: 2}
       </p>
     </section>
 
@@ -153,7 +153,7 @@
         <label>Search<input type="search" id="f-search" placeholder="id, name, product…"/></label>
         <label>Origin<select id="f-origin"><option value="">All</option><option value="cls_brazil">cls_brazil</option><option value="internal">internal</option></select></label>
         <label>Product<select id="f-product"><option value="">All</option><option value="forcing">forcing</option><option value="ocean2d">ocean2d</option><option value="ocean3d">ocean3d</option><option value="other">other</option><option value="run_dirs">run_dirs</option><option value="wrf2d">wrf2d</option><option value="wrf3d">wrf3d</option></select></label>
-        <label>Lifecycle<select id="f-life"><option value="">All</option><option value="CATALOGUED">CATALOGUED</option></select></label>
+        <label>Lifecycle<select id="f-life"><option value="">All</option><option value="CATALOGUED">CATALOGUED</option><option value="INCOMPLETE">INCOMPLETE</option></select></label>
         <label>Owner<select id="f-owner"><option value="">All</option><option value="UNKNOWN">UNKNOWN</option></select></label>
         <label>Year<input type="number" id="f-year" placeholder="e.g. 2001" min="1900" max="2100"/></label>
         <label>TODOs<select id="f-todos"><option value="">All</option><option value="yes">Has outstanding</option><option value="no">None open</option></select></label>
@@ -175,7 +175,7 @@
               <th>Created</th><th>Catalogued</th><th>Verified</th><th>Files</th><th>Size</th><th>Owner</th><th>TODOs</th>
             </tr>
           </thead>
-          <tbody><tr data-id="dataset_cls_hindcast_run" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="run_dirs" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1996-12-30" data-period-end="2024-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_hindcast_run CLS cawo_hindcast_run directories run_dirs CLS_HISTORICAL"><td><a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a><div class="sub">CLS cawo_hindcast_run directories</div></td><td>CLS_HISTORICAL</td><td>run_dirs</td><td>1996-12-30 → 2024-12-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>8403</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2001-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d CLS postprocessed ocean2d ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a><div class="sub">CLS postprocessed ocean2d</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>1995-01-01 → 2001-12-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>2557</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d_with_tm01" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="2002-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d_with_tm01 CLS postprocessed ocean2d with tm01 (2002+) ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d_with_tm01">dataset_cls_post_ocean2d_with_tm01</a><div class="sub">CLS postprocessed ocean2d with tm01 (2002+)</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>2002-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>4779</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean3d CLS postprocessed ocean3d ocean3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a><div class="sub">CLS postprocessed ocean3d</div></td><td>CLS_HISTORICAL</td><td>ocean3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf2d CLS postprocessed wrf2d wrf2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a><div class="sub">CLS postprocessed wrf2d</div></td><td>CLS_HISTORICAL</td><td>wrf2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf3d CLS postprocessed wrf3d wrf3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a><div class="sub">CLS postprocessed wrf3d</div></td><td>CLS_HISTORICAL</td><td>wrf3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_internal_input_scratch" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="forcing" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="" data-period-end="" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_input_scratch Internal cawo_input scratch forcing INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_input_scratch">dataset_internal_input_scratch</a><div class="sub">Internal cawo_input scratch</div></td><td>INTERNAL_HINDCAST</td><td>forcing</td><td>UNKNOWN → UNKNOWN</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>UNKNOWN</td><td>~70G</td><td>UNKNOWN</td><td>0</td></tr><tr data-id="dataset_internal_post_sample_20150113" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="other" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="2015-01-13" data-period-end="2015-01-13" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_post_sample_20150113 Internal postprocessed sample f20150113 other INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_post_sample_20150113">dataset_internal_post_sample_20150113</a><div class="sub">Internal postprocessed sample f20150113</div></td><td>INTERNAL_HINDCAST</td><td>other</td><td>2015-01-13 → 2015-01-13</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>UNKNOWN</td><td>~8.5G tree</td><td>UNKNOWN</td><td>0</td></tr></tbody>
+          <tbody><tr data-id="dataset_cls_hindcast_run" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="run_dirs" data-lifecycle="INCOMPLETE" data-owner="UNKNOWN" data-todos="1" data-period-start="1996-12-30" data-period-end="2024-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_hindcast_run CLS cawo_hindcast_run directories run_dirs CLS_HISTORICAL"><td><a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a><div class="sub">CLS cawo_hindcast_run directories</div></td><td>CLS_HISTORICAL</td><td>run_dirs</td><td>1996-12-30 → 2024-12-31</td><td><span class="pill warn">INCOMPLETE</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>8403</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2001-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d CLS postprocessed ocean2d ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a><div class="sub">CLS postprocessed ocean2d</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>1995-01-01 → 2001-12-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>2557</td><td>10.04 TiB</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d_with_tm01" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="2002-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d_with_tm01 CLS postprocessed ocean2d with tm01 (2002+) ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d_with_tm01">dataset_cls_post_ocean2d_with_tm01</a><div class="sub">CLS postprocessed ocean2d with tm01 (2002+)</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>2002-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>4779</td><td>19.88 TiB</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean3d CLS postprocessed ocean3d ocean3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a><div class="sub">CLS postprocessed ocean3d</div></td><td>CLS_HISTORICAL</td><td>ocean3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>25.44 TiB</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf2d CLS postprocessed wrf2d wrf2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a><div class="sub">CLS postprocessed wrf2d</div></td><td>CLS_HISTORICAL</td><td>wrf2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>7.34 TiB</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf3d CLS postprocessed wrf3d wrf3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a><div class="sub">CLS postprocessed wrf3d</div></td><td>CLS_HISTORICAL</td><td>wrf3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>16.96 TiB</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_internal_input_scratch" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="forcing" data-lifecycle="INCOMPLETE" data-owner="UNKNOWN" data-todos="0" data-period-start="1995-05-01" data-period-end="2026-01-05" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_input_scratch Internal cawo_input scratch forcing INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_input_scratch">dataset_internal_input_scratch</a><div class="sub">Internal cawo_input scratch</div></td><td>INTERNAL_HINDCAST</td><td>forcing</td><td>1995-05-01 → 2026-01-05</td><td><span class="pill warn">INCOMPLETE</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>2737</td><td>69.83 GiB</td><td>UNKNOWN</td><td>0</td></tr><tr data-id="dataset_internal_post_sample_20150113" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="other" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="2015-01-13" data-period-end="2015-01-13" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_post_sample_20150113 Internal postprocessed sample f20150113 other INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_post_sample_20150113">dataset_internal_post_sample_20150113</a><div class="sub">Internal postprocessed sample f20150113</div></td><td>INTERNAL_HINDCAST</td><td>other</td><td>2015-01-13 → 2015-01-13</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>32</td><td>8.44 GiB</td><td>UNKNOWN</td><td>0</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -220,7 +220,7 @@
           data-origin="cls_brazil" data-product="run_dirs">
           <summary>
             <strong>dataset_cls_hindcast_run</strong>
-            <span class="pill run">CATALOGUED</span>
+            <span class="pill warn">INCOMPLETE</span>
             <span class="muted">CLS_HISTORICAL · run_dirs</span>
           </summary>
           <div class="detail-grid">
@@ -231,8 +231,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>run_dirs</span></li>
                 <li><span>Period</span><span>1996-12-30 → 2024-12-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Run directories are not evidence of scientific completion. Classification pending OPEN_QUESTIONS Q6. Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 8403 day dirs; max span 1996-12-30..2024-12-31 but MISSING years 1997-2001 and only 2 days in 1996 — lifecycle INCOMPLETE. Run dirs are not scientific completion. Size UNKNOWN until du finishes if still pending. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
@@ -241,7 +240,7 @@
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/cawo_hindcast_run</code></span></li>
                 <li><span>Files</span><span>8403</span></li>
                 <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -249,13 +248,13 @@
             <div>
               <h4>Lifecycle</h4>
               <ul class="kv">
-                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Status</span><span><span class="pill warn">INCOMPLETE</span></span></li>
                 <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
                 <li><span>Catalogued</span><span>2026-11-23</span></li>
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -286,8 +285,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>ocean2d</span></li>
                 <li><span>Period</span><span>1995-01-01 → 2001-12-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Directory inventory: continuous daily fYYYYMMDD coverage 1995-01-01..2001-12-31 (2557 days). Earlier catalog marked this INCOMPLETE vs a claimed 1995-2014 delivery because only this folder was inspected. Re-inventory found the 2002+ continuation under postprocessed/ocean2d_with_tm01 (dataset_cls_post_ocean2d_with_tm01). Scientific creation date UNKNOWN. Integrity NOT_VERIFIED.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 2557 day dirs (full years 1995-2001). Sample NC counts: f19950101=25, f20000101=24, f20011231=24. Size from du -sb. file_count=day directories (not NC file total). created_at/owner/checksums UNKNOWN — not inferred from mtime. Integrity remains NOT_VERIFIED (no checksum campaign).</span></li>
               </ul>
             </div>
             <div>
@@ -295,8 +293,8 @@
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean2d</code></span></li>
                 <li><span>Files</span><span>2557</span></li>
-                <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Size</span><span>10.04 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -310,7 +308,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -341,8 +339,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>ocean2d</span></li>
                 <li><span>Period</span><span>2002-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Re-inventory 2026-11-23: continuation of CLS ocean2d under a separate folder (not under postprocessed/ocean2d). Directory names span 2002-01-01..2015-01-31 (4779 fYYYYMMDD dirs; plus backup_f20020101). Spot-check sample days had 24 inacawo_hindcast_ocean2d_*.nc files. Complements dataset_cls_post_ocean2d (1995-2001). Scientific creation date UNKNOWN. Integrity NOT_VERIFIED.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 4779 day dirs 2002-01-01..2015-01-31. Sample NC counts all 24 on checked days. Size from du -sb. file_count=day directories. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
@@ -350,8 +347,8 @@
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean2d_with_tm01</code></span></li>
                 <li><span>Files</span><span>4779</span></li>
-                <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Size</span><span>19.88 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -365,7 +362,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -396,8 +393,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>ocean3d</span></li>
                 <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Directory inventory spans into January 2015 (beyond claimed 2014 historical end). Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 7336 day dirs 1995-01-01..2015-01-31. Sample NC counts ~8-9/day (product-specific; not 24). Size from du -sb. file_count=day directories. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
@@ -405,8 +401,8 @@
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean3d</code></span></li>
                 <li><span>Files</span><span>7336</span></li>
-                <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Size</span><span>25.44 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -420,7 +416,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -451,8 +447,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>wrf2d</span></li>
                 <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 7336 day dirs 1995-01-01..2015-01-31. Sample NC counts 8/day. Size from du -sb. file_count=day directories. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
@@ -460,8 +455,8 @@
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/wrf2d</code></span></li>
                 <li><span>Files</span><span>7336</span></li>
-                <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Size</span><span>7.34 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -475,7 +470,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -506,8 +501,7 @@
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>wrf3d</span></li>
                 <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 7336 day dirs 1995-01-01..2015-01-31. Sample NC counts 8/day. Size from du -sb. file_count=day directories. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
@@ -515,8 +509,8 @@
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/wrf3d</code></span></li>
                 <li><span>Files</span><span>7336</span></li>
-                <li><span>Size</span><span>UNKNOWN</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Size</span><span>16.96 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -530,7 +524,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -550,7 +544,7 @@
           data-origin="internal" data-product="forcing">
           <summary>
             <strong>dataset_internal_input_scratch</strong>
-            <span class="pill run">CATALOGUED</span>
+            <span class="pill warn">INCOMPLETE</span>
             <span class="muted">INTERNAL_HINDCAST · forcing</span>
           </summary>
           <div class="detail-grid">
@@ -560,18 +554,17 @@
                 <li><span>Name</span><span>Internal cawo_input scratch</span></li>
                 <li><span>Origin</span><span>INTERNAL_HINDCAST</span></li>
                 <li><span>Product</span><span>forcing</span></li>
-                <li><span>Period</span><span>UNKNOWN → UNKNOWN (unknown)</span></li>
-                <li><span>Description</span><span>Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05). Not a continuous remaining-period input archive. Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Period</span><span>1995-05-01 → 2026-01-05 (directory_names)</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: sparse forcing samples only (era5/glorys/f markers). Unique dated markers span 1995-05-01..2026-01-05 across years {1995:1, 2000:11, 2021:8, 2025:1, 2026:5} — NOT continuous. file_count=2737 regular files under tree (find). Size from du -sb (~70 GiB). created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
               <h4>Inventory</h4>
               <ul class="kv">
                 <li><span>Path</span><span><code>$CAWO_HINDCAST_BASE/cawo_input</code></span></li>
-                <li><span>Files</span><span>UNKNOWN</span></li>
-                <li><span>Size</span><span>~70G</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Files</span><span>2737</span></li>
+                <li><span>Size</span><span>69.83 GiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -579,13 +572,13 @@
             <div>
               <h4>Lifecycle</h4>
               <ul class="kv">
-                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Status</span><span><span class="pill warn">INCOMPLETE</span></span></li>
                 <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
                 <li><span>Catalogued</span><span>2026-11-23</span></li>
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>
@@ -616,17 +609,16 @@
                 <li><span>Origin</span><span>INTERNAL_HINDCAST</span></li>
                 <li><span>Product</span><span>other</span></li>
                 <li><span>Period</span><span>2015-01-13 → 2015-01-13 (directory_names)</span></li>
-                <li><span>Description</span><span>Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch. Staging/test evidence only — not year completion. Scientific creation date UNKNOWN.
-</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: only f20150113 under ocean2d/3d and wrf2d/3d (32 files). Size from du -sb. Staging/test only — not year completion. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
               </ul>
             </div>
             <div>
               <h4>Inventory</h4>
               <ul class="kv">
                 <li><span>Path</span><span><code>$CAWO_HINDCAST_BASE/cawo_post</code></span></li>
-                <li><span>Files</span><span>UNKNOWN</span></li>
-                <li><span>Size</span><span>~8.5G tree</span></li>
-                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Files</span><span>32</span></li>
+                <li><span>Size</span><span>8.44 GiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span>NOT_RECORDED</span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
               </ul>
@@ -640,7 +632,7 @@
                 <li><span>Verified</span><span>UNKNOWN</span></li>
                 <li><span>Accepted</span><span>UNKNOWN</span></li>
                 <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
               </ul>
             </div>
             <div>

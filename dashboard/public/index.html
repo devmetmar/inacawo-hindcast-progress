@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>INACAWO Hindcast Progress</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --ink: #142033;
+      --card: #ffffff;
+      --line: #d7e0ea;
+      --ok: #1b7f4a;
+      --run: #0b6e99;
+      --ready: #6a5a00;
+      --bad: #a11b2b;
+      --unk: #5c6775;
+      --warn: #9a6700;
+      --muted: #7a8694;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink); background:
+        radial-gradient(circle at top left, #e7eef8, transparent 40%),
+        linear-gradient(180deg, #eef3f8, var(--bg));
+    }
+    header {
+      padding: 1.5rem 1.75rem 1rem; border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(6px);
+    }
+    h1 { margin: 0 0 0.35rem; font-size: 1.55rem; }
+    .banner {
+      display: inline-block; margin-top: 0.5rem; padding: 0.35rem 0.7rem;
+      border-radius: 0.35rem; font-weight: 600; background: #fff3cd; color: var(--warn);
+      border: 1px solid #f0d48a;
+    }
+    main { padding: 1.25rem 1.75rem 2.5rem; display: grid; gap: 1rem; }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    section {
+      background: var(--card); border: 1px solid var(--line); border-radius: 0.75rem;
+      padding: 1rem 1.1rem; box-shadow: 0 1px 0 rgba(20,32,51,0.03);
+    }
+    h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
+    .stat { font-size: 1.6rem; font-weight: 700; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    .years { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 0.5rem; }
+    .year {
+      border: 1px solid var(--line); border-radius: 0.5rem; padding: 0.45rem;
+      display: flex; flex-direction: column; gap: 0.15rem; background: #fbfcfe;
+    }
+    .year span { font-size: 0.72rem; color: var(--muted); }
+    .year .sub { font-size: 0.68rem; }
+    .year.ok { border-color: #9fd6b5; background: #eef9f2; }
+    .year.run { border-color: #9dcee6; background: #eef7fb; }
+    .year.ready { border-color: #e2d48a; background: #fffbeb; }
+    .year.bad { border-color: #e3a4ad; background: #fff1f3; }
+    .year.unk, .year.muted { border-color: #d5dde6; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    .pill { padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.78rem; background: #eef2f6; }
+    .pill.ok { background: #dff3e8; color: var(--ok); }
+    .pill.run { background: #dff0f8; color: var(--run); }
+    .pill.bad { background: #fde4e8; color: var(--bad); }
+    .pill.unk { background: #eef1f4; color: var(--unk); }
+    .pill.warn { background: #fff3cd; color: var(--warn); }
+    footer { padding: 0 1.75rem 1.5rem; color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>INACAWO Hindcast Progress</h1>
+    <div class="muted">Generated 2026-11-23T08:41:09+00:00 · source of truth: data/*.yaml</div>
+    <div class="banner">Scope: PROVISIONAL / NOT CONFIRMED</div>
+  </header>
+  <main>
+    <div class="grid">
+      <section>
+        <h2>Overall acceptance</h2>
+        <div class="stat">NOT CONFIRMED — overall % suppressed</div>
+        <p class="muted">Uses fully-complete years only when scope is confirmed. Never task-count based.</p>
+      </section>
+      <section>
+        <h2>Provisional remaining window</h2>
+        <div class="stat" style="font-size:1.1rem">2015-01-01 → 2025-12-31</div>
+        <p class="muted">See OPEN_QUESTIONS.md Q1 before treating as final.</p>
+      </section>
+      <section>
+        <h2>Open blockers</h2>
+        <div class="stat">2</div>
+        <p class="muted">Issues in OPEN / IN_PROGRESS / BLOCKED.</p>
+      </section>
+      <section>
+        <h2>Active HPC runs (tracked)</h2>
+        <div class="stat">0</div>
+        <p class="muted">From data/runs only — not live SLURM unless snapshotted.</p>
+      </section>
+    </div>
+
+    <section>
+      <h2>Remaining years (provisional)</h2>
+      <div class="years"><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2015</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2016</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2017</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2018</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2019</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2020</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2021</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2022</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2023</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2024</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2025</strong><span>NOT_STARTED</span><span class="sub">NO</span></div></div>
+      <p class="muted">Colors reflect execution_status. fully_complete shown as subtitle.</p>
+    </section>
+
+    <section>
+      <h2>Historical baseline years (inventory status)</h2>
+      <div class="years"><div class="year unk" title="historical UNKNOWN"><strong>1995</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1996</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1997</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1998</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1999</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2000</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2001</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2002</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2003</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2004</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2005</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2006</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2007</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2008</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2009</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2010</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2011</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2012</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2013</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2014</strong><span>UNKNOWN</span></div></div>
+      <p class="muted">Not mixed into remaining acceptance % until owner accepts baseline rules.</p>
+    </section>
+
+    <section>
+      <h2>Progress metrics</h2>
+      <table>
+        <thead><tr><th>Metric</th><th>Matched/Total</th><th>Display %</th><th>Note</th></tr></thead>
+        <tbody><tr><td>execution_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>output_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>validation_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>acceptance_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Workflow stages</h2>
+      <table>
+        <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody><tr><td>1</td><td>Project Preparation</td><td><span class="pill run">RUNNING</span></td><td>Discovery completed 2026-11-23; scope confirmation still open.</td></tr><tr><td>2</td><td>Model Preparation</td><td><span class="pill unk">UNKNOWN</span></td><td>Binaries exist for ramp/no_ramp (built 2026-10-20) but full stage acceptance is NOT_VERIFIED.
+</td></tr><tr><td>3</td><td>Hindcast Execution</td><td><span class="pill muted">NOT_STARTED</span></td><td>No verified continuous 2015+ production runs recorded for cawohdcst_ft2.</td></tr><tr><td>4</td><td>Output Processing</td><td><span class="pill muted">NOT_STARTED</span></td><td>Internal cawo_post currently shows only f20150113 sample.</td></tr><tr><td>5</td><td>Scientific Validation</td><td><span class="pill muted">NOT_STARTED</span></td><td>Thresholds not defined; do not invent acceptance criteria.</td></tr><tr><td>6</td><td>Final Dataset Integration</td><td><span class="pill muted">NOT_STARTED</span></td><td></td></tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Outstanding issues</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Status</th><th>Owner</th></tr></thead>
+        <tbody><tr><td>issue_period_discrepancy</td><td>30-year vs 31-calendar-year period discrepancy</td><td>HIGH</td><td>OPEN</td><td>member_01</td></tr><tr><td>issue_uneven_historical_products</td><td>Uneven CLS historical product coverage</td><td>HIGH</td><td>OPEN</td><td>member_04</td></tr></tbody>
+      </table>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>Team workload</h2>
+        <table>
+          <thead><tr><th>Member</th><th>Open/active items</th></tr></thead>
+          <tbody><tr><td>member_01</td><td>4</td></tr><tr><td>member_02</td><td>0</td></tr><tr><td>member_03</td><td>0</td></tr><tr><td>member_04</td><td>1</td></tr></tbody>
+        </table>
+      </section>
+      <section>
+        <h2>HPC snapshot</h2>
+        <p><strong>hpc_20261123T083639</strong> collected 2026-11-23T08:36:39+00:00 (readonly_slurm) — 0 queue job(s). Treat as stale if older than operational expectation.</p>
+      </section>
+    </div>
+  </main>
+  <footer>
+    Evidence-based tracking · UNKNOWN/NOT_VERIFIED means not assumed complete ·
+    regenerate with <code>python dashboard/generate.py</code>
+  </footer>
+</body>
+</html>

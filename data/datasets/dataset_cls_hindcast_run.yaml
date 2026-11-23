@@ -10,11 +10,11 @@ location: $SCRATCH_HISTORICAL/data/cawo_hindcast_run
 file_count: 8403
 size_bytes: null
 size_human: UNKNOWN
-manifest_ref: null
+manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
-validation_status: UNKNOWN
-lifecycle_status: null
+validation_status: NOT_VALIDATED
+lifecycle_status: INCOMPLETE
 owner: null
 created_at: null
 created_at_provenance: null
@@ -24,7 +24,7 @@ accepted_at: null
 last_inventory_scan: '2026-11-23'
 related_task_ids:
 - task_historical_inventory_acceptance
-notes: 'Run directories are not evidence of scientific completion. Classification
-  pending OPEN_QUESTIONS Q6. Scientific creation date UNKNOWN.
-
-  '
+notes: 'Inventory 2026-11-23: 8403 day dirs; max span 1996-12-30..2024-12-31 but MISSING
+  years 1997-2001 and only 2 days in 1996 — lifecycle INCOMPLETE. Run dirs are not
+  scientific completion. Size UNKNOWN until du finishes if still pending. created_at/owner/checksums
+  UNKNOWN. Integrity NOT_VERIFIED.'

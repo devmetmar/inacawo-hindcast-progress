@@ -16,11 +16,14 @@ This repository tracks **progress, evidence, issues, and readiness**. It does **
 `dashboard/public/index.html` is a **catalog-centric** static page (regenerate with `python dashboard/generate.py`):
 
 1. Catalog overview counts (catalogued / created-evidenced / verified / accepted / incomplete / open TODOs)
-2. Searchable dataset inventory (origin, product, lifecycle, dates, owners, TODOs)
+2. Daily inventory calendars for all catalog years (explicit `day_presence_YYYY.json` or synthesized from inventory scan)
 3. Year × product matrices (CLS historical vs internal hindcast, separate)
-4. TODO / action tracker linked to datasets
-5. Per-dataset detail + timeline
-6. Secondary project info (workflow, issues, HPC) in a collapsed panel
+4. Searchable dataset inventory (origin, product, lifecycle, dates, owners, TODOs)
+5. TODO / action tracker linked to datasets
+6. Per-dataset detail + timeline
+7. Ops / HPC panel (collapsed)
+
+Matrix cells filter datasets and sync the day calendar year/product.
 
 See [docs/user_guide.md](docs/user_guide.md), [CATALOG_DASHBOARD_REDESIGN_REPORT.md](CATALOG_DASHBOARD_REDESIGN_REPORT.md), and [UNKNOWN_DATA.md](UNKNOWN_DATA.md) for fields that remain intentionally unknown.
 

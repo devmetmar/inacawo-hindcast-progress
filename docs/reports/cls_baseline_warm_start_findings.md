@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-23  
 **Audience:** `cawohdcst_ft2` operators continuing the hindcast after the CLS historical baseline  
-**Status:** Hindcast job submission **deferred** until a warm-start ROMS restart is recovered  
+**Status:** ROMS restarts located under CLS `postprocessed/roms_rst` (2026-11-23 re-search). Preferred warm-start **`20150201`** has a full triad on CLS; ft2 staging/submit still deferred until operators choose to resume.  
 
 ---
 
@@ -10,7 +10,7 @@
 
 This report records investigation results for January 2015 on the CLS historical archive and defines how an **ft2** warm-start continuation should proceed **after ~20 years of CLS** production (approximately 1995–2014, with January 2015 inventory extending some post products).
 
-Hindcast runs are **not** started in this tracking iteration. The dashboard day-coverage panel and this document are the deliverables until the restart blocker is cleared.
+Hindcast **submit** remains operator-deferred. The dashboard day-coverage panel, CLS `roms_rst` catalog record, and this document capture inventory and the warm-start handoff procedure now that ROMS restarts are located.
 
 ---
 
@@ -38,6 +38,7 @@ Under `/scratch/cawohdcst/data` (read-only checks, 2026-11-23):
 | `postprocessed/ocean2d_with_tm01/f201501*` | **31/31** |
 | `postprocessed/ocean3d`, `wrf2d`, `wrf3d` | **31/31** each |
 | `postprocessed/ocean2d` (legacy tree) | **0** Jan 2015 dirs (delivery is under `ocean2d_with_tm01`) |
+| `postprocessed/roms_rst/f201501*` | **31/31** (`cawo_g2.8.0_rst_*_12.nc`, ~14 GiB each) |
 | Sample completion | `f20150101`, `f20150115`, `f20150131` logs include `ROMS/TOMS: DONE` and WRF SUCCESS through next-day 12Z |
 
 **January 2025:** no `f202501*` run/output dirs on CLS — the finished month under discussion is **2015**.
@@ -66,19 +67,36 @@ Same pattern on `f20150102` and `f20150115`.
 
 ## 5. Restart availability today (CLS-only)
 
-| Component | January 2015 on `/scratch/cawohdcst` | Implication |
-|-----------|--------------------------------------|-------------|
-| SWAN hotstart | Present for **31/31** days | Handoff possible on wave side |
-| WRF `wrfrst_*` | Present for **31/31** days (e.g. end of `f20150131` → `2015-02-01_12:00:00`) | Handoff possible on atmosphere side |
-| ROMS `cawo_g2.8.0_rst_*.nc` | **0** files under CLS `cawo_hindcast_outputs` (and no `*rst*.nc` in that tree) | **No CLS warm-startable day** |
+### Where ROMS restarts actually live
 
-Logs for completed days show ROMS restart files were **written** historically (e.g. `f20150131` → `cawo_g2.8.0_rst_20150131_12.nc`). They are absent on disk now (consistent with `LcycleRST == T` / retention cleanup).
+An earlier check that only looked under `cawo_hindcast_outputs/` reported **zero** ROMS rst files. That was **incomplete**.
 
-**CLS-only startable warm days: none** — including preferred **`20150201`**.
+A broader search found the archived ROMS restarts here:
 
-Shifting the start date within January 2015 does not help on CLS alone: every handoff still lacks ROMS rst.
+| Path | Contents |
+|------|----------|
+| `$SCRATCH_HISTORICAL/data/postprocessed/roms_rst/` | **7336** day dirs `fYYYYMMDD` |
+| Span | `f19950101` … `f20150131` |
+| Naming | `cawo_g2.8.0_rst_<YYYYMMDD>_12.nc` (~14 GiB each) |
+| January 2015 | **31/31** days present |
 
-*(ft2 early-1995 ROMS files under `/scratch/cawohdcst_ft2/data` are a different era and are out of scope for CLS-based continuation after the ~20y baseline.)*
+Example (preferred prior day for Feb start):
+
+`/scratch/cawohdcst/data/postprocessed/roms_rst/f20150131/cawo_g2.8.0_rst_20150131_12.nc`
+
+They are **not** retained next to history files under `cawo_hindcast_outputs/` (run-time `RSTNAME` path); they are **postprocessed/archived** under `roms_rst/`.
+
+Other spots checked: `cawo_hindcast_run` (no ROMS nc rst), `mercator` (0), ft2/ft early trees (only sparse 1995 samples on ft2 — not needed for 2015 handoff).
+
+### Triad for preferred start `20150201` (prior day `20150131`)
+
+| Component | Location | Status |
+|-----------|----------|--------|
+| **ROMS** | `postprocessed/roms_rst/f20150131/cawo_g2.8.0_rst_20150131_12.nc` | **PRESENT** (14 G) |
+| **WRF** | `cawo_hindcast_run/f20150131/wrfrst_d01_2015-02-01_12:00:00_*` | **PRESENT** (5952 shards) |
+| **SWAN** | `cawo_hindcast_run/f20150131/swan_rst.20150201.120000.dat-*` | **PRESENT** (672 shards) |
+
+**CLS warm-startable day (evidence):** **`20150201`** (and any other Jan 2015+1 day whose prior `roms_rst` + WRF/SWAN exist — all Jan 2015 priors appear populated).
 
 ---
 
@@ -101,21 +119,20 @@ Tracking YAML may be updated under `$HOME/inacawo-hindcast-progress` without mut
 Intended handoff (once unblocked):
 
 1. Treat CLS inventory through **2015-01-31** as the operational predecessor for remaining-internal work (subject to owner resolution of OPEN_QUESTIONS Q6 for catalog classification).
-2. Recover a **2015-era ROMS** restart for the prior day `S-1` (preferred: `cawo_g2.8.0_rst_20150131_12.nc` for start **`S = 20150201`**).
-3. Confirm WRF + SWAN restarts for that same prior day still exist on CLS (they do for all January 2015 days as of this report).
-4. **Stage** the triad under ft2 only:
-   - ROMS → `$CAWO_OUTPUT/f<S-1>/`
-   - WRF + SWAN → `$CAWO_HINDCAST_RUN/f<S-1>/`
-5. As `cawohdcst_ft2`, source `$HOME/inacawo-iht/setup_env.bash`, preprocess forcing for `S` (and ROMS day+1 as required), then:
+2. **ROMS rst is available** at `postprocessed/roms_rst/f20150131/…` (not under `cawo_hindcast_outputs`). Preferred start **`S = 20150201`**.
+3. Confirm WRF + SWAN for `f20150131` (confirmed present as of this report).
+4. **Stage** the triad under ft2 only (read from CLS, write to ft2 — do not modify CLS):
+   - ROMS → `$CAWO_OUTPUT/f20150131/` (copy or symlink from `postprocessed/roms_rst/f20150131/`)
+   - Or point `ININAME` at the CLS `roms_rst` path if site policy allows read-only use without copy
+   - WRF + SWAN → `$CAWO_HINDCAST_RUN/f20150131/` (copy/symlink from CLS run dir)
+5. As `cawohdcst_ft2`, source `$HOME/inacawo-iht/setup_env.bash`, preprocess forcing for `20150201` (and ROMS day+1 as required), then:
 
 ```bash
-./run_hindcast.bash --start S --end S    # NEVER pass --day1
-./run_postprocess.bash --start S --end S
+./run_hindcast.bash --start 20150201 --end 20150201    # NEVER pass --day1
+./run_postprocess.bash --start 20150201 --end 20150201
 ```
 
 6. Register the run in the tracking catalog with `hpc_user: cawohdcst_ft2` and evidence refs; update day-presence inventory after outputs exist.
-
-Until step 2 succeeds: **no submit**.
 
 ---
 
@@ -123,10 +140,11 @@ Until step 2 succeeds: **no submit**.
 
 | Priority | Action |
 |----------|--------|
-| Blocker | Locate or recover `cawo_g2.8.0_rst_20150131_12.nc` (or another 2015 prior-day rst) without mutating CLS |
-| Tracking | Keep day calendar / manifests updated (`data/manifests/day_presence_*.json`) |
+| Cleared | ROMS rst archive found: `$SCRATCH_HISTORICAL/data/postprocessed/roms_rst/` |
+| Next | Operator decision to stage triad into ft2 and submit warm-start `20150201` |
+| Tracking | Keep day calendar / manifests updated; catalog `roms_rst` as a dataset when ready |
 | Policy | Resolve OPEN_QUESTIONS Q1–Q3 / Q6 before treating acceptance % as authoritative |
-| Deferred | Warm-start stage → `20150201` (or chosen `S`) hindcast on ft2 → catalog run YAML |
+| Deferred | Warm-start stage → `20150201` hindcast on ft2 → catalog run YAML |
 
 ---
 

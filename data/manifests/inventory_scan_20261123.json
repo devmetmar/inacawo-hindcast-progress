@@ -343,5 +343,43 @@
     ]
   },
   "scan_date": "2026-11-23",
-  "method": "directory_names + du -sb + sample nc counts; no checksums; created_at not inferred from mtime"
+  "method": "directory_names + du -sb + sample nc counts; no checksums; created_at not inferred from mtime",
+  "roms_rst": {
+    "day_dirs": 7336,
+    "span": [
+      "19950101",
+      "20150131"
+    ],
+    "years": {
+      "1995": 365,
+      "1996": 366,
+      "1997": 365,
+      "1998": 365,
+      "1999": 365,
+      "2000": 366,
+      "2001": 365,
+      "2002": 365,
+      "2003": 365,
+      "2004": 366,
+      "2005": 365,
+      "2006": 365,
+      "2007": 365,
+      "2008": 366,
+      "2009": 365,
+      "2010": 365,
+      "2011": 365,
+      "2012": 366,
+      "2013": 365,
+      "2014": 365,
+      "2015": 31
+    },
+    "sample_nc_files": {
+      "f19950101": 1,
+      "f20150131": 1
+    },
+    "sample_file_bytes": {
+      "f20150131/cawo_g2.8.0_rst_20150131_12.nc": 14571115448
+    },
+    "notes": "Archived under postprocessed/roms_rst; not retained in cawo_hindcast_outputs"
+  }
 }

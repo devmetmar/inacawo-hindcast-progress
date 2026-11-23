@@ -25,6 +25,7 @@ related_dataset_ids:
   - dataset_cls_post_ocean3d
   - dataset_cls_post_wrf2d
   - dataset_cls_post_wrf3d
+  - dataset_cls_post_roms_rst
   - dataset_cls_hindcast_run
 related_period_ids: []
 related_product: null
@@ -32,3 +33,5 @@ completed_date: null
 last_updated: "2026-11-23"
 notes: >
   2026-11-23 re-inventory: ocean2d continuation lives under ocean2d_with_tm01.
+  ROMS restarts archived under postprocessed/roms_rst (catalogued as
+  dataset_cls_post_roms_rst); required for warm-start after Jan 2015.

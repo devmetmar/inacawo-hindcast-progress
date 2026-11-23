@@ -1,0 +1,36 @@
+id: dataset_cls_post_roms_rst
+name: CLS postprocessed ROMS restart archive
+origin: cls_brazil
+product: raw_output
+description: >
+  Archived ROMS restart NetCDF files (cawo_g2.8.0_rst_YYYYMMDD_12.nc), one per
+  day directory under postprocessed/roms_rst. Distinct from raw history under
+  cawo_hindcast_outputs (where RSTNAME is written at run time but not retained).
+period_coverage:
+  start: '1995-01-01'
+  end: '2015-01-31'
+  basis: directory_names
+location: $SCRATCH_HISTORICAL/data/postprocessed/roms_rst
+file_count: 7336
+size_bytes: null
+size_human: UNKNOWN
+manifest_ref: data/manifests/inventory_scan_20261123.json
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: NOT_VALIDATED
+lifecycle_status: null
+owner: null
+created_at: null
+created_at_provenance: null
+catalogued_at: '2026-11-23'
+verified_at: null
+accepted_at: null
+last_inventory_scan: '2026-11-23'
+related_task_ids:
+- task_historical_inventory_acceptance
+notes: >
+  Inventory 2026-11-23 (re-search): 7336 day dirs f19950101..f20150131; January
+  2015 complete (31/31). Sample file f20150131/cawo_g2.8.0_rst_20150131_12.nc
+  size 14571115448 bytes (~14 GiB). Tree-wide du not completed; size_human left
+  UNKNOWN. Required for warm-start triad with WRF/SWAN under cawo_hindcast_run.
+  Integrity NOT_VERIFIED; scientific creation date UNKNOWN.

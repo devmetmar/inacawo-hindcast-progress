@@ -34,14 +34,15 @@ def test_dataset_counts_by_origin_and_product() -> None:
     store = TrackingStore.load(ROOT)
     catalog = build_catalog_view(store)
     s = catalog["summary"]
-    assert s["catalogued_datasets"] == len(store.datasets) == 8
-    assert s["by_origin"]["cls_brazil"] == 6
+    assert s["catalogued_datasets"] == len(store.datasets) == 9
+    assert s["by_origin"]["cls_brazil"] == 7
     assert s["by_origin"]["internal"] == 2
     assert s["by_product"]["ocean2d"] == 2  # ocean2d + ocean2d_with_tm01
     assert s["by_product"]["ocean3d"] == 1
     assert s["by_product"]["wrf2d"] == 1
     assert s["by_product"]["wrf3d"] == 1
     assert s["by_product"]["run_dirs"] == 1
+    assert s["by_product"]["raw_output"] == 1  # dataset_cls_post_roms_rst
     assert s["by_product"]["forcing"] == 1
     assert s["by_product"]["other"] == 1
 
@@ -277,14 +278,87 @@ def test_dashboard_includes_daily_progress_panel() -> None:
     mod = _load_generate()
     html = mod.render(store, progress, catalog)
     assert 'id="daily-progress"' in html
-    assert "Daily inventory coverage" in html
-    assert "directory_names" in html or "inventory only" in html
-    assert "day-present" in html
+    assert "Daily inventory" in html
+    assert 'id="day-coverage-data"' in html
+    assert "day-present" in html  # CSS class for client-rendered cells
     assert "NOT CONFIRMED — overall % suppressed" in html
+    assert catalog["day_coverage"]["available_years"][0] == 1995
+    assert 2015 in catalog["day_coverage"]["available_years"]
+    assert 2025 in catalog["day_coverage"]["available_years"]
+    assert 'id="day-year"' in html
+    assert '<option value="1995"' in html
+    assert '<option value="2015"' in html
+    assert '<option value="2025"' in html
     # Sparse sample must not imply verified year in matrix
     row_2015 = next(r for r in catalog["remaining_matrix"] if r["year"] == 2015)
     for st in row_2015["cells"].values():
         assert st not in {"VERIFIED", "ACCEPTED"}
+
+
+def test_dashboard_ux_landmarks_and_stale_chrome() -> None:
+    store = TrackingStore.load(ROOT)
+    progress = compute_progress(store)
+    catalog = build_catalog_view(store)
+    mod = _load_generate()
+    html = mod.render(store, progress, catalog)
+
+    assert 'class="skip-link"' in html
+    assert 'href="#main"' in html
+    assert 'aria-label="Catalog sections"' in html
+    assert 'id="overview"' in html
+    assert 'id="inventory"' in html
+    assert 'id="todos"' in html
+    assert 'aria-live="polite"' in html
+
+    # Full catalog year dropdown (not a static single-year label)
+    assert 'class="year-static"' not in html
+    assert 'id="day-year" disabled' not in html
+    assert "<select id=\"day-year\">" in html
+    assert "Additional years need day_presence" not in html
+
+    # Day cells are non-interactive spans (client-rendered; no day buttons in markup)
+    assert 'button type="button" class="day' not in html
+
+    # Todo anchors live on task rows; no hidden placeholder divs
+    assert 'id="todo-task_confirm_scope"' in html
+    assert '<div id="todo-' not in html
+
+    # Empty TODO groups omitted
+    assert "In progress (0)" not in html
+    assert "Blocked (0)" not in html
+    assert "Completed (0)" not in html
+    assert "Not started / Ready" in html
+
+    # Priority CRITICAL uses semantic bad/warn styling, not grey unk
+    assert 'class="pill bad">CRITICAL</span>' in html
+    assert "filter datasets" in html
+    assert "Skip to catalog" in html
+    assert "Hindcast Catalog" in html
+
+    # Owner filter hidden when only one distinct owner
+    assert "<label>Owner<select id=\"f-owner\">" not in html
+    assert 'id="f-owner"' in html
+
+    # Overview chips instead of raw JSON dumps
+    assert "chip-row" in html
+    overview = html.split("Catalog overview", 1)[1].split("Daily inventory", 1)[0]
+    assert "Origins" in overview
+    assert "chip-k" in overview
+    assert "Origins: {" not in overview
+
+
+def test_multi_year_day_coverage_from_inventory() -> None:
+    cov = build_year_day_coverage(ROOT, 2005)
+    assert cov["year"] == 2005
+    # Synthesized from inventory when no day_presence_2005.json
+    assert cov["has_presence_file"] is False
+    assert cov["synthesized"] is True
+    cls_o3 = cov["streams"]["cls_brazil"]["products"]["ocean3d"]
+    assert cls_o3["present_count"] == 365
+    assert cls_o3["missing_count"] == 0
+    # ocean2d aliases to with_tm01 for 2005
+    cls_o2 = cov["streams"]["cls_brazil"]["products"]["ocean2d"]
+    assert cls_o2["present_count"] == 365
 
 
 def test_group_todos_empty_due_does_not_invent_overdue() -> None:

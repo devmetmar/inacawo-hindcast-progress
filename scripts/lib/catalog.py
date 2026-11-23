@@ -275,12 +275,15 @@ def build_catalog_view(store: TrackingStore) -> dict[str, Any]:
 
     all_tasks = list(store.tasks)
 
-    # Day-level inventory coverage (optional; attached by dashboard via coverage module)
+    # Day-level inventory coverage for all matrix years (explicit files + inventory synthesis)
     day_coverage = None
     try:
-        from .coverage import build_year_day_coverage
+        from .coverage import build_multi_year_day_coverage, catalog_years_from_matrices
 
-        day_coverage = build_year_day_coverage(Path(REPO_ROOT), 2015)
+        years = catalog_years_from_matrices(hist_matrix, rem_matrix)
+        day_coverage = build_multi_year_day_coverage(
+            Path(REPO_ROOT), years or [2015], default_year=2015
+        )
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
         day_coverage = None
 

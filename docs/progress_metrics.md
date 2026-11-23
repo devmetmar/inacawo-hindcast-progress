@@ -47,3 +47,29 @@ A year is fully complete only when project `completion_criteria` are satisfied:
 ## Historical baseline
 
 Historical years (`stream: historical_baseline`) are inventoried separately and are **not** included in remaining acceptance percentage until the owner defines acceptance rules (OPEN_QUESTIONS Q2/Q3).
+
+## Catalog progress stages (distinct)
+
+These stages must **not** be collapsed into one overall percentage:
+
+| Stage | What it means | Typical fields |
+|-------|---------------|----------------|
+| Dataset creation | Scientific/output files exist with evidenced creation time | `created_at` + `created_at_provenance` |
+| Catalog registration | Tracking YAML exists for the dataset | record present; `catalogued_at` |
+| Inventory completeness | File counts/size/manifest scanned | `file_count`, `size_*`, `last_inventory_scan`, `manifest_ref` |
+| Integrity verification | Checksums / inventory integrity checked | `integrity_status=VERIFIED`, `verified_at` |
+| Scientific validation | Domain validation performed | `validation_status` in `{VERIFIED, …}` |
+| Human acceptance | Owner/reviewer accepted | `validation_status=ACCEPTED`, `accepted_at` |
+
+Rules:
+
+- A dataset can exist without being catalogued (no YAML → not counted as catalogued).
+- Catalogued does not imply verified.
+- Inventory verification does not imply scientific validation.
+- Scientific validation does not imply human acceptance.
+- Missing records are never treated as complete.
+- While scope is `PROVISIONAL / NOT CONFIRMED`, the dashboard suppresses overall acceptance % and shows catalog **counts** instead.
+
+## Year × product matrix cells
+
+Matrix rows are calendar years (historical CLS vs remaining internal, separate tables). Columns are required postprocessed products (`ocean2d`, `ocean3d`, `wrf2d`, `wrf3d`). Cell values are evidence-based (`EXPECTED`, `MISSING`, `CATALOGUED`, `INCOMPLETE`, `VERIFIED`, …) and never infer a full year from a single product or a sparse sample day.

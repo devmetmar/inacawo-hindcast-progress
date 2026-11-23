@@ -14,6 +14,16 @@ manifest_ref: null
 checksum_ref: null
 integrity_status: NOT_VERIFIED
 validation_status: UNKNOWN
-notes: >
-  Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05).
-  Not a continuous remaining-period input archive.
+lifecycle_status: null
+owner: null
+created_at: null
+created_at_provenance: null
+catalogued_at: '2026-11-23'
+verified_at: null
+accepted_at: null
+last_inventory_scan: '2026-11-23'
+related_task_ids: []
+notes: 'Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05).
+  Not a continuous remaining-period input archive. Scientific creation date UNKNOWN.
+
+  '

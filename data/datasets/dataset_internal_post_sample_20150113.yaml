@@ -3,8 +3,8 @@ name: Internal postprocessed sample f20150113
 origin: internal
 product: other
 period_coverage:
-  start: "2015-01-13"
-  end: "2015-01-13"
+  start: '2015-01-13'
+  end: '2015-01-13'
   basis: directory_names
 location: $CAWO_HINDCAST_BASE/cawo_post
 file_count: null
@@ -14,6 +14,16 @@ manifest_ref: null
 checksum_ref: null
 integrity_status: NOT_VERIFIED
 validation_status: UNKNOWN
-notes: >
-  Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch.
-  Staging/test evidence only — not year completion.
+lifecycle_status: null
+owner: null
+created_at: null
+created_at_provenance: null
+catalogued_at: '2026-11-23'
+verified_at: null
+accepted_at: null
+last_inventory_scan: '2026-11-23'
+related_task_ids: []
+notes: 'Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch.
+  Staging/test evidence only — not year completion. Scientific creation date UNKNOWN.
+
+  '

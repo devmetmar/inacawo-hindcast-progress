@@ -14,6 +14,17 @@ manifest_ref: null
 checksum_ref: null
 integrity_status: NOT_VERIFIED
 validation_status: UNKNOWN
+lifecycle_status: INCOMPLETE
+owner: null
+created_at: null
+created_at_provenance: null
+catalogued_at: "2026-11-23"
+verified_at: null
+accepted_at: null
+last_inventory_scan: "2026-11-23"
+related_task_ids:
+  - task_historical_inventory_acceptance
 notes: >
   Verified from directory names on 2026-11-23. Ends 2001-12-31 — incomplete
-  relative to a claimed 1995-2014 ocean2d delivery.
+  relative to a claimed 1995-2014 ocean2d delivery. Scientific creation date
+  UNKNOWN (directory mtime not used as created_at).

@@ -16,4 +16,9 @@ completion_criteria:
   - Owner decision recorded in OPEN_QUESTIONS.md Resolutions
   - data/project.yaml scope.confirmed populated
   - Activity log entry created
+related_dataset_ids: []
+related_period_ids: []
+related_product: null
+completed_date: null
+last_updated: "2026-11-23"
 notes: Blocking authoritative completion percentages.

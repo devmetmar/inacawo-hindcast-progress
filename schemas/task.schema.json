@@ -59,6 +59,21 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "related_dataset_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^dataset_" },
+      "uniqueItems": true
+    },
+    "related_period_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^period_" },
+      "uniqueItems": true
+    },
+    "related_product": {
+      "type": ["string", "null"]
+    },
+    "completed_date": { "type": ["string", "null"] },
+    "last_updated": { "type": ["string", "null"] },
     "notes": { "type": ["string", "null"] }
   }
 }

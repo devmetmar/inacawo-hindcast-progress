@@ -3,155 +3,757 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>INACAWO Hindcast Progress</title>
+  <title>INACAWO Dataset Catalog Progress</title>
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f0f3f7;
       --ink: #142033;
       --card: #ffffff;
-      --line: #d7e0ea;
+      --line: #d0d8e2;
       --ok: #1b7f4a;
       --run: #0b6e99;
       --ready: #6a5a00;
       --bad: #a11b2b;
       --unk: #5c6775;
       --warn: #9a6700;
-      --muted: #7a8694;
+      --muted: #6b7785;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-      color: var(--ink); background:
-        radial-gradient(circle at top left, #e7eef8, transparent 40%),
-        linear-gradient(180deg, #eef3f8, var(--bg));
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #e8eef5, var(--bg));
+      line-height: 1.45;
     }
     header {
-      padding: 1.5rem 1.75rem 1rem; border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.85); backdrop-filter: blur(6px);
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.92);
     }
-    h1 { margin: 0 0 0.35rem; font-size: 1.55rem; }
+    h1 { margin: 0 0 0.25rem; font-size: 1.45rem; }
     .banner {
-      display: inline-block; margin-top: 0.5rem; padding: 0.35rem 0.7rem;
-      border-radius: 0.35rem; font-weight: 600; background: #fff3cd; color: var(--warn);
+      display: inline-block; margin-top: 0.45rem; padding: 0.3rem 0.65rem;
+      border-radius: 0.3rem; font-weight: 650; background: #fff3cd; color: var(--warn);
       border: 1px solid #f0d48a;
     }
-    main { padding: 1.25rem 1.75rem 2.5rem; display: grid; gap: 1rem; }
-    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    main { padding: 1rem 1.5rem 2.5rem; display: grid; gap: 1rem; max-width: 1400px; }
+    .cards { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 0.55rem;
+      padding: 0.75rem 0.85rem;
+    }
+    .card .stat { font-size: 1.55rem; font-weight: 700; }
+    .card .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
     section {
-      background: var(--card); border: 1px solid var(--line); border-radius: 0.75rem;
-      padding: 1rem 1.1rem; box-shadow: 0 1px 0 rgba(20,32,51,0.03);
+      background: var(--card); border: 1px solid var(--line); border-radius: 0.55rem;
+      padding: 0.9rem 1rem;
     }
-    h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
-    .stat { font-size: 1.6rem; font-weight: 700; }
-    .muted { color: var(--muted); font-size: 0.9rem; }
-    .years { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 0.5rem; }
-    .year {
-      border: 1px solid var(--line); border-radius: 0.5rem; padding: 0.45rem;
-      display: flex; flex-direction: column; gap: 0.15rem; background: #fbfcfe;
+    h2 { margin: 0 0 0.65rem; font-size: 1.05rem; }
+    h3 { margin: 1rem 0 0.4rem; font-size: 0.95rem; }
+    h4 { margin: 0.4rem 0; font-size: 0.88rem; }
+    .muted { color: var(--muted); font-size: 0.88rem; }
+    .sub { font-size: 0.78rem; color: var(--muted); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 0.35rem 0.4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .matrix th, .matrix td { text-align: center; }
+    .matrix th[scope="row"] { text-align: left; }
+    .pill {
+      display: inline-block; padding: 0.08rem 0.4rem; border-radius: 0.25rem;
+      font-size: 0.72rem; font-weight: 600; background: #eef2f6; white-space: nowrap;
     }
-    .year span { font-size: 0.72rem; color: var(--muted); }
-    .year .sub { font-size: 0.68rem; }
-    .year.ok { border-color: #9fd6b5; background: #eef9f2; }
-    .year.run { border-color: #9dcee6; background: #eef7fb; }
-    .year.ready { border-color: #e2d48a; background: #fffbeb; }
-    .year.bad { border-color: #e3a4ad; background: #fff1f3; }
-    .year.unk, .year.muted { border-color: #d5dde6; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-    th { color: var(--muted); font-weight: 600; }
-    .pill { padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.78rem; background: #eef2f6; }
     .pill.ok { background: #dff3e8; color: var(--ok); }
     .pill.run { background: #dff0f8; color: var(--run); }
+    .pill.ready { background: #fff6d6; color: var(--ready); }
     .pill.bad { background: #fde4e8; color: var(--bad); }
     .pill.unk { background: #eef1f4; color: var(--unk); }
     .pill.warn { background: #fff3cd; color: var(--warn); }
-    footer { padding: 0 1.75rem 1.5rem; color: var(--muted); font-size: 0.85rem; }
+    .pill.muted { background: #eef1f4; color: var(--muted); }
+    button.cell {
+      border: 1px solid var(--line); border-radius: 0.25rem; padding: 0.25rem 0.35rem;
+      font-size: 0.68rem; font-weight: 650; cursor: pointer; width: 100%;
+      background: #f7f9fb; color: var(--ink);
+    }
+    button.cell.ok { background: #eef9f2; border-color: #9fd6b5; color: var(--ok); }
+    button.cell.run { background: #eef7fb; border-color: #9dcee6; color: var(--run); }
+    button.cell.ready { background: #fffbeb; border-color: #e2d48a; color: var(--ready); }
+    button.cell.bad { background: #fff1f3; border-color: #e3a4ad; color: var(--bad); }
+    button.cell.warn { background: #fff8e8; border-color: #f0d48a; color: var(--warn); }
+    button.cell.unk, button.cell.muted { background: #f4f6f8; color: var(--muted); }
+    .filters {
+      display: grid; gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      margin-bottom: 0.75rem; align-items: end;
+    }
+    .filters label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.75rem; color: var(--muted); }
+    .filters input, .filters select {
+      padding: 0.35rem 0.45rem; border: 1px solid var(--line); border-radius: 0.3rem;
+      font: inherit; color: var(--ink); background: #fff;
+    }
+    .filters .actions { display: flex; gap: 0.4rem; }
+    .filters button {
+      padding: 0.35rem 0.65rem; border: 1px solid var(--line); border-radius: 0.3rem;
+      background: #f4f7fb; cursor: pointer; font: inherit;
+    }
+    .detail-grid {
+      display: grid; gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 0.5rem;
+    }
+    .kv { list-style: none; padding: 0; margin: 0; }
+    .kv li { display: grid; grid-template-columns: 7rem 1fr; gap: 0.35rem; padding: 0.15rem 0; font-size: 0.84rem; }
+    .kv li > span:first-child { color: var(--muted); }
+    .timeline { margin: 0.25rem 0 0; padding-left: 1.1rem; font-size: 0.84rem; }
+    details.dataset-detail {
+      border: 1px solid var(--line); border-radius: 0.4rem; padding: 0.45rem 0.65rem;
+      margin: 0.4rem 0; background: #fbfcfe;
+    }
+    details.dataset-detail > summary { cursor: pointer; }
+    details.secondary { margin-top: 0.25rem; }
+    footer { padding: 0 1.5rem 1.5rem; color: var(--muted); font-size: 0.82rem; max-width: 1400px; }
+    code { font-size: 0.8rem; }
+    a { color: var(--run); }
+    #inv-count { font-size: 0.85rem; color: var(--muted); margin: 0.25rem 0 0.5rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>INACAWO Hindcast Progress</h1>
-    <div class="muted">Generated 2026-11-23T09:03:26+00:00 · source of truth: data/*.yaml</div>
+    <h1>INACAWO Dataset Catalog Progress</h1>
+    <div class="muted">Generated 2026-11-23T09:33:41+00:00 · source of truth: data/*.yaml</div>
     <div class="banner">Scope: PROVISIONAL / NOT CONFIRMED</div>
+    <p class="muted" style="margin:0.5rem 0 0">
+      Overall acceptance: <strong>NOT CONFIRMED — overall % suppressed</strong>
+      — catalog counts below are evidence-based record counts, not a project completion percentage.
+    </p>
   </header>
   <main>
-    <div class="grid">
-      <section>
-        <h2>Overall acceptance</h2>
-        <div class="stat">NOT CONFIRMED — overall % suppressed</div>
-        <p class="muted">Uses fully-complete years only when scope is confirmed. Never task-count based.</p>
-      </section>
-      <section>
-        <h2>Provisional remaining window</h2>
-        <div class="stat" style="font-size:1.1rem">2015-01-01 → 2025-12-31</div>
-        <p class="muted">See OPEN_QUESTIONS.md Q1 before treating as final.</p>
-      </section>
-      <section>
-        <h2>Open blockers</h2>
-        <div class="stat">2</div>
-        <p class="muted">Issues in OPEN / IN_PROGRESS / BLOCKED.</p>
-      </section>
-      <section>
-        <h2>Active HPC runs (tracked)</h2>
-        <div class="stat">0</div>
-        <p class="muted">From data/runs only — not live SLURM unless snapshotted.</p>
-      </section>
-    </div>
-
     <section>
-      <h2>Remaining years (provisional)</h2>
-      <div class="years"><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2015</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2016</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2017</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2018</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2019</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2020</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2021</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2022</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2023</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2024</strong><span>NOT_STARTED</span><span class="sub">NO</span></div><div class="year muted" title="exec=NOT_STARTED sci=NOT_VALIDATED complete=NO"><strong>2025</strong><span>NOT_STARTED</span><span class="sub">NO</span></div></div>
-      <p class="muted">Colors reflect execution_status. fully_complete shown as subtitle.</p>
+      <h2>Catalog overview</h2>
+      <div class="cards">
+        <div class="card"><div class="label">Expected cells</div><div class="stat">124</div><div class="muted">year × required product</div></div>
+        <div class="card"><div class="label">Catalogued</div><div class="stat">7</div><div class="muted">dataset records</div></div>
+        <div class="card"><div class="label">Created (evidenced)</div><div class="stat">0</div><div class="muted">created_at recorded</div></div>
+        <div class="card"><div class="label">Verified</div><div class="stat">0</div><div class="muted">integrity VERIFIED</div></div>
+        <div class="card"><div class="label">Accepted</div><div class="stat">0</div><div class="muted">validation ACCEPTED</div></div>
+        <div class="card"><div class="label">Incomplete</div><div class="stat">1</div><div class="muted">lifecycle INCOMPLETE</div></div>
+        <div class="card"><div class="label">Open TODOs</div><div class="stat">3</div><div class="muted">tasks not completed</div></div>
+      </div>
+      <p class="muted" style="margin-top:0.75rem">
+        Origins: {&quot;cls_brazil&quot;: 5, &quot;internal&quot;: 2}
+        · Products: {&quot;forcing&quot;: 1, &quot;ocean2d&quot;: 1, &quot;ocean3d&quot;: 1, &quot;other&quot;: 1, &quot;run_dirs&quot;: 1, &quot;wrf2d&quot;: 1, &quot;wrf3d&quot;: 1}
+        · Lifecycles: {&quot;CATALOGUED&quot;: 6, &quot;INCOMPLETE&quot;: 1}
+      </p>
     </section>
 
     <section>
-      <h2>Historical baseline years (inventory status)</h2>
-      <div class="years"><div class="year unk" title="historical UNKNOWN"><strong>1995</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1996</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1997</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1998</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>1999</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2000</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2001</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2002</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2003</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2004</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2005</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2006</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2007</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2008</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2009</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2010</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2011</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2012</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2013</strong><span>UNKNOWN</span></div><div class="year unk" title="historical UNKNOWN"><strong>2014</strong><span>UNKNOWN</span></div></div>
-      <p class="muted">Not mixed into remaining acceptance % until owner accepts baseline rules.</p>
-    </section>
-
-    <section>
-      <h2>Progress metrics</h2>
-      <table>
-        <thead><tr><th>Metric</th><th>Matched/Total</th><th>Display %</th><th>Note</th></tr></thead>
-        <tbody><tr><td>execution_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>output_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set | complete=[] partial=[] not_verified=[]</td></tr><tr><td>validation_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>acceptance_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr></tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>Workflow stages</h2>
-      <table>
-        <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Notes</th></tr></thead>
-        <tbody><tr><td>1</td><td>Project Preparation</td><td><span class="pill run">RUNNING</span></td><td>Discovery completed 2026-11-23; scope confirmation still open.</td></tr><tr><td>2</td><td>Model Preparation</td><td><span class="pill unk">UNKNOWN</span></td><td>Binaries exist for ramp/no_ramp (built 2026-10-20) but full stage acceptance is NOT_VERIFIED.
-</td></tr><tr><td>3</td><td>Hindcast Execution</td><td><span class="pill muted">NOT_STARTED</span></td><td>No verified continuous 2015+ production runs recorded for cawohdcst_ft2.</td></tr><tr><td>4</td><td>Output Processing</td><td><span class="pill muted">NOT_STARTED</span></td><td>Internal cawo_post currently shows only f20150113 sample.</td></tr><tr><td>5</td><td>Scientific Validation</td><td><span class="pill muted">NOT_STARTED</span></td><td>Thresholds not defined; do not invent acceptance criteria.</td></tr><tr><td>6</td><td>Final Dataset Integration</td><td><span class="pill muted">NOT_STARTED</span></td><td></td></tr></tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>Outstanding issues</h2>
-      <table>
-        <thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Status</th><th>Owner</th></tr></thead>
-        <tbody><tr><td>issue_period_discrepancy</td><td>30-year vs 31-calendar-year period discrepancy</td><td>HIGH</td><td>OPEN</td><td>member_01</td></tr><tr><td>issue_uneven_historical_products</td><td>Uneven CLS historical product coverage</td><td>HIGH</td><td>OPEN</td><td>member_04</td></tr></tbody>
-      </table>
-    </section>
-
-    <div class="grid">
-      <section>
-        <h2>Team workload</h2>
-        <table>
-          <thead><tr><th>Member</th><th>Open/active items</th></tr></thead>
-          <tbody><tr><td>member_01</td><td>4</td></tr><tr><td>member_02</td><td>0</td></tr><tr><td>member_03</td><td>0</td></tr><tr><td>member_04</td><td>1</td></tr></tbody>
+      <h2>Dataset inventory</h2>
+      <div class="filters" id="inv-filters">
+        <label>Search<input type="search" id="f-search" placeholder="id, name, product…"/></label>
+        <label>Origin<select id="f-origin"><option value="">All</option><option value="cls_brazil">cls_brazil</option><option value="internal">internal</option></select></label>
+        <label>Product<select id="f-product"><option value="">All</option><option value="forcing">forcing</option><option value="ocean2d">ocean2d</option><option value="ocean3d">ocean3d</option><option value="other">other</option><option value="run_dirs">run_dirs</option><option value="wrf2d">wrf2d</option><option value="wrf3d">wrf3d</option></select></label>
+        <label>Lifecycle<select id="f-life"><option value="">All</option><option value="CATALOGUED">CATALOGUED</option><option value="INCOMPLETE">INCOMPLETE</option></select></label>
+        <label>Owner<select id="f-owner"><option value="">All</option><option value="UNKNOWN">UNKNOWN</option></select></label>
+        <label>Year<input type="number" id="f-year" placeholder="e.g. 2001" min="1900" max="2100"/></label>
+        <label>TODOs<select id="f-todos"><option value="">All</option><option value="yes">Has outstanding</option><option value="no">None open</option></select></label>
+        <label>Sort<select id="f-sort">
+          <option value="id">Dataset ID</option>
+          <option value="created">Created</option>
+          <option value="catalogued">Catalogued</option>
+          <option value="verified">Verified</option>
+          <option value="lifecycle">Lifecycle</option>
+        </select></label>
+        <div class="actions"><button type="button" id="f-reset">Reset</button></div>
+      </div>
+      <div id="inv-count"></div>
+      <div class="table-wrap">
+        <table id="inv-table">
+          <thead>
+            <tr>
+              <th>Dataset</th><th>Origin</th><th>Product</th><th>Period</th><th>Status</th>
+              <th>Created</th><th>Catalogued</th><th>Verified</th><th>Files</th><th>Size</th><th>Owner</th><th>TODOs</th>
+            </tr>
+          </thead>
+          <tbody><tr data-id="dataset_cls_hindcast_run" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="run_dirs" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1996-12-30" data-period-end="2024-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_hindcast_run CLS cawo_hindcast_run directories run_dirs CLS_HISTORICAL"><td><a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a><div class="sub">CLS cawo_hindcast_run directories</div></td><td>CLS_HISTORICAL</td><td>run_dirs</td><td>1996-12-30 → 2024-12-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>8403</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="INCOMPLETE" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2001-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d CLS postprocessed ocean2d ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a><div class="sub">CLS postprocessed ocean2d</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>1995-01-01 → 2001-12-31</td><td><span class="pill warn">INCOMPLETE</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>2557</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_ocean3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean3d CLS postprocessed ocean3d ocean3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a><div class="sub">CLS postprocessed ocean3d</div></td><td>CLS_HISTORICAL</td><td>ocean3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf2d CLS postprocessed wrf2d wrf2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a><div class="sub">CLS postprocessed wrf2d</div></td><td>CLS_HISTORICAL</td><td>wrf2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_cls_post_wrf3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf3d CLS postprocessed wrf3d wrf3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a><div class="sub">CLS postprocessed wrf3d</div></td><td>CLS_HISTORICAL</td><td>wrf3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>7336</td><td>UNKNOWN</td><td>UNKNOWN</td><td>1</td></tr><tr data-id="dataset_internal_input_scratch" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="forcing" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="" data-period-end="" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_input_scratch Internal cawo_input scratch forcing INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_input_scratch">dataset_internal_input_scratch</a><div class="sub">Internal cawo_input scratch</div></td><td>INTERNAL_HINDCAST</td><td>forcing</td><td>UNKNOWN → UNKNOWN</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>UNKNOWN</td><td>~70G</td><td>UNKNOWN</td><td>0</td></tr><tr data-id="dataset_internal_post_sample_20150113" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="other" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="2015-01-13" data-period-end="2015-01-13" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_post_sample_20150113 Internal postprocessed sample f20150113 other INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_post_sample_20150113">dataset_internal_post_sample_20150113</a><div class="sub">Internal postprocessed sample f20150113</div></td><td>INTERNAL_HINDCAST</td><td>other</td><td>2015-01-13 → 2015-01-13</td><td><span class="pill run">CATALOGUED</span></td><td>UNKNOWN</td><td>2026-11-23</td><td>UNKNOWN</td><td>UNKNOWN</td><td>~8.5G tree</td><td>UNKNOWN</td><td>0</td></tr></tbody>
         </table>
-      </section>
-      <section>
-        <h2>HPC snapshot</h2>
-        <p><span class="pill ok">FRESH</span> TTL=24.0h · <strong>hpc_20261123T083639</strong> collected 2026-11-23T08:36:39+00:00 (readonly_slurm) — 0 queue job(s).</p>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    
+    <section>
+      <h2>Year × product — CLS historical</h2>
+      <p class="muted">Click a cell to filter the inventory. Origin: CLS_HISTORICAL.</p>
+      <div class="table-wrap">
+        <table class="matrix">
+          <thead><tr><th>Year</th><th>ocean2d</th><th>ocean3d</th><th>wrf2d</th><th>wrf3d</th></tr></thead>
+          <tbody><tr><th scope="row">1995</th><td><button type="button" class="cell warn" data-filter-year="1995" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="1995 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="1995" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="1995 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1995" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="1995 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1995" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="1995 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">1996</th><td><button type="button" class="cell warn" data-filter-year="1996" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="1996 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="1996" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="1996 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1996" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="1996 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1996" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="1996 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">1997</th><td><button type="button" class="cell warn" data-filter-year="1997" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="1997 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="1997" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="1997 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1997" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="1997 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1997" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="1997 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">1998</th><td><button type="button" class="cell warn" data-filter-year="1998" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="1998 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="1998" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="1998 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1998" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="1998 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1998" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="1998 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">1999</th><td><button type="button" class="cell warn" data-filter-year="1999" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="1999 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="1999" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="1999 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1999" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="1999 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="1999" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="1999 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2000</th><td><button type="button" class="cell warn" data-filter-year="2000" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2000 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="2000" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2000 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2000" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2000 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2000" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2000 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2001</th><td><button type="button" class="cell warn" data-filter-year="2001" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2001 ocean2d: INCOMPLETE">INCOMPLETE</button></td><td><button type="button" class="cell run" data-filter-year="2001" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2001 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2001" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2001 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2001" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2001 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2002</th><td><button type="button" class="cell bad" data-filter-year="2002" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2002 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2002" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2002 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2002" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2002 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2002" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2002 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2003</th><td><button type="button" class="cell bad" data-filter-year="2003" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2003 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2003" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2003 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2003" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2003 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2003" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2003 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2004</th><td><button type="button" class="cell bad" data-filter-year="2004" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2004 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2004" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2004 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2004" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2004 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2004" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2004 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2005</th><td><button type="button" class="cell bad" data-filter-year="2005" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2005 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2005" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2005 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2005" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2005 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2005" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2005 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2006</th><td><button type="button" class="cell bad" data-filter-year="2006" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2006 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2006" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2006 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2006" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2006 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2006" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2006 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2007</th><td><button type="button" class="cell bad" data-filter-year="2007" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2007 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2007" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2007 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2007" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2007 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2007" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2007 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2008</th><td><button type="button" class="cell bad" data-filter-year="2008" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2008 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2008" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2008 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2008" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2008 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2008" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2008 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2009</th><td><button type="button" class="cell bad" data-filter-year="2009" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2009 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2009" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2009 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2009" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2009 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2009" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2009 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2010</th><td><button type="button" class="cell bad" data-filter-year="2010" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2010 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2010" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2010 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2010" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2010 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2010" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2010 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2011</th><td><button type="button" class="cell bad" data-filter-year="2011" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2011 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2011" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2011 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2011" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2011 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2011" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2011 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2012</th><td><button type="button" class="cell bad" data-filter-year="2012" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2012 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2012" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2012 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2012" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2012 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2012" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2012 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2013</th><td><button type="button" class="cell bad" data-filter-year="2013" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2013 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2013" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2013 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2013" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2013 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2013" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2013 wrf3d: CATALOGUED">CATALOGUED</button></td></tr><tr><th scope="row">2014</th><td><button type="button" class="cell bad" data-filter-year="2014" data-filter-product="ocean2d" data-filter-origin="CLS_HISTORICAL" title="2014 ocean2d: MISSING">MISSING</button></td><td><button type="button" class="cell run" data-filter-year="2014" data-filter-product="ocean3d" data-filter-origin="CLS_HISTORICAL" title="2014 ocean3d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2014" data-filter-product="wrf2d" data-filter-origin="CLS_HISTORICAL" title="2014 wrf2d: CATALOGUED">CATALOGUED</button></td><td><button type="button" class="cell run" data-filter-year="2014" data-filter-product="wrf3d" data-filter-origin="CLS_HISTORICAL" title="2014 wrf3d: CATALOGUED">CATALOGUED</button></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    
+    <section>
+      <h2>Year × product — Internal hindcast</h2>
+      <p class="muted">Click a cell to filter the inventory. Origin: INTERNAL_HINDCAST.</p>
+      <div class="table-wrap">
+        <table class="matrix">
+          <thead><tr><th>Year</th><th>ocean2d</th><th>ocean3d</th><th>wrf2d</th><th>wrf3d</th></tr></thead>
+          <tbody><tr><th scope="row">2015</th><td><button type="button" class="cell muted" data-filter-year="2015" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2015 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2015" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2015 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2015" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2015 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2015" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2015 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2016</th><td><button type="button" class="cell muted" data-filter-year="2016" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2016 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2016" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2016 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2016" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2016 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2016" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2016 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2017</th><td><button type="button" class="cell muted" data-filter-year="2017" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2017 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2017" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2017 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2017" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2017 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2017" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2017 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2018</th><td><button type="button" class="cell muted" data-filter-year="2018" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2018 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2018" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2018 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2018" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2018 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2018" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2018 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2019</th><td><button type="button" class="cell muted" data-filter-year="2019" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2019 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2019" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2019 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2019" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2019 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2019" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2019 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2020</th><td><button type="button" class="cell muted" data-filter-year="2020" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2020 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2020" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2020 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2020" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2020 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2020" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2020 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2021</th><td><button type="button" class="cell muted" data-filter-year="2021" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2021 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2021" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2021 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2021" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2021 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2021" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2021 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2022</th><td><button type="button" class="cell muted" data-filter-year="2022" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2022 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2022" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2022 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2022" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2022 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2022" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2022 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2023</th><td><button type="button" class="cell muted" data-filter-year="2023" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2023 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2023" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2023 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2023" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2023 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2023" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2023 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2024</th><td><button type="button" class="cell muted" data-filter-year="2024" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2024 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2024" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2024 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2024" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2024 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2024" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2024 wrf3d: EXPECTED">EXPECTED</button></td></tr><tr><th scope="row">2025</th><td><button type="button" class="cell muted" data-filter-year="2025" data-filter-product="ocean2d" data-filter-origin="INTERNAL_HINDCAST" title="2025 ocean2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2025" data-filter-product="ocean3d" data-filter-origin="INTERNAL_HINDCAST" title="2025 ocean3d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2025" data-filter-product="wrf2d" data-filter-origin="INTERNAL_HINDCAST" title="2025 wrf2d: EXPECTED">EXPECTED</button></td><td><button type="button" class="cell muted" data-filter-year="2025" data-filter-product="wrf3d" data-filter-origin="INTERNAL_HINDCAST" title="2025 wrf3d: EXPECTED">EXPECTED</button></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+
+    <section>
+      <h2>TODO / action tracker</h2>
+      <p class="muted">Due dates shown only when explicitly recorded. Owners are member IDs from data/team.yaml — never invented names.</p>
+      <h3 id='todos-in_progress'>In progress (0)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr><td colspan="8">None</td></tr></tbody></table></div><h3 id='todos-blocked'>Blocked (0)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr><td colspan="8">None</td></tr></tbody></table></div><h3 id='todos-not_started'>Not started / Ready (3)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr><td>task_confirm_scope</td><td>Confirm final hindcast simulation period</td><td><span class="pill unk">CRITICAL</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td>NOT_RECORDED</td><td>—</td><td>2026-11-23</td></tr><tr><td>task_historical_inventory_acceptance</td><td>Decide historical baseline acceptance rules</td><td><span class="pill unk">HIGH</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td>NOT_RECORDED</td><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a>, <a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a>, <a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a>, <a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a>, <a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a></td><td>2026-11-23</td></tr><tr><td>task_register_team_roster</td><td>Replace team member placeholders with real roster</td><td><span class="pill unk">MEDIUM</span></td><td><span class="pill muted">NOT_STARTED</span></td><td>member_01</td><td>NOT_RECORDED</td><td>—</td><td>UNKNOWN</td></tr></tbody></table></div><h3 id='todos-completed_recently'>Completed (0)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr><td colspan="8">None</td></tr></tbody></table></div>
+      <div id="todo-task_confirm_scope" hidden></div><div id="todo-task_historical_inventory_acceptance" hidden></div><div id="todo-task_register_team_roster" hidden></div>
+    </section>
+
+    <section>
+      <h2>Dataset details</h2>
+      <p class="muted">Expand a dataset for inventory, lifecycle timeline, evidence fields, and linked TODOs.</p>
+      
+        <details class="dataset-detail" id="ds-dataset_cls_hindcast_run"
+          data-origin="cls_brazil" data-product="run_dirs">
+          <summary>
+            <strong>dataset_cls_hindcast_run</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">CLS_HISTORICAL · run_dirs</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS cawo_hindcast_run directories</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>run_dirs</span></li>
+                <li><span>Period</span><span>1996-12-30 → 2024-12-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Run directories are not evidence of scientific completion. Classification pending OPEN_QUESTIONS Q6. Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/cawo_hindcast_run</code></span></li>
+                <li><span>Files</span><span>8403</span></li>
+                <li><span>Size</span><span>UNKNOWN</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_post_ocean2d"
+          data-origin="cls_brazil" data-product="ocean2d">
+          <summary>
+            <strong>dataset_cls_post_ocean2d</strong>
+            <span class="pill warn">INCOMPLETE</span>
+            <span class="muted">CLS_HISTORICAL · ocean2d</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS postprocessed ocean2d</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>ocean2d</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2001-12-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Verified from directory names on 2026-11-23. Ends 2001-12-31 — incomplete relative to a claimed 1995-2014 ocean2d delivery. Scientific creation date UNKNOWN (directory mtime not used as created_at).
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean2d</code></span></li>
+                <li><span>Files</span><span>2557</span></li>
+                <li><span>Size</span><span>UNKNOWN</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill warn">INCOMPLETE</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_post_ocean3d"
+          data-origin="cls_brazil" data-product="ocean3d">
+          <summary>
+            <strong>dataset_cls_post_ocean3d</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">CLS_HISTORICAL · ocean3d</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS postprocessed ocean3d</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>ocean3d</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Directory inventory spans into January 2015 (beyond claimed 2014 historical end). Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean3d</code></span></li>
+                <li><span>Files</span><span>7336</span></li>
+                <li><span>Size</span><span>UNKNOWN</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_post_wrf2d"
+          data-origin="cls_brazil" data-product="wrf2d">
+          <summary>
+            <strong>dataset_cls_post_wrf2d</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">CLS_HISTORICAL · wrf2d</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS postprocessed wrf2d</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>wrf2d</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/wrf2d</code></span></li>
+                <li><span>Files</span><span>7336</span></li>
+                <li><span>Size</span><span>UNKNOWN</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_post_wrf3d"
+          data-origin="cls_brazil" data-product="wrf3d">
+          <summary>
+            <strong>dataset_cls_post_wrf3d</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">CLS_HISTORICAL · wrf3d</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS postprocessed wrf3d</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>wrf3d</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/wrf3d</code></span></li>
+                <li><span>Files</span><span>7336</span></li>
+                <li><span>Size</span><span>UNKNOWN</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_internal_input_scratch"
+          data-origin="internal" data-product="forcing">
+          <summary>
+            <strong>dataset_internal_input_scratch</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">INTERNAL_HINDCAST · forcing</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>Internal cawo_input scratch</span></li>
+                <li><span>Origin</span><span>INTERNAL_HINDCAST</span></li>
+                <li><span>Product</span><span>forcing</span></li>
+                <li><span>Period</span><span>UNKNOWN → UNKNOWN (unknown)</span></li>
+                <li><span>Description</span><span>Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05). Not a continuous remaining-period input archive. Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$CAWO_HINDCAST_BASE/cawo_input</code></span></li>
+                <li><span>Files</span><span>UNKNOWN</span></li>
+                <li><span>Size</span><span>~70G</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>0</span></li>
+              </ul>
+              <ul><li>No linked TODOs</li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_internal_post_sample_20150113"
+          data-origin="internal" data-product="other">
+          <summary>
+            <strong>dataset_internal_post_sample_20150113</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">INTERNAL_HINDCAST · other</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>Internal postprocessed sample f20150113</span></li>
+                <li><span>Origin</span><span>INTERNAL_HINDCAST</span></li>
+                <li><span>Product</span><span>other</span></li>
+                <li><span>Period</span><span>2015-01-13 → 2015-01-13 (directory_names)</span></li>
+                <li><span>Description</span><span>Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch. Staging/test evidence only — not year completion. Scientific creation date UNKNOWN.
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$CAWO_HINDCAST_BASE/cawo_post</code></span></li>
+                <li><span>Files</span><span>UNKNOWN</span></li>
+                <li><span>Size</span><span>~8.5G tree</span></li>
+                <li><span>Manifest</span><span>NOT_RECORDED</span></li>
+                <li><span>Checksum</span><span>NOT_RECORDED</span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span>UNKNOWN <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span>UNKNOWN</span></li>
+                <li><span>Accepted</span><span>UNKNOWN</span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">UNKNOWN</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span>UNKNOWN</span></li>
+                <li><span>Open TODOs</span><span>0</span></li>
+              </ul>
+              <ul><li>No linked TODOs</li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+    </section>
+
+    <section>
+      <h2>Metric definitions</h2>
+      <ul><li><strong>catalogued</strong>: Dataset YAML record present under data/datasets/</li><li><strong>created_evidenced</strong>: created_at populated with provenance (never inferred from mtime alone)</li><li><strong>verified</strong>: integrity_status=VERIFIED or explicit lifecycle VERIFIED</li><li><strong>accepted</strong>: validation_status=ACCEPTED or explicit lifecycle ACCEPTED</li><li><strong>expected_cells</strong>: Provisional count of year×required_product cells for historical_baseline and remaining_internal periods; not an overall completion percentage</li><li><strong>matrix_missing</strong>: No catalog dataset of that origin/product covers the year</li><li><strong>matrix_expected</strong>: Internal remaining year with no covering catalog entry yet</li></ul>
+      <p class="muted">
+        Creation, catalog registration, inventory completeness, integrity verification,
+        scientific validation, and human acceptance are separate stages and are never
+        collapsed into one misleading percentage while scope is provisional.
+      </p>
+    </section>
+
+    <details class="secondary">
+      <summary><strong>Secondary project information</strong> (workflow, issues, HPC, workload)</summary>
+      <div style="display:grid;gap:1rem;margin-top:0.75rem">
+        <div>
+          <h3>Open issues</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Status</th><th>Owner</th></tr></thead>
+            <tbody><tr><td>issue_period_discrepancy</td><td>30-year vs 31-calendar-year period discrepancy</td><td>HIGH</td><td>OPEN</td><td>member_01</td></tr><tr><td>issue_uneven_historical_products</td><td>Uneven CLS historical product coverage</td><td>HIGH</td><td>OPEN</td><td>member_04</td></tr></tbody>
+          </table></div>
+        </div>
+        <div>
+          <h3>Progress metrics (remaining stream)</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Metric</th><th>Matched/Total</th><th>Display %</th><th>Note</th></tr></thead>
+            <tbody><tr><td>execution_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>output_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>validation_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr><tr><td>acceptance_coverage</td><td>0/11</td><td>NOT_CONFIRMED</td><td>Denominator provisional until scope.confirmed is set</td></tr></tbody>
+          </table></div>
+        </div>
+        <div>
+          <h3>Workflow stages</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Notes</th></tr></thead>
+            <tbody><tr><td>1</td><td>Project Preparation</td><td><span class="pill run">RUNNING</span></td><td>Discovery completed 2026-11-23; scope confirmation still open.</td></tr><tr><td>2</td><td>Model Preparation</td><td><span class="pill unk">UNKNOWN</span></td><td>Binaries exist for ramp/no_ramp (built 2026-10-20) but full stage acceptance is NOT_VERIFIED.
+</td></tr><tr><td>3</td><td>Hindcast Execution</td><td><span class="pill muted">NOT_STARTED</span></td><td>No verified continuous 2015+ production runs recorded for cawohdcst_ft2.</td></tr><tr><td>4</td><td>Output Processing</td><td><span class="pill muted">NOT_STARTED</span></td><td>Internal cawo_post currently shows only f20150113 sample.</td></tr><tr><td>5</td><td>Scientific Validation</td><td><span class="pill muted">NOT_STARTED</span></td><td>Thresholds not defined; do not invent acceptance criteria.</td></tr><tr><td>6</td><td>Final Dataset Integration</td><td><span class="pill muted">NOT_STARTED</span></td><td></td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="cards" style="grid-template-columns:1fr 1fr">
+          <div class="card">
+            <h3>Team workload</h3>
+            <table><thead><tr><th>Member</th><th>Open/active</th></tr></thead>
+            <tbody><tr><td>member_01</td><td>4</td></tr><tr><td>member_02</td><td>0</td></tr><tr><td>member_03</td><td>0</td></tr><tr><td>member_04</td><td>1</td></tr></tbody></table>
+          </div>
+          <div class="card">
+            <h3>HPC snapshot</h3>
+            <p><span class="pill unk">FRESH</span> TTL=24.0h · hpc_20261123T083639 collected 2026-11-23T08:36:39+00:00 (readonly_slurm) — 0 queue job(s).</p>
+            <p class="muted">Active tracked runs: 0</p>
+          </div>
+        </div>
+      </div>
+    </details>
   </main>
   <footer>
-    Evidence-based tracking · UNKNOWN/NOT_VERIFIED means not assumed complete ·
+    Evidence-based catalog tracking · UNKNOWN / NOT_RECORDED means not assumed complete ·
     regenerate with <code>python dashboard/generate.py</code>
   </footer>
+  <script>
+  (function () {
+    const tbody = document.querySelector('#inv-table tbody');
+    if (!tbody) return;
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const countEl = document.getElementById('inv-count');
+    const els = {
+      search: document.getElementById('f-search'),
+      origin: document.getElementById('f-origin'),
+      product: document.getElementById('f-product'),
+      life: document.getElementById('f-life'),
+      owner: document.getElementById('f-owner'),
+      year: document.getElementById('f-year'),
+      todos: document.getElementById('f-todos'),
+      sort: document.getElementById('f-sort'),
+      reset: document.getElementById('f-reset'),
+    };
+
+    function yearInPeriod(start, end, year) {
+      if (!year) return true;
+      if (!start || !end || start === 'None' || end === 'None') return false;
+      const ys = parseInt(String(start).slice(0, 4), 10);
+      const ye = parseInt(String(end).slice(0, 4), 10);
+      if (Number.isNaN(ys) || Number.isNaN(ye)) return false;
+      return ys <= year && year <= ye;
+    }
+
+    function apply() {
+      const q = (els.search.value || '').trim().toLowerCase();
+      const origin = els.origin.value;
+      const product = els.product.value;
+      const life = els.life.value;
+      const owner = els.owner.value;
+      const year = els.year.value ? parseInt(els.year.value, 10) : null;
+      const todos = els.todos.value;
+      let visible = 0;
+      rows.forEach(function (row) {
+        const okSearch = !q || (row.dataset.search || '').toLowerCase().includes(q);
+        const okOrigin = !origin || row.dataset.origin === origin;
+        const okProduct = !product || row.dataset.product === product;
+        const okLife = !life || row.dataset.lifecycle === life;
+        const okOwner = !owner || row.dataset.owner === owner;
+        const okYear = yearInPeriod(row.dataset.periodStart, row.dataset.periodEnd, year);
+        const todoCount = parseInt(row.dataset.todos || '0', 10);
+        const okTodos = !todos || (todos === 'yes' ? todoCount > 0 : todoCount === 0);
+        const show = okSearch && okOrigin && okProduct && okLife && okOwner && okYear && okTodos;
+        row.style.display = show ? '' : 'none';
+        if (show) visible += 1;
+      });
+      countEl.textContent = visible + ' of ' + rows.length + ' datasets shown';
+
+      const key = els.sort.value;
+      const sorted = rows.slice().sort(function (a, b) {
+        const av = a.dataset[key] || a.dataset.id || '';
+        const bv = b.dataset[key] || b.dataset.id || '';
+        if (av === 'UNKNOWN' && bv !== 'UNKNOWN') return 1;
+        if (bv === 'UNKNOWN' && av !== 'UNKNOWN') return -1;
+        return String(av).localeCompare(String(bv));
+      });
+      sorted.forEach(function (r) { tbody.appendChild(r); });
+    }
+
+    Object.keys(els).forEach(function (k) {
+      if (k === 'reset') return;
+      els[k].addEventListener('input', apply);
+      els[k].addEventListener('change', apply);
+    });
+    els.reset.addEventListener('click', function () {
+      els.search.value = '';
+      els.origin.value = '';
+      els.product.value = '';
+      els.life.value = '';
+      els.owner.value = '';
+      els.year.value = '';
+      els.todos.value = '';
+      els.sort.value = 'id';
+      apply();
+    });
+
+    document.querySelectorAll('button.cell').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const product = btn.getAttribute('data-filter-product') || '';
+        const year = btn.getAttribute('data-filter-year') || '';
+        const originLabel = btn.getAttribute('data-filter-origin') || '';
+        els.product.value = product;
+        els.year.value = year;
+        // Map origin label back to origin enum where possible
+        if (originLabel === 'CLS_HISTORICAL') els.origin.value = 'cls_brazil';
+        else if (originLabel === 'INTERNAL_HINDCAST') els.origin.value = 'internal';
+        else els.origin.value = '';
+        apply();
+        document.getElementById('inv-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    apply();
+  })();
+  </script>
 </body>
 </html>

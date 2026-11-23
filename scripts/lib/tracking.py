@@ -538,6 +538,30 @@ def validate_store(store: TrackingStore, root: Path | None = None) -> list[Valid
         for dep in task.get("depends_on", []):
             if dep not in task_ids:
                 issues.append(ValidationIssue("error", f"{task['id']}: unknown depends_on {dep}"))
+        for did in task.get("related_dataset_ids", []) or []:
+            if did not in dataset_ids:
+                issues.append(
+                    ValidationIssue(
+                        "error", f"{task['id']}: unknown related_dataset_ids {did}"
+                    )
+                )
+        for pid in task.get("related_period_ids", []) or []:
+            if pid not in period_ids:
+                issues.append(
+                    ValidationIssue(
+                        "error", f"{task['id']}: unknown related_period_ids {pid}"
+                    )
+                )
+
+    for dataset in store.datasets:
+        _check_member(dataset.get("owner"), member_ids, dataset["id"], issues)
+        for tid in dataset.get("related_task_ids", []) or []:
+            if tid not in task_ids:
+                issues.append(
+                    ValidationIssue(
+                        "error", f"{dataset['id']}: unknown related_task_ids {tid}"
+                    )
+                )
 
     for issue in store.issues:
         _check_member(issue.get("owner"), member_ids, issue["id"], issues)

@@ -3,8 +3,8 @@ name: CLS postprocessed wrf3d
 origin: cls_brazil
 product: wrf3d
 period_coverage:
-  start: "1995-01-01"
-  end: "2015-01-31"
+  start: '1995-01-01'
+  end: '2015-01-31'
   basis: directory_names
 location: $SCRATCH_HISTORICAL/data/postprocessed/wrf3d
 file_count: 7336
@@ -14,4 +14,16 @@ manifest_ref: null
 checksum_ref: null
 integrity_status: NOT_VERIFIED
 validation_status: UNKNOWN
-notes: Directory inventory through 2015-01-31.
+lifecycle_status: null
+owner: null
+created_at: null
+created_at_provenance: null
+catalogued_at: '2026-11-23'
+verified_at: null
+accepted_at: null
+last_inventory_scan: '2026-11-23'
+related_task_ids:
+- task_historical_inventory_acceptance
+notes: 'Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
+
+  '

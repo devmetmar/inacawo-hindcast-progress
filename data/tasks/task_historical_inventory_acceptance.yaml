@@ -19,4 +19,14 @@ evidence:
 completion_criteria:
   - Written acceptance rules for historical products
   - Period fully_complete policy documented
+related_dataset_ids:
+  - dataset_cls_post_ocean2d
+  - dataset_cls_post_ocean3d
+  - dataset_cls_post_wrf2d
+  - dataset_cls_post_wrf3d
+  - dataset_cls_hindcast_run
+related_period_ids: []
+related_product: null
+completed_date: null
+last_updated: "2026-11-23"
 notes: null

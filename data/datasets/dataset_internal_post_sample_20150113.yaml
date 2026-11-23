@@ -7,13 +7,13 @@ period_coverage:
   end: '2015-01-13'
   basis: directory_names
 location: $CAWO_HINDCAST_BASE/cawo_post
-file_count: null
-size_bytes: null
-size_human: ~8.5G tree
-manifest_ref: null
+file_count: 32
+size_bytes: 9063309112
+size_human: 8.44 GiB
+manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
-validation_status: UNKNOWN
+validation_status: NOT_VALIDATED
 lifecycle_status: null
 owner: null
 created_at: null
@@ -23,7 +23,6 @@ verified_at: null
 accepted_at: null
 last_inventory_scan: '2026-11-23'
 related_task_ids: []
-notes: 'Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch.
-  Staging/test evidence only — not year completion. Scientific creation date UNKNOWN.
-
-  '
+notes: 'Inventory 2026-11-23: only f20150113 under ocean2d/3d and wrf2d/3d (32 files).
+  Size from du -sb. Staging/test only — not year completion. created_at/owner/checksums
+  UNKNOWN. Integrity NOT_VERIFIED.'

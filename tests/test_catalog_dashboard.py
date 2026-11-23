@@ -171,17 +171,18 @@ def test_year_product_matrix_ocean2d_split_folders() -> None:
     assert "dataset_cls_post_ocean2d_with_tm01" in ids
 
 
-def test_no_overall_percent_when_provisional() -> None:
+def test_dashboard_header_omits_scope_and_acceptance_banner() -> None:
     store = TrackingStore.load(ROOT)
     progress = compute_progress(store)
     assert not progress["scope_confirmed"]
     mod = _load_generate()
     catalog = build_catalog_view(store)
     html = mod.render(store, progress, catalog)
-    assert "PROVISIONAL" in html or "NOT CONFIRMED" in html
-    assert "NOT CONFIRMED — overall % suppressed" in html
-    # Must not show a fabricated overall completion like "42%"
-    assert "Overall acceptance: <strong>NOT CONFIRMED — overall % suppressed</strong>" in html
+    assert "Hindcast scope:" not in html
+    assert "Overall acceptance:" not in html
+    assert "overall % suppressed" not in html
+    # Must not show a fabricated overall completion percentage in the header
+    assert "Overall acceptance: <strong>" not in html
 
 
 def test_dashboard_empty_and_incomplete_records() -> None:
@@ -281,7 +282,7 @@ def test_dashboard_includes_daily_progress_panel() -> None:
     assert "Daily inventory" in html
     assert 'id="day-coverage-data"' in html
     assert "day-present" in html  # CSS class for client-rendered cells
-    assert "NOT CONFIRMED — overall % suppressed" in html
+    assert "Hindcast scope:" not in html
     assert catalog["day_coverage"]["available_years"][0] == 1995
     assert 2015 in catalog["day_coverage"]["available_years"]
     assert 2025 in catalog["day_coverage"]["available_years"]

@@ -346,12 +346,6 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     else:
         snap_html = f"<p>{_pill(state)} HPC snapshot unavailable (TTL={_esc(ttl)}h).</p>"
 
-    overall = (
-        "NOT CONFIRMED — overall % suppressed"
-        if not progress["scope_confirmed"]
-        else _esc(progress["overall_percent"])
-    )
-
     inv_rows = []
     detail_blocks = []
     for ds in catalog["datasets"]:
@@ -787,11 +781,6 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
   <header>
     <h1>INACAWO Hindcast Catalog &amp; Progress</h1>
     <div class="muted">Updated {_esc(progress['generated_at'])}</div>
-    <div class="banner">Hindcast scope: {_esc(progress['scope_label'])}</div>
-    <p class="muted" style="margin:0.45rem 0 0">
-      Overall acceptance: <strong>{overall}</strong>
-      — dataset catalog + day inventory; not scientific verification.
-    </p>
   </header>
   <nav class="site-nav" aria-label="Catalog sections">
     <a href="#overview">Overview</a>

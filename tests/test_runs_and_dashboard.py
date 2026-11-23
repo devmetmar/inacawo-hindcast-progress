@@ -77,13 +77,14 @@ def test_stale_hpc_snapshot_listed() -> None:
     assert progress["latest_hpc_snapshot"]["collected_at"].startswith("2020-")
 
 
-def test_dashboard_contains_provisional_banner_and_no_fake_percent() -> None:
+def test_dashboard_omits_scope_banner_and_shows_years() -> None:
     store = TrackingStore.load(ROOT)
     progress = compute_progress(store)
     mod = _load_generate()
     html = mod.render(store, progress)
-    assert "PROVISIONAL" in html or "NOT CONFIRMED" in html
-    assert "NOT CONFIRMED — overall % suppressed" in html
+    assert "Hindcast scope:" not in html
+    assert "Overall acceptance:" not in html
+    assert "overall % suppressed" not in html
     assert "period_2015" not in html  # shows years, not necessarily ids
     assert "2015" in html
     assert "issue_period_discrepancy" in html

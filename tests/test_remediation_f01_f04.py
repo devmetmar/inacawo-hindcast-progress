@@ -187,7 +187,8 @@ def test_f04_dashboard_html_has_no_absolute_home_or_scratch(store: TrackingStore
     html = mod.render(store, progress)
     assert "/home/" not in html
     assert "/scratch/" not in html
-    assert "PROVISIONAL" in html or "NOT CONFIRMED" in html
+    assert "Hindcast scope:" not in html
+    assert "Overall acceptance:" not in html
 
 
 def test_unconfirmed_scope_still_suppresses_overall_percent(store: TrackingStore) -> None:

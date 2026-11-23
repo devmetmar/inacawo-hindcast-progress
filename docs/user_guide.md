@@ -48,8 +48,8 @@ python scripts/log_activity.py \
 
 The landing page prioritizes **dataset catalog progress**, not generic project status. Use the section nav (or skip link) to jump between overview, daily inventory, matrices, inventory, TODOs, and secondary panels.
 
-- **PROVISIONAL / NOT CONFIRMED** banner: scope end year not owner-confirmed; overall acceptance % is suppressed.
 - Catalog cards count only evidenced records (never treat a missing YAML as complete).
+- Scope confirmation and overall acceptance % remain tracking metrics (`compute_progress.py` / OPEN_QUESTIONS Q1); they are not shown as a dashboard banner.
 - **Daily inventory**: calendar day presence for every catalog year (1995–2025). Uses `day_presence_YYYY.json` when present, otherwise synthesized from the latest `inventory_scan_*.json` year counts (inventory only — not verified or accepted). Use the **Year** dropdown to switch years.
 - **UNKNOWN / NOT_RECORDED / NOT_VERIFIED**: no evidence yet — not success (shown muted in tables).
 - Historical and internal year × product matrices are **separate**; one product does not complete a year.

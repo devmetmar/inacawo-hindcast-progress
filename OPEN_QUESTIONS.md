@@ -59,7 +59,7 @@
 
 ## Q6 — CLS scratch content beyond 2014
 
-**Context:** January 2015 postprocessed days and `cawo_hindcast_run` through 2024 exist under `/scratch/cawohdcst`.
+**Context:** January 2015 postprocessed days and `cawo_hindcast_run` through 2024 exist under `$SCRATCH_HISTORICAL` (historical archive root).
 
 **Decision needed:** Treat as CLS legacy, internal WIP, or out of scope for this tracker?
 

@@ -6,7 +6,7 @@ period_coverage:
   start: "1996-12-30"
   end: "2024-12-31"
   basis: directory_names
-location: /scratch/cawohdcst/data/cawo_hindcast_run
+location: $SCRATCH_HISTORICAL/data/cawo_hindcast_run
 file_count: 8403
 size_bytes: null
 size_human: UNKNOWN

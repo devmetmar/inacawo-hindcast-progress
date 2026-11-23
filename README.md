@@ -1,6 +1,6 @@
 # INACAWO Hindcast Progress Tracking
 
-Operational source of truth for the internal INACAWO hindcast completion effort (HPC user `cawohdcst_ft2`).
+Operational source of truth for the internal INACAWO hindcast completion effort.
 
 This repository tracks **progress, evidence, issues, and readiness**. It does **not** contain model source, dependencies, or scientific output files.
 
@@ -9,8 +9,11 @@ This repository tracks **progress, evidence, issues, and readiness**. It does **
 - Scope end year: **PROVISIONAL / NOT CONFIRMED** (see [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) Q1).
 - Do not treat overall completion percentage as authoritative until scope is confirmed.
 - Unknown items are shown as `UNKNOWN` or `NOT_VERIFIED` — never assumed complete.
+- Dataset locations use placeholders (`$CAWO_HINDCAST_BASE`, `$SCRATCH_HISTORICAL`); resolve them locally — do not commit absolute home/scratch paths.
 
 ## Quick start
+
+Assumes the hindcast conda env exists at `$HOME/inacawo-deps/miniforge3/envs/hindcast` and this repo is at `$HOME/inacawo-hindcast-progress`. `pytest` must be available in that environment or your user site.
 
 ```bash
 # Prefer the hindcast conda environment

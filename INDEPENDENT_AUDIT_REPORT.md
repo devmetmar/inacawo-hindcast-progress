@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-11-23  
 **Auditor role:** Independent implementation review (audit-only)  
-**Repository audited:** `/home/cawohdcst_ft2/inacawo-hindcast-progress`  
+**Repository audited:** `$HOME/inacawo-hindcast-progress`  
 **Remote:** `git@github.com:devmetmar/inacawo-hindcast-progress.git` (public)  
 **Commit/push performed during audit:** None  
 
@@ -56,8 +56,8 @@ Non-blocking gaps remain (transition enforcement not wired into CI validators; p
 
 During earlier implementation/testing, `pytest` was installed into the user site:
 
-- `/home/cawohdcst_ft2/.local/lib/python3.13/site-packages/pytest`
-- `/home/cawohdcst_ft2/.local/bin/pytest`
+- `$HOME/.local/lib/python3.13/site-packages/pytest`
+- `$HOME/.local/bin/pytest`
 
 This is **outside** `inacawo-hindcast-progress` but is a local Python tooling install, not a model/HPC/dataset modification. Running this audit also refreshed `__pycache__` under the gitignored hindcast conda tree when importing packages.
 
@@ -196,7 +196,7 @@ Snapshots store `collected_at`. Dashboard displays timestamp and warns to treat 
 | NetCDF / large scientific files | **None** in tree; `.gitignore` blocks common types |
 | Raw HPC logs | **None** committed |
 | Environment secret files | **None** |
-| Internal absolute paths | **Present** in docs/data (`/scratch/...`, `/home/cawohdcst_ft2/...`, HPC usernames) |
+| Internal absolute paths | **Present** in docs/data (`$SCRATCH_...`, `$HOME/...`, HPC usernames) |
 | Companion git SHAs / tarball checksum | Present in `data/project.yaml` metadata (reproducibility, not secrets) |
 | Generated dashboard | No secret patterns; shows provisional status and issue IDs |
 

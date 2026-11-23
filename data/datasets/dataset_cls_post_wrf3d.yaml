@@ -6,7 +6,7 @@ period_coverage:
   start: "1995-01-01"
   end: "2015-01-31"
   basis: directory_names
-location: /scratch/cawohdcst/data/postprocessed/wrf3d
+location: $SCRATCH_HISTORICAL/data/postprocessed/wrf3d
 file_count: 7336
 size_bytes: null
 size_human: UNKNOWN

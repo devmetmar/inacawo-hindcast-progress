@@ -15,6 +15,6 @@ related_run_ids: []
 related_period_ids: []
 evidence:
   - type: dataset_path
-    reference: /scratch/cawohdcst/data/postprocessed
+    reference: $SCRATCH_HISTORICAL/data/postprocessed
     notes: See data/datasets/dataset_cls_post_*.yaml
 notes: null

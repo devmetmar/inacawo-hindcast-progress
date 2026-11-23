@@ -6,7 +6,7 @@ period_coverage:
   start: "2015-01-13"
   end: "2015-01-13"
   basis: directory_names
-location: /scratch/cawohdcst_ft2/inacawo-iht/cawo_post
+location: $CAWO_HINDCAST_BASE/cawo_post
 file_count: null
 size_bytes: null
 size_human: ~8.5G tree

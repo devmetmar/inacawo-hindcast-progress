@@ -13,15 +13,15 @@
 
 **Verified** — Multi-root Cursor workspace roots are accessible:
 
-| Folder | Path | Role |
-|--------|------|------|
-| `inacawo-iht` | `/home/cawohdcst_ft2/inacawo-iht` | Preprocess / hindcast / postprocess workflow |
-| `inacawo-src` | `/home/cawohdcst_ft2/inacawo-src` | COAWST build helpers and binaries |
-| `inacawo-deps` | `/home/cawohdcst_ft2/inacawo-deps` | Conda env, LiveOcean, COAWST library env |
-| `apps` | `/home/cawohdcst_ft2/apps` | Installed application dependencies |
-| `scratch-inacawo-iht` | `/scratch/cawohdcst_ft2/inacawo-iht` | Internal IHT working scratch (~81G) |
-| previous hindcast | `/scratch/cawohdcst` | CLS Brazil historical archive |
-| `inacawo-hindcast-progress` | `/home/cawohdcst_ft2/inacawo-hindcast-progress` | Dedicated tracking repository |
+| Folder | Path (portable) | Role |
+|--------|------------------|------|
+| `inacawo-iht` | `$HOME/inacawo-iht` | Preprocess / hindcast / postprocess workflow |
+| `inacawo-src` | `$HOME/inacawo-src` | COAWST build helpers and binaries |
+| `inacawo-deps` | `$HOME/inacawo-deps` | Conda env, LiveOcean, COAWST library env |
+| `apps` | `$HOME/apps` | Installed application dependencies |
+| `scratch-inacawo-iht` | `$CAWO_HINDCAST_BASE` | Internal IHT working scratch (~81G) |
+| previous hindcast | `$SCRATCH_HISTORICAL` | CLS Brazil historical archive |
+| `inacawo-hindcast-progress` | `$HOME/inacawo-hindcast-progress` | Dedicated tracking repository |
 
 **Verified** — Scientific workflow is day-based COAWST (WRF–ROMS–SWAN). Each integration day uses directory `fYYYYMMDD`. Stage entry points are CLI date-range driven (`--start` / `--end`); no hardcoded 30-year campaign definition exists in `inacawo-iht` configs.
 
@@ -53,7 +53,7 @@
 | COAWST source tarball sha256 | `617afa3addf449a4943a6c31771a7ea028969d688b38aee269b517bff8106f73` |
 | `coawstM` ramp / no_ramp | Present under `inacawo-src/binaries/`; built 2026-10-20 (SLURM jobs 568717 / 568718) |
 
-### 3.2 Internal scratch `/scratch/cawohdcst_ft2/inacawo-iht` (Verified)
+### 3.2 Internal scratch `$CAWO_HINDCAST_BASE` (Verified)
 
 | Path | Approx. size | Notes |
 |------|--------------|-------|
@@ -65,7 +65,7 @@
 
 **Observation:** Internal scratch appears to be staging/test material, not continuous 2015+ production.
 
-### 3.3 Historical archive `/scratch/cawohdcst/data` (Verified, read-only)
+### 3.3 Historical archive `$SCRATCH_HISTORICAL/data` (Verified, read-only)
 
 | Product | `fYYYYMMDD` span | Distinct years |
 |---------|------------------|----------------|
@@ -79,13 +79,13 @@
 
 **Critical observation:** A uniform claim that 1995–2014 is fully delivered is **not** supported by on-disk postprocessed products (`ocean2d` ends 2001; 3D/WRF streams extend into January 2015). Presence of `cawo_hindcast_run` directories through 2024 does **not** imply verified scientific completion.
 
-**Unknown:** Exact byte sizes of each `/scratch/cawohdcst/data/*` subtree (background `du` was aborted).
+**Unknown:** Exact byte sizes of each `$SCRATCH_HISTORICAL/data/*` subtree (background `du` was aborted).
 
 ### 3.4 HPC scheduler (Verified)
 
 - SLURM 24.11.5 available (`squeue`, `sacct`, `sinfo`, `scontrol`).
 - Partitions observed: `DEV1*` (default), `HDCAST`, `ENS1`.
-- No jobs queued/running for `cawohdcst_ft2` at discovery time.
+- No jobs queued/running for the internal tracking HPC user at discovery time.
 - IHT templates prefer HDCAST when allowed, else DEV1.
 
 ### 3.5 Team (Verified absence)

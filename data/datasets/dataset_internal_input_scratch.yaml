@@ -6,7 +6,7 @@ period_coverage:
   start: null
   end: null
   basis: unknown
-location: /scratch/cawohdcst_ft2/inacawo-iht/cawo_input
+location: $CAWO_HINDCAST_BASE/cawo_input
 file_count: null
 size_bytes: null
 size_human: ~70G

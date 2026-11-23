@@ -8,12 +8,12 @@ period_coverage:
   basis: directory_names
 location: $SCRATCH_HISTORICAL/data/postprocessed/wrf3d
 file_count: 7336
-size_bytes: null
-size_human: UNKNOWN
-manifest_ref: null
+size_bytes: 18643887310258
+size_human: 16.96 TiB
+manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
-validation_status: UNKNOWN
+validation_status: NOT_VALIDATED
 lifecycle_status: null
 owner: null
 created_at: null
@@ -24,6 +24,6 @@ accepted_at: null
 last_inventory_scan: '2026-11-23'
 related_task_ids:
 - task_historical_inventory_acceptance
-notes: 'Directory inventory through 2015-01-31. Scientific creation date UNKNOWN.
-
-  '
+notes: 'Inventory 2026-11-23: 7336 day dirs 1995-01-01..2015-01-31. Sample NC counts
+  8/day. Size from du -sb. file_count=day directories. created_at/owner/checksums
+  UNKNOWN. Integrity NOT_VERIFIED.'

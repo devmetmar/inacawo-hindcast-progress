@@ -3,18 +3,18 @@ name: Internal cawo_input scratch
 origin: internal
 product: forcing
 period_coverage:
-  start: null
-  end: null
-  basis: unknown
+  start: '1995-05-01'
+  end: '2026-01-05'
+  basis: directory_names
 location: $CAWO_HINDCAST_BASE/cawo_input
-file_count: null
-size_bytes: null
-size_human: ~70G
-manifest_ref: null
+file_count: 2737
+size_bytes: 74981817300
+size_human: 69.83 GiB
+manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
-validation_status: UNKNOWN
-lifecycle_status: null
+validation_status: NOT_VALIDATED
+lifecycle_status: INCOMPLETE
 owner: null
 created_at: null
 created_at_provenance: null
@@ -23,7 +23,8 @@ verified_at: null
 accepted_at: null
 last_inventory_scan: '2026-11-23'
 related_task_ids: []
-notes: 'Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05).
-  Not a continuous remaining-period input archive. Scientific creation date UNKNOWN.
-
-  '
+notes: 'Inventory 2026-11-23: sparse forcing samples only (era5/glorys/f markers).
+  Unique dated markers span 1995-05-01..2026-01-05 across years {1995:1, 2000:11,
+  2021:8, 2025:1, 2026:5} — NOT continuous. file_count=2737 regular files under tree
+  (find). Size from du -sb (~70 GiB). created_at/owner/checksums UNKNOWN. Integrity
+  NOT_VERIFIED.'

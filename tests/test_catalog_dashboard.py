@@ -17,6 +17,7 @@ from lib.catalog import (  # noqa: E402
     group_todos,
     tasks_for_dataset,
 )
+from lib.coverage import build_year_day_coverage  # noqa: E402
 from lib.tracking import TrackingStore, compute_progress, validate_store  # noqa: E402
 
 
@@ -243,6 +244,47 @@ def test_schema_accepts_new_optional_fields() -> None:
     issues = validate_store(store, ROOT)
     errors = [i.message for i in issues if i.level == "error"]
     assert errors == []
+
+
+def test_day_coverage_2015_cls_january_and_sparse_internal() -> None:
+    cov = build_year_day_coverage(ROOT, 2015)
+    assert cov["has_presence_file"] is True
+    assert cov["year"] == 2015
+    cls_o3 = cov["streams"]["cls_brazil"]["products"]["ocean3d"]
+    assert cls_o3["present_count"] == 31
+    assert cls_o3["out_count"] == 365 - 31
+    jan1 = next(d for d in cls_o3["days"] if d["date"] == "20150101")
+    feb1 = next(d for d in cls_o3["days"] if d["date"] == "20150201")
+    assert jan1["state"] == "PRESENT"
+    assert feb1["state"] == "OUT_OF_SPAN"
+    # ocean2d aliases to ocean2d_with_tm01 for CLS 2015
+    cls_o2 = cov["streams"]["cls_brazil"]["products"]["ocean2d"]
+    assert cls_o2["present_count"] == 31
+    internal = cov["streams"]["internal"]["products"]["wrf2d"]
+    assert internal["present_count"] == 1
+    assert internal["missing_count"] == 364
+    sample = next(d for d in internal["days"] if d["date"] == "20150113")
+    assert sample["state"] == "PRESENT"
+    # Must not treat sparse internal as full-year present
+    assert cov["streams"]["internal"]["all_required"]["present_count"] == 1
+
+
+def test_dashboard_includes_daily_progress_panel() -> None:
+    store = TrackingStore.load(ROOT)
+    progress = compute_progress(store)
+    catalog = build_catalog_view(store)
+    assert catalog.get("day_coverage") is not None
+    mod = _load_generate()
+    html = mod.render(store, progress, catalog)
+    assert 'id="daily-progress"' in html
+    assert "Daily inventory coverage" in html
+    assert "directory_names" in html or "inventory only" in html
+    assert "day-present" in html
+    assert "NOT CONFIRMED — overall % suppressed" in html
+    # Sparse sample must not imply verified year in matrix
+    row_2015 = next(r for r in catalog["remaining_matrix"] if r["year"] == 2015)
+    for st in row_2015["cells"].values():
+        assert st not in {"VERIFIED", "ACCEPTED"}
 
 
 def test_group_todos_empty_due_does_not_invent_overdue() -> None:

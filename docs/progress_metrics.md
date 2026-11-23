@@ -73,3 +73,12 @@ Rules:
 ## Year × product matrix cells
 
 Matrix rows are calendar years (historical CLS vs remaining internal, separate tables). Columns are required postprocessed products (`ocean2d`, `ocean3d`, `wrf2d`, `wrf3d`). Cell values are evidence-based (`EXPECTED`, `MISSING`, `CATALOGUED`, `INCOMPLETE`, `VERIFIED`, …) and never infer a full year from a single product or a sparse sample day.
+
+## Daily inventory coverage (dashboard)
+
+The **Daily inventory coverage** panel is separate from year×product lifecycle cells and from the four remaining-stream metrics above.
+
+- Source: `data/manifests/day_presence_YYYY.json` (directory_names evidence; optional alias e.g. CLS `ocean2d` → `ocean2d_with_tm01`).
+- Per-day states: `PRESENT`, `MISSING`, `OUT_OF_SPAN` (plus aggregate `PARTIAL` when not all required products are present).
+- **Does not** imply integrity `VERIFIED` or scientific `ACCEPTED`.
+- Sparse internal sample days must not be treated as year completion (same rule as matrix cells).

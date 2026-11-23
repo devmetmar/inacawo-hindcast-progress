@@ -70,7 +70,7 @@ def _matrix_table(
     return f"""
     <section>
       <h2>{_esc(title)}</h2>
-      <p class="muted">Click a cell to filter the inventory. Origin: {_esc(origin_label)}.</p>
+      <p class="muted">Click a cell to open Daily progress for that year/product and filter inventory. Origin: {_esc(origin_label)}. Lifecycle overview only — not day completeness.</p>
       <div class="table-wrap">
         <table class="matrix">
           <thead><tr><th>Year</th>{headers}</tr></thead>
@@ -103,6 +103,163 @@ def _todo_rows(tasks: list[dict]) -> str:
             f"</tr>"
         )
     return "".join(rows)
+
+
+def _glyph(state: str) -> str:
+    return {
+        "PRESENT": "✓",
+        "MISSING": "·",
+        "OUT_OF_SPAN": "–",
+        "PARTIAL": "~",
+    }.get(state, "?")
+
+
+def _day_calendar_html(product: str, block: dict, months: list[dict]) -> str:
+    by_month: dict[int, list[dict]] = {m: [] for m in range(1, 13)}
+    for day in block.get("days") or []:
+        by_month[int(day["month"])].append(day)
+    rows = []
+    for mmeta in months:
+        m = mmeta["num"]
+        cells = []
+        for day in by_month.get(m) or []:
+            st = day["state"]
+            cells.append(
+                f'<button type="button" class="day day-{_esc(st.lower())}" '
+                f'title="{_esc(day["iso"])} {_esc(product)}: {_esc(st)}" '
+                f'aria-label="{_esc(day["iso"])} {_esc(product)} {_esc(st)}">'
+                f'<span class="day-num" aria-hidden="true">{day["day"]}</span>'
+                f'<span class="day-glyph" aria-hidden="true">{_glyph(st)}</span>'
+                f"</button>"
+            )
+        # pad to days_in_month if incomplete list
+        while len(cells) < int(mmeta["days_in_month"]):
+            cells.append('<span class="day day-pad" aria-hidden="true"></span>')
+        rows.append(
+            f'<div class="cal-row">'
+            f'<div class="cal-month" id="cal-{_esc(product)}-m{m}">{_esc(mmeta["name"])}</div>'
+            f'<div class="cal-days" role="group" aria-label="{_esc(product)} {_esc(mmeta["name"])}">'
+            f'{"".join(cells)}</div></div>'
+        )
+    pc = block.get("present_count", 0)
+    mc = block.get("missing_count", 0)
+    oc = block.get("out_count", 0)
+    ec = block.get("expected_count", 0)
+    return (
+        f'<article class="product-cal" data-product="{_esc(product)}">'
+        f"<h3>{_esc(product)}</h3>"
+        f'<p class="muted">PRESENT {pc} · MISSING {mc} · OUT_OF_SPAN {oc} · expected {ec}</p>'
+        f'{"".join(rows)}</article>'
+    )
+
+
+def _day_progress_section(catalog: dict) -> str:
+    dc = catalog.get("day_coverage")
+    if not dc:
+        return (
+            '<section id="daily-progress">'
+            "<h2>Daily inventory coverage</h2>"
+            '<p class="muted">No day_presence_*.json loaded — calendar unavailable.</p>'
+            "</section>"
+        )
+    year = dc["year"]
+    cls = dc["streams"]["cls_brazil"]
+    internal = dc["streams"]["internal"]
+    months = dc["months"]
+    products = dc["products"]
+
+    cls_cals = "".join(
+        _day_calendar_html(p, cls["products"][p], months) for p in products
+    )
+    int_cals = "".join(
+        _day_calendar_html(p, internal["products"][p], months) for p in products
+    )
+
+    cls_all = cls["all_required"]
+    int_all = internal["all_required"]
+    # Next missing day for CLS all-required (first MISSING or after last PRESENT)
+    next_missing = "UNKNOWN"
+    for day in cls_all["days"]:
+        if day["state"] == "MISSING":
+            next_missing = day["iso"]
+            break
+    else:
+        for day in cls_all["days"]:
+            if day["state"] == "OUT_OF_SPAN":
+                next_missing = day["iso"]
+                break
+
+    year_opts = "".join(
+        f'<option value="{y}"{" selected" if y == year else ""}>{y}</option>'
+        for y in dc.get("available_years") or [year]
+    )
+
+    # Compact fallback table: non-OUT CLS days for first product ocean2d (via alias span)
+    table_rows = []
+    for p in products:
+        for day in cls["products"][p]["days"]:
+            if day["state"] == "OUT_OF_SPAN":
+                continue
+            table_rows.append(
+                f"<tr data-stream=\"cls_brazil\" data-product=\"{_esc(p)}\">"
+                f"<td>{_esc(day['iso'])}</td><td>CLS_HISTORICAL</td>"
+                f"<td>{_esc(p)}</td><td>{_esc(day['state'])}</td></tr>"
+            )
+            if len(table_rows) >= 200:
+                break
+        if len(table_rows) >= 200:
+            break
+
+    return f"""
+    <div class="sticky-bar" id="day-controls" role="region" aria-label="Daily progress controls">
+      <label>Year <select id="day-year" disabled title="Additional years require day_presence_YYYY.json">{year_opts}</select></label>
+      <label>Stream <select id="day-stream">
+        <option value="cls_brazil">CLS historical</option>
+        <option value="internal">Internal hindcast</option>
+      </select></label>
+      <label>Product <select id="day-product">
+        <option value="all">All required</option>
+        {"".join(f'<option value="{_esc(p)}">{_esc(p)}</option>' for p in products)}
+      </select></label>
+      <span class="muted">basis: {_esc(dc.get("basis") or "unknown")} · scan {_esc(dc.get("scan_date") or "UNKNOWN")}</span>
+    </div>
+
+    <section id="daily-progress">
+      <h2>Daily inventory coverage</h2>
+      <p class="banner-inline">{_esc(dc.get("disclaimer"))}</p>
+      <div class="cards kpi-strip" id="day-kpi">
+        <div class="card"><div class="label">CLS all-4 PRESENT</div>
+          <div class="stat">{cls_all["present_count"]}/{cls_all["expected_count"]}</div>
+          <div class="muted">inventory only</div></div>
+        <div class="card"><div class="label">Internal all-4 PRESENT</div>
+          <div class="stat">{int_all["present_count"]}/{int_all["expected_count"]}</div>
+          <div class="muted">inventory only</div></div>
+        <div class="card"><div class="label">Year</div>
+          <div class="stat">{year}</div>
+          <div class="muted">calendar days</div></div>
+        <div class="card"><div class="label">Next CLS gap day</div>
+          <div class="stat" style="font-size:1.1rem">{_esc(next_missing)}</div>
+          <div class="muted">first MISSING/OUT</div></div>
+      </div>
+      <div class="legend" aria-label="Day state legend">
+        <span class="leg PRESENT"><span class="swatch" aria-hidden="true">✓</span> PRESENT</span>
+        <span class="leg MISSING"><span class="swatch" aria-hidden="true">·</span> MISSING</span>
+        <span class="leg OUT_OF_SPAN"><span class="swatch" aria-hidden="true">–</span> OUT_OF_SPAN</span>
+        <span class="leg PARTIAL"><span class="swatch" aria-hidden="true">~</span> PARTIAL</span>
+      </div>
+      <div id="cal-cls" class="cal-stack" data-stream="cls_brazil">{cls_cals}</div>
+      <div id="cal-internal" class="cal-stack" data-stream="internal" hidden>{int_cals}</div>
+      <details class="a11y-table">
+        <summary>Accessible day table (CLS non–OUT_OF_SPAN sample, max 200 rows)</summary>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Stream</th><th>Product</th><th>State</th></tr></thead>
+            <tbody>{"".join(table_rows) or '<tr><td colspan="4">None</td></tr>'}</tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+    """
 
 
 def render(store: TrackingStore, progress: dict, catalog: dict | None = None) -> str:
@@ -316,6 +473,8 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         for o in sorted({d["owner"] for d in catalog["datasets"]})
     )
 
+    day_section = _day_progress_section(catalog)
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -324,63 +483,133 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
   <title>INACAWO Dataset Catalog Progress</title>
   <style>
     :root {{
-      --bg: #f0f3f7;
+      --bg: #F4F6F8;
+      --surface: #FFFFFF;
       --ink: #142033;
-      --card: #ffffff;
-      --line: #d0d8e2;
-      --ok: #1b7f4a;
-      --run: #0b6e99;
+      --muted: #5C6775;
+      --line: #D0D8E2;
+      --present: #0F6B4C;
+      --missing: #8A1C2E;
+      --out: #E8ECF0;
+      --run: #0B6E99;
+      --warn: #9A6700;
+      --focus: #0B6E99;
+      --ok: #0F6B4C;
       --ready: #6a5a00;
-      --bad: #a11b2b;
-      --unk: #5c6775;
-      --warn: #9a6700;
-      --muted: #6b7785;
+      --bad: #8A1C2E;
+      --unk: #5C6775;
+      --card: var(--surface);
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --cell: 15px;
+      --header-h: 56px;
     }}
     * {{ box-sizing: border-box; }}
     body {{
       margin: 0;
       font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
       color: var(--ink);
-      background: linear-gradient(180deg, #e8eef5, var(--bg));
+      background: var(--bg);
       line-height: 1.45;
+      scroll-padding-top: calc(var(--header-h) + 48px);
     }}
     header {{
-      padding: 1.25rem 1.5rem 1rem;
+      padding: var(--space-3) var(--space-4);
       border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.92);
+      background: var(--surface);
     }}
-    h1 {{ margin: 0 0 0.25rem; font-size: 1.45rem; }}
+    h1 {{ margin: 0 0 var(--space-1); font-size: 1.35rem; }}
     .banner {{
-      display: inline-block; margin-top: 0.45rem; padding: 0.3rem 0.65rem;
-      border-radius: 0.3rem; font-weight: 650; background: #fff3cd; color: var(--warn);
-      border: 1px solid #f0d48a;
+      display: inline-block; margin-top: var(--space-2); padding: 0.25rem 0.55rem;
+      border-radius: 0.25rem; font-weight: 650; background: #fff3cd; color: var(--warn);
+      border: 1px solid #f0d48a; font-size: 0.85rem;
     }}
-    main {{ padding: 1rem 1.5rem 2.5rem; display: grid; gap: 1rem; max-width: 1400px; }}
-    .cards {{ display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }}
+    .banner-inline {{
+      margin: 0 0 var(--space-3); padding: var(--space-2) var(--space-3);
+      background: #eef6fb; border: 1px solid #b7d4e8; border-radius: 0.25rem;
+      color: var(--run); font-size: 0.86rem;
+    }}
+    .sticky-bar {{
+      position: sticky; top: 0; z-index: 20;
+      display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: end;
+      padding: var(--space-2) var(--space-4);
+      background: rgba(244,246,248,0.96); border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(4px);
+    }}
+    .sticky-bar label {{
+      display: flex; flex-direction: column; gap: 2px;
+      font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em;
+    }}
+    .sticky-bar select {{
+      min-height: 36px; padding: 0.3rem 0.45rem; border: 1px solid var(--line);
+      border-radius: 0.25rem; font: inherit; background: #fff; color: var(--ink); cursor: pointer;
+    }}
+    .sticky-bar select:focus, button:focus-visible, a:focus-visible, .filters input:focus, .filters select:focus {{
+      outline: 2px solid var(--focus); outline-offset: 2px;
+    }}
+    main {{ padding: var(--space-3) var(--space-4) 2.5rem; display: grid; gap: var(--space-3); max-width: 1480px; }}
+    .cards {{ display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }}
+    .kpi-strip .stat {{ font-size: 1.35rem; }}
     .card {{
-      background: var(--card); border: 1px solid var(--line); border-radius: 0.55rem;
-      padding: 0.75rem 0.85rem;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 0.35rem;
+      padding: var(--space-2) var(--space-3);
     }}
-    .card .stat {{ font-size: 1.55rem; font-weight: 700; }}
-    .card .label {{ font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }}
+    .card .stat {{ font-size: 1.45rem; font-weight: 700; }}
+    .card .label {{ font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }}
     section {{
-      background: var(--card); border: 1px solid var(--line); border-radius: 0.55rem;
-      padding: 0.9rem 1rem;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 0.35rem;
+      padding: var(--space-3);
     }}
-    h2 {{ margin: 0 0 0.65rem; font-size: 1.05rem; }}
-    h3 {{ margin: 1rem 0 0.4rem; font-size: 0.95rem; }}
-    h4 {{ margin: 0.4rem 0; font-size: 0.88rem; }}
-    .muted {{ color: var(--muted); font-size: 0.88rem; }}
-    .sub {{ font-size: 0.78rem; color: var(--muted); }}
+    section.compact {{ padding: var(--space-2) var(--space-3); }}
+    h2 {{ margin: 0 0 var(--space-2); font-size: 1.02rem; }}
+    h3 {{ margin: 0 0 var(--space-1); font-size: 0.92rem; }}
+    h4 {{ margin: 0.35rem 0; font-size: 0.84rem; }}
+    .muted {{ color: var(--muted); font-size: 0.86rem; }}
+    .sub {{ font-size: 0.76rem; color: var(--muted); }}
+    .legend {{ display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0 0 var(--space-3); font-size: 0.82rem; }}
+    .leg {{ display: inline-flex; align-items: center; gap: 0.35rem; }}
+    .leg .swatch {{
+      display: inline-flex; width: 1.25rem; height: 1.25rem; align-items: center; justify-content: center;
+      border: 1px solid var(--line); border-radius: 0.2rem; font-size: 0.75rem; font-weight: 700;
+    }}
+    .leg.PRESENT .swatch {{ background: #e6f5ee; color: var(--present); border-color: #8fc9ad; }}
+    .leg.MISSING .swatch {{ background: #fdecee; color: var(--missing); border-color: #e3a4ad; }}
+    .leg.OUT_OF_SPAN .swatch {{ background: var(--out); color: var(--muted); }}
+    .leg.PARTIAL .swatch {{ background: #fff6d6; color: var(--ready); }}
+    .cal-stack {{ display: grid; gap: var(--space-3); }}
+    .product-cal {{ border: 1px solid var(--line); border-radius: 0.3rem; padding: var(--space-2); }}
+    .cal-row {{ display: grid; grid-template-columns: 2.6rem 1fr; gap: var(--space-1); align-items: start; margin-bottom: 2px; }}
+    .cal-month {{ font-size: 0.72rem; font-weight: 650; color: var(--muted); padding-top: 2px; }}
+    .cal-days {{
+      display: grid; grid-template-columns: repeat(31, minmax(var(--cell), 1fr));
+      gap: 2px; overflow-x: auto;
+    }}
+    button.day {{
+      min-width: var(--cell); min-height: calc(var(--cell) + 4px);
+      padding: 0; border: 1px solid var(--line); border-radius: 2px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; font: inherit; line-height: 1; background: #f7f9fb; color: var(--ink);
+      transition: background 180ms ease, border-color 180ms ease;
+    }}
+    button.day .day-num {{ font-size: 0.58rem; color: var(--muted); }}
+    button.day .day-glyph {{ font-size: 0.7rem; font-weight: 700; }}
+    button.day-present {{ background: #e6f5ee; border-color: #8fc9ad; color: var(--present); }}
+    button.day-missing {{ background: #fdecee; border-color: #e3a4ad; color: var(--missing); }}
+    button.day-out_of_span {{ background: var(--out); color: var(--muted); }}
+    button.day-partial {{ background: #fff6d6; border-color: #e2d48a; color: var(--ready); }}
+    .day-pad {{ min-height: calc(var(--cell) + 4px); }}
+    @media (prefers-reduced-motion: reduce) {{
+      button.day {{ transition: none; }}
+    }}
     .table-wrap {{ overflow-x: auto; }}
-    table {{ width: 100%; border-collapse: collapse; font-size: 0.86rem; }}
-    th, td {{ text-align: left; padding: 0.35rem 0.4rem; border-bottom: 1px solid var(--line); vertical-align: top; }}
+    table {{ width: 100%; border-collapse: collapse; font-size: 0.84rem; }}
+    th, td {{ text-align: left; padding: 0.3rem 0.35rem; border-bottom: 1px solid var(--line); vertical-align: top; }}
     th {{ color: var(--muted); font-weight: 600; white-space: nowrap; }}
-    .matrix th, .matrix td {{ text-align: center; }}
+    .matrix {{ font-size: 0.78rem; }}
+    .matrix th, .matrix td {{ text-align: center; padding: 0.2rem; }}
     .matrix th[scope="row"] {{ text-align: left; }}
     .pill {{
-      display: inline-block; padding: 0.08rem 0.4rem; border-radius: 0.25rem;
-      font-size: 0.72rem; font-weight: 600; background: #eef2f6; white-space: nowrap;
+      display: inline-block; padding: 0.06rem 0.35rem; border-radius: 0.2rem;
+      font-size: 0.7rem; font-weight: 600; background: #eef2f6; white-space: nowrap;
     }}
     .pill.ok {{ background: #dff3e8; color: var(--ok); }}
     .pill.run {{ background: #dff0f8; color: var(--run); }}
@@ -390,8 +619,8 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     .pill.warn {{ background: #fff3cd; color: var(--warn); }}
     .pill.muted {{ background: #eef1f4; color: var(--muted); }}
     button.cell {{
-      border: 1px solid var(--line); border-radius: 0.25rem; padding: 0.25rem 0.35rem;
-      font-size: 0.68rem; font-weight: 650; cursor: pointer; width: 100%;
+      border: 1px solid var(--line); border-radius: 0.2rem; padding: 0.2rem 0.28rem;
+      font-size: 0.65rem; font-weight: 650; cursor: pointer; width: 100%;
       background: #f7f9fb; color: var(--ink);
     }}
     button.cell.ok {{ background: #eef9f2; border-color: #9fd6b5; color: var(--ok); }}
@@ -401,39 +630,43 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     button.cell.warn {{ background: #fff8e8; border-color: #f0d48a; color: var(--warn); }}
     button.cell.unk, button.cell.muted {{ background: #f4f6f8; color: var(--muted); }}
     .filters {{
-      display: grid; gap: 0.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      margin-bottom: 0.75rem; align-items: end;
+      display: grid; gap: var(--space-2);
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      margin-bottom: var(--space-2); align-items: end;
     }}
-    .filters label {{ display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.75rem; color: var(--muted); }}
+    .filters label {{ display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.72rem; color: var(--muted); }}
     .filters input, .filters select {{
-      padding: 0.35rem 0.45rem; border: 1px solid var(--line); border-radius: 0.3rem;
-      font: inherit; color: var(--ink); background: #fff;
+      padding: 0.3rem 0.4rem; border: 1px solid var(--line); border-radius: 0.25rem;
+      font: inherit; color: var(--ink); background: #fff; min-height: 36px;
     }}
-    .filters .actions {{ display: flex; gap: 0.4rem; }}
+    .filters .actions {{ display: flex; gap: 0.35rem; }}
     .filters button {{
-      padding: 0.35rem 0.65rem; border: 1px solid var(--line); border-radius: 0.3rem;
-      background: #f4f7fb; cursor: pointer; font: inherit;
+      padding: 0.3rem 0.55rem; border: 1px solid var(--line); border-radius: 0.25rem;
+      background: #f4f7fb; cursor: pointer; font: inherit; min-height: 36px;
     }}
     .detail-grid {{
-      display: grid; gap: 0.75rem;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      margin-top: 0.5rem;
+      display: grid; gap: var(--space-2);
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: var(--space-2);
     }}
     .kv {{ list-style: none; padding: 0; margin: 0; }}
-    .kv li {{ display: grid; grid-template-columns: 7rem 1fr; gap: 0.35rem; padding: 0.15rem 0; font-size: 0.84rem; }}
+    .kv li {{ display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.3rem; padding: 0.12rem 0; font-size: 0.82rem; }}
     .kv li > span:first-child {{ color: var(--muted); }}
-    .timeline {{ margin: 0.25rem 0 0; padding-left: 1.1rem; font-size: 0.84rem; }}
+    .timeline {{ margin: 0.2rem 0 0; padding-left: 1rem; font-size: 0.82rem; }}
     details.dataset-detail {{
-      border: 1px solid var(--line); border-radius: 0.4rem; padding: 0.45rem 0.65rem;
-      margin: 0.4rem 0; background: #fbfcfe;
+      border: 1px solid var(--line); border-radius: 0.3rem; padding: 0.4rem 0.55rem;
+      margin: 0.35rem 0; background: #fbfcfe;
     }}
-    details.dataset-detail > summary {{ cursor: pointer; }}
-    details.secondary {{ margin-top: 0.25rem; }}
-    footer {{ padding: 0 1.5rem 1.5rem; color: var(--muted); font-size: 0.82rem; max-width: 1400px; }}
-    code {{ font-size: 0.8rem; }}
+    details.dataset-detail > summary, details.a11y-table > summary, details.secondary > summary {{ cursor: pointer; }}
+    details.secondary {{ margin-top: 0.2rem; }}
+    footer {{ padding: 0 var(--space-4) var(--space-4); color: var(--muted); font-size: 0.8rem; max-width: 1480px; }}
+    code {{ font-size: 0.78rem; }}
     a {{ color: var(--run); }}
-    #inv-count {{ font-size: 0.85rem; color: var(--muted); margin: 0.25rem 0 0.5rem; }}
+    #inv-count {{ font-size: 0.84rem; color: var(--muted); margin: 0.2rem 0 0.45rem; }}
+    @media (max-width: 768px) {{
+      :root {{ --cell: 18px; }}
+      main {{ padding: var(--space-2); }}
+    }}
   </style>
 </head>
 <body>
@@ -441,11 +674,12 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     <h1>INACAWO Dataset Catalog Progress</h1>
     <div class="muted">Generated {_esc(progress['generated_at'])} · source of truth: data/*.yaml</div>
     <div class="banner">Scope: {_esc(progress['scope_label'])}</div>
-    <p class="muted" style="margin:0.5rem 0 0">
+    <p class="muted" style="margin:0.45rem 0 0">
       Overall acceptance: <strong>{overall}</strong>
-      — catalog counts below are evidence-based record counts, not a project completion percentage.
+      — catalog counts are evidence-based; daily panel is inventory coverage only.
     </p>
   </header>
+  {day_section}
   <main>
     <section>
       <h2>Catalog overview</h2>
@@ -458,12 +692,15 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         <div class="card"><div class="label">Incomplete</div><div class="stat">{summary['incomplete_datasets']}</div><div class="muted">lifecycle INCOMPLETE</div></div>
         <div class="card"><div class="label">Open TODOs</div><div class="stat">{summary['outstanding_todos']}</div><div class="muted">tasks not completed</div></div>
       </div>
-      <p class="muted" style="margin-top:0.75rem">
+      <p class="muted" style="margin-top:0.65rem">
         Origins: {_esc(json.dumps(summary['by_origin']))}
         · Products: {_esc(json.dumps(summary['by_product']))}
         · Lifecycles: {_esc(json.dumps(summary['lifecycle_counts']))}
       </p>
     </section>
+
+    {_matrix_table("Year × product — CLS historical (lifecycle overview)", catalog["historical_matrix"], products, "CLS_HISTORICAL")}
+    {_matrix_table("Year × product — Internal hindcast (lifecycle overview)", catalog["remaining_matrix"], products, "INTERNAL_HINDCAST")}
 
     <section>
       <h2>Dataset inventory</h2>
@@ -497,9 +734,6 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         </table>
       </div>
     </section>
-
-    {_matrix_table("Year × product — CLS historical", catalog["historical_matrix"], products, "CLS_HISTORICAL")}
-    {_matrix_table("Year × product — Internal hindcast", catalog["remaining_matrix"], products, "INTERNAL_HINDCAST")}
 
     <section>
       <h2>TODO / action tracker</h2>
@@ -653,16 +887,46 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         const originLabel = btn.getAttribute('data-filter-origin') || '';
         els.product.value = product;
         els.year.value = year;
-        // Map origin label back to origin enum where possible
         if (originLabel === 'CLS_HISTORICAL') els.origin.value = 'cls_brazil';
         else if (originLabel === 'INTERNAL_HINDCAST') els.origin.value = 'internal';
         else els.origin.value = '';
         apply();
-        document.getElementById('inv-table').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+        const dayStream = document.getElementById('day-stream');
+        const dayProduct = document.getElementById('day-product');
+        if (dayStream) {{
+          dayStream.value = originLabel === 'INTERNAL_HINDCAST' ? 'internal' : 'cls_brazil';
+          dayStream.dispatchEvent(new Event('change'));
+        }}
+        if (dayProduct && product) {{
+          dayProduct.value = product;
+          dayProduct.dispatchEvent(new Event('change'));
+        }}
+        const daily = document.getElementById('daily-progress');
+        if (daily) daily.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+        else document.getElementById('inv-table').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
       }});
     }});
 
     apply();
+
+    const dayStream = document.getElementById('day-stream');
+    const dayProduct = document.getElementById('day-product');
+    const calCls = document.getElementById('cal-cls');
+    const calInt = document.getElementById('cal-internal');
+    function applyDayFilters() {{
+      if (!dayStream || !dayProduct) return;
+      const stream = dayStream.value;
+      const product = dayProduct.value;
+      if (calCls) calCls.hidden = stream !== 'cls_brazil';
+      if (calInt) calInt.hidden = stream !== 'internal';
+      document.querySelectorAll('.product-cal').forEach(function (art) {{
+        const show = product === 'all' || art.getAttribute('data-product') === product;
+        art.hidden = !show;
+      }});
+    }}
+    if (dayStream) dayStream.addEventListener('change', applyDayFilters);
+    if (dayProduct) dayProduct.addEventListener('change', applyDayFilters);
+    applyDayFilters();
   }})();
   </script>
 </body>

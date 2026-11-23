@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
-from .tracking import TrackingStore, dataset_covers_year
+from .tracking import REPO_ROOT, TrackingStore, dataset_covers_year
 
 POSTPROCESSED_PRODUCTS = ("ocean2d", "ocean3d", "wrf2d", "wrf3d")
 
@@ -272,6 +274,16 @@ def build_catalog_view(store: TrackingStore) -> dict[str, Any]:
         return tallies
 
     all_tasks = list(store.tasks)
+
+    # Day-level inventory coverage (optional; attached by dashboard via coverage module)
+    day_coverage = None
+    try:
+        from .coverage import build_year_day_coverage
+
+        day_coverage = build_year_day_coverage(Path(REPO_ROOT), 2015)
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
+        day_coverage = None
+
     return {
         "summary": {
             "catalogued_datasets": catalogued,
@@ -301,6 +313,7 @@ def build_catalog_view(store: TrackingStore) -> dict[str, Any]:
         "remaining_matrix": rem_matrix,
         "historical_matrix_counts": matrix_counts(hist_matrix),
         "remaining_matrix_counts": matrix_counts(rem_matrix),
+        "day_coverage": day_coverage,
         "todo_groups": group_todos(all_tasks),
         "all_todos": all_tasks,
         "definitions": {

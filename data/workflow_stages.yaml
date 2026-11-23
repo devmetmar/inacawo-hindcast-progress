@@ -1,0 +1,49 @@
+stages:
+  - id: stage_a_project_preparation
+    name: Project Preparation
+    order: 1
+    description: >
+      Scope confirmation, historical inventory, workspace/source/deps/config
+      identification, input inventory, HPC environment verification.
+    status: RUNNING
+    evidence_layer: reported
+    notes: Discovery completed 2026-11-23; scope confirmation still open.
+  - id: stage_b_model_preparation
+    name: Model Preparation
+    order: 2
+    description: >
+      Source/config verification, compilation, build verification, runtime
+      checks, preliminary test runs, configuration approval.
+    status: UNKNOWN
+    evidence_layer: reported
+    notes: >
+      Binaries exist for ramp/no_ramp (built 2026-10-20) but full stage
+      acceptance is NOT_VERIFIED.
+  - id: stage_c_hindcast_execution
+    name: Hindcast Execution
+    order: 3
+    description: Per-period/per-run simulation execution with HPC evidence.
+    status: NOT_STARTED
+    evidence_layer: reported
+    notes: No verified continuous 2015+ production runs recorded for cawohdcst_ft2.
+  - id: stage_d_output_processing
+    name: Output Processing
+    order: 4
+    description: Output inventory, completeness, integrity, post-processing status.
+    status: NOT_STARTED
+    evidence_layer: reported
+    notes: Internal cawo_post currently shows only f20150113 sample.
+  - id: stage_e_scientific_validation
+    name: Scientific Validation
+    order: 5
+    description: Configurable validation procedures with owner-supplied thresholds.
+    status: NOT_STARTED
+    evidence_layer: reported
+    notes: Thresholds not defined; do not invent acceptance criteria.
+  - id: stage_f_final_integration
+    name: Final Dataset Integration
+    order: 6
+    description: Cross-period consistency, metadata, acceptance, delivery readiness.
+    status: NOT_STARTED
+    evidence_layer: reported
+    notes: null

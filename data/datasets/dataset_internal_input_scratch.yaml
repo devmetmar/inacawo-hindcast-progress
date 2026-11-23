@@ -1,0 +1,19 @@
+id: dataset_internal_input_scratch
+name: Internal cawo_input scratch
+origin: internal
+product: forcing
+period_coverage:
+  start: null
+  end: null
+  basis: unknown
+location: /scratch/cawohdcst_ft2/inacawo-iht/cawo_input
+file_count: null
+size_bytes: null
+size_human: ~70G
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: >
+  Sparse sample days observed (1995, 2000, 2021 Seroja, 2025-12-31..2026-01-05).
+  Not a continuous remaining-period input archive.

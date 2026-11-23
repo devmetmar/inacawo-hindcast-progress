@@ -1,0 +1,21 @@
+members:
+  - id: member_01
+    display_name: Member 01 (placeholder)
+    role: Project lead / acceptance authority
+    active: true
+    notes: Replace display_name when owner supplies roster (OPEN_QUESTIONS Q4).
+  - id: member_02
+    display_name: Member 02 (placeholder)
+    role: HPC execution / job operations
+    active: true
+    notes: null
+  - id: member_03
+    display_name: Member 03 (placeholder)
+    role: Preprocess / inputs / postprocess
+    active: true
+    notes: null
+  - id: member_04
+    display_name: Member 04 (placeholder)
+    role: Scientific validation / QA
+    active: true
+    notes: null

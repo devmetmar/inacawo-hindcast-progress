@@ -1,0 +1,17 @@
+id: period_2024
+calendar_year: 2024
+start_date: "2024-01-01"
+end_date: "2024-12-31"
+stream: remaining_internal
+scope_basis: provisional
+execution_status: NOT_STARTED
+scientific_status: NOT_VALIDATED
+owner: null
+reviewer: null
+configuration_id: null
+related_run_ids: []
+related_dataset_ids: []
+fully_complete: "NO"
+notes: >
+  Provisional remaining-year stub. End year 2025 is NOT CONFIRMED
+  (see OPEN_QUESTIONS Q1). No verified production completion recorded.

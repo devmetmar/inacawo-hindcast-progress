@@ -1,0 +1,18 @@
+id: dataset_cls_post_ocean3d
+name: CLS postprocessed ocean3d
+origin: cls_brazil
+product: ocean3d
+period_coverage:
+  start: "1995-01-01"
+  end: "2015-01-31"
+  basis: directory_names
+location: /scratch/cawohdcst/data/postprocessed/ocean3d
+file_count: 7336
+size_bytes: null
+size_human: UNKNOWN
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: >
+  Directory inventory spans into January 2015 (beyond claimed 2014 historical end).

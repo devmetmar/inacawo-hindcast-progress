@@ -1,0 +1,50 @@
+id: proj_inaca_hindcast
+name: INACAWO Hindcast Progress Tracking
+objective: >
+  Complete the remaining internal INACAWO hindcast simulation work with
+  traceable execution, output, validation, and acceptance evidence, while
+  maintaining an auditable inventory of the CLS Brazil historical archive.
+status: ACTIVE
+project_owner: member_01
+team_member_ids:
+  - member_01
+  - member_02
+  - member_03
+  - member_04
+scope:
+  confirmed: null
+  provisional:
+    historical_claimed:
+      start: "1995-01-01"
+      end: "2014-12-31"
+    remaining_claimed:
+      start: "2015-01-01"
+      end: "2025-12-31"
+  notes: >
+    Remaining end year NOT CONFIRMED (2015-2025 inclusive is 11 calendar years;
+    project language also refers to a 30-year hindcast). Do not hardcode
+    total_years or authoritative completion percentages until OPEN_QUESTIONS Q1
+    is resolved.
+completion_criteria:
+  require_execution_verified: true
+  require_outputs_verified: true
+  require_validations_verified: true
+  require_human_acceptance: true
+  required_products:
+    - ocean2d
+    - ocean3d
+    - wrf2d
+    - wrf3d
+hpc:
+  primary_user: cawohdcst_ft2
+  historical_user: cawohdcst
+  work_base: /scratch/cawohdcst_ft2/inacawo-iht
+  historical_base: /scratch/cawohdcst
+  scheduler: slurm
+metadata:
+  discovery_date: "2026-11-23"
+  companion_repos:
+    inacawo_iht_head: dfa52934654a1357e81470175bcd384526ee47d8
+    inacawo_src_head: a5cfc5eb3b310e6e6423222c30e8f4e126a9cfac
+    inacawo_deps_head: e3457cdd31c914be3310ab843c6965bce27d20ec
+    coawst_tarball_sha256: 617afa3addf449a4943a6c31771a7ea028969d688b38aee269b517bff8106f73

@@ -1,0 +1,17 @@
+id: dataset_cls_post_wrf3d
+name: CLS postprocessed wrf3d
+origin: cls_brazil
+product: wrf3d
+period_coverage:
+  start: "1995-01-01"
+  end: "2015-01-31"
+  basis: directory_names
+location: /scratch/cawohdcst/data/postprocessed/wrf3d
+file_count: 7336
+size_bytes: null
+size_human: UNKNOWN
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: Directory inventory through 2015-01-31.

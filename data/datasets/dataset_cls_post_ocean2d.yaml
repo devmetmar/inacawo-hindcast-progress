@@ -1,0 +1,19 @@
+id: dataset_cls_post_ocean2d
+name: CLS postprocessed ocean2d
+origin: cls_brazil
+product: ocean2d
+period_coverage:
+  start: "1995-01-01"
+  end: "2001-12-31"
+  basis: directory_names
+location: /scratch/cawohdcst/data/postprocessed/ocean2d
+file_count: 2557
+size_bytes: null
+size_human: UNKNOWN
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: >
+  Verified from directory names on 2026-11-23. Ends 2001-12-31 — incomplete
+  relative to a claimed 1995-2014 ocean2d delivery.

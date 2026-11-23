@@ -1,0 +1,20 @@
+id: issue_uneven_historical_products
+title: Uneven CLS historical product coverage
+description: >
+  ocean2d postprocessed ends 2001-12-31 while ocean3d/wrf2d/wrf3d extend to
+  2015-01-31. A uniform "1995-2014 complete" claim is not supported by directory
+  inventory alone.
+severity: HIGH
+impact: Historical baseline acceptance and delivery narrative are uncertain.
+owner: member_04
+status: OPEN
+resolution: null
+related_task_ids:
+  - task_historical_inventory_acceptance
+related_run_ids: []
+related_period_ids: []
+evidence:
+  - type: dataset_path
+    reference: /scratch/cawohdcst/data/postprocessed
+    notes: See data/datasets/dataset_cls_post_*.yaml
+notes: null

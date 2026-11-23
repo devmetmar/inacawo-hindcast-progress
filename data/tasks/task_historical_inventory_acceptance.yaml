@@ -1,0 +1,22 @@
+id: task_historical_inventory_acceptance
+title: Decide historical baseline acceptance rules
+description: >
+  Resolve OPEN_QUESTIONS Q2/Q3/Q6 regarding uneven CLS product coverage and
+  definition of a complete year.
+workflow_stage_id: stage_a_project_preparation
+priority: HIGH
+owner: member_01
+reviewer: member_04
+status: READY
+start_date: "2026-11-23"
+due_date: null
+depends_on:
+  - task_confirm_scope
+evidence:
+  - type: other
+    reference: DISCOVERY_REPORT.md
+    notes: Directory inventory findings for CLS postprocessed products
+completion_criteria:
+  - Written acceptance rules for historical products
+  - Period fully_complete policy documented
+notes: null

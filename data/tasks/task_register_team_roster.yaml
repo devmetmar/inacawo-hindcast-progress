@@ -1,0 +1,16 @@
+id: task_register_team_roster
+title: Replace team member placeholders with real roster
+description: Update data/team.yaml display names and roles per OPEN_QUESTIONS Q4.
+workflow_stage_id: stage_a_project_preparation
+priority: MEDIUM
+owner: member_01
+reviewer: null
+status: NOT_STARTED
+start_date: null
+due_date: null
+depends_on: []
+evidence: []
+completion_criteria:
+  - Four active members named
+  - Roles confirmed
+notes: Do not invent names.

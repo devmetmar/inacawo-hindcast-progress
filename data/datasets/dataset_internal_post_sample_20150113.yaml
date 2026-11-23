@@ -1,0 +1,19 @@
+id: dataset_internal_post_sample_20150113
+name: Internal postprocessed sample f20150113
+origin: internal
+product: other
+period_coverage:
+  start: "2015-01-13"
+  end: "2015-01-13"
+  basis: directory_names
+location: /scratch/cawohdcst_ft2/inacawo-iht/cawo_post
+file_count: null
+size_bytes: null
+size_human: ~8.5G tree
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: >
+  Only f20150113 observed under ocean2d/ocean3d/wrf2d/wrf3d on internal scratch.
+  Staging/test evidence only — not year completion.

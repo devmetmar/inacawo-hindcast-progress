@@ -1,0 +1,11 @@
+id: hpc_20261123T083639
+collected_at: '2026-11-23T08:36:39+00:00'
+collector: scripts/collect_slurm_readonly.py
+mode: readonly_slurm
+hpc_user: cawohdcst_ft2
+commands_used:
+- squeue -u cawohdcst_ft2 -o %.18i|%.9P|%j|%.2t|%.10M|%.6D --noheader
+- sacct -u cawohdcst_ft2 -S 2026-11-23 -n -X -o JobID,JobName,Partition,State,Elapsed,ExitCode
+  -P
+jobs: []
+notes: sacct_rc=0; sacct_rows=0

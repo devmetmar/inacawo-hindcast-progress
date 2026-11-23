@@ -1,0 +1,23 @@
+id: issue_period_discrepancy
+title: 30-year vs 31-calendar-year period discrepancy
+description: >
+  Project language describes a 30-year hindcast with remaining 2015-2025 as
+  "10 years", but 2015-2025 inclusive is 11 calendar years (31 total with
+  1995-2014). Tracking must remain configurable until owner confirmation.
+severity: HIGH
+impact: >
+  Authoritative completion denominators and delivery planning cannot be fixed
+  until resolved.
+owner: member_01
+status: OPEN
+resolution: null
+related_task_ids:
+  - task_confirm_scope
+related_run_ids: []
+related_period_ids:
+  - period_2025
+evidence:
+  - type: other
+    reference: OPEN_QUESTIONS.md#q1
+    notes: Owner decision required
+notes: Do not silently assume 2015-2024 or 2015-2025.

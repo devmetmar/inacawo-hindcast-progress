@@ -1,0 +1,19 @@
+id: task_confirm_scope
+title: Confirm final hindcast simulation period
+description: >
+  Resolve OPEN_QUESTIONS Q1 (2015-2024 vs 2015-2025 or other exact dates)
+  and record scope.confirmed in data/project.yaml.
+workflow_stage_id: stage_a_project_preparation
+priority: CRITICAL
+owner: member_01
+reviewer: member_01
+status: READY
+start_date: "2026-11-23"
+due_date: null
+depends_on: []
+evidence: []
+completion_criteria:
+  - Owner decision recorded in OPEN_QUESTIONS.md Resolutions
+  - data/project.yaml scope.confirmed populated
+  - Activity log entry created
+notes: Blocking authoritative completion percentages.

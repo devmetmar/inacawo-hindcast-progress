@@ -1,0 +1,17 @@
+id: period_1995
+calendar_year: 1995
+start_date: "1995-01-01"
+end_date: "1995-12-31"
+stream: historical_baseline
+scope_basis: provisional
+execution_status: UNKNOWN
+scientific_status: UNKNOWN
+owner: null
+reviewer: null
+configuration_id: null
+related_run_ids: []
+related_dataset_ids: []
+fully_complete: "NOT_VERIFIED"
+notes: >
+  CLS Brazil historical stream. Product coverage is uneven across ocean2d/3d
+  and wrf streams; do not assume year is fully complete without inventory evidence.

@@ -1,0 +1,19 @@
+id: dataset_cls_hindcast_run
+name: CLS cawo_hindcast_run directories
+origin: cls_brazil
+product: run_dirs
+period_coverage:
+  start: "1996-12-30"
+  end: "2024-12-31"
+  basis: directory_names
+location: /scratch/cawohdcst/data/cawo_hindcast_run
+file_count: 8403
+size_bytes: null
+size_human: UNKNOWN
+manifest_ref: null
+checksum_ref: null
+integrity_status: NOT_VERIFIED
+validation_status: UNKNOWN
+notes: >
+  Run directories are not evidence of scientific completion. Classification
+  pending OPEN_QUESTIONS Q6.

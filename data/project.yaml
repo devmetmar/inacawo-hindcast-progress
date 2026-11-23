@@ -36,13 +36,18 @@ completion_criteria:
     - wrf2d
     - wrf3d
 hpc:
-  primary_user: cawohdcst_ft2
-  historical_user: cawohdcst
-  work_base: /scratch/cawohdcst_ft2/inacawo-iht
-  historical_base: /scratch/cawohdcst
+  primary_user: PLACEHOLDER_HPC_USER_INTERNAL
+  historical_user: PLACEHOLDER_HPC_USER_HISTORICAL
+  work_base: $CAWO_HINDCAST_BASE
+  historical_base: $SCRATCH_HISTORICAL
   scheduler: slurm
+hpc_snapshot_ttl_hours: 24
 metadata:
   discovery_date: "2026-11-23"
+  path_placeholders:
+    CAWO_HINDCAST_BASE: "Internal hindcast scratch root (set locally; do not commit absolute paths)"
+    SCRATCH_HISTORICAL: "Historical archive scratch root (set locally; do not commit absolute paths)"
+    HOME_TRACKING: "$HOME/inacawo-hindcast-progress"
   companion_repos:
     inacawo_iht_head: dfa52934654a1357e81470175bcd384526ee47d8
     inacawo_src_head: a5cfc5eb3b310e6e6423222c30e8f4e126a9cfac

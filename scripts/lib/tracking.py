@@ -35,6 +35,34 @@ SCIENTIFIC_TRANSITIONS: dict[str, set[str]] = {
     "UNKNOWN": {"NOT_VALIDATED", "NEEDS_REVIEW", "VERIFIED", "ACCEPTED", "FAILED_VALIDATION"},
 }
 
+TASK_TRANSITIONS: dict[str, set[str]] = {
+    "NOT_STARTED": {"READY", "BLOCKED", "CANCELLED"},
+    "READY": {"RUNNING", "BLOCKED", "CANCELLED", "NOT_STARTED", "NEEDS_REVIEW"},
+    "RUNNING": {"COMPLETED", "FAILED", "BLOCKED", "CANCELLED", "NEEDS_REVIEW"},
+    "COMPLETED": set(),
+    "BLOCKED": {"READY", "RUNNING", "CANCELLED", "FAILED"},
+    "FAILED": {"READY", "RUNNING", "CANCELLED"},
+    "CANCELLED": {"READY", "NOT_STARTED"},
+    "NEEDS_REVIEW": {"COMPLETED", "FAILED", "READY", "RUNNING"},
+}
+
+ISSUE_TRANSITIONS: dict[str, set[str]] = {
+    "OPEN": {"IN_PROGRESS", "BLOCKED", "RESOLVED", "CLOSED"},
+    "IN_PROGRESS": {"BLOCKED", "RESOLVED", "CLOSED", "OPEN"},
+    "BLOCKED": {"IN_PROGRESS", "OPEN", "RESOLVED", "CLOSED"},
+    "RESOLVED": {"CLOSED", "OPEN"},
+    "CLOSED": set(),
+}
+
+# Statuses that may exist without transition history (initial / inventory).
+BOOTSTRAP_EXECUTION = frozenset({"NOT_STARTED", "UNKNOWN"})
+BOOTSTRAP_SCIENTIFIC = frozenset({"NOT_VALIDATED", "UNKNOWN"})
+BOOTSTRAP_TASK = frozenset({"NOT_STARTED", "READY"})
+BOOTSTRAP_ISSUE = frozenset({"OPEN"})
+BOOTSTRAP_STAGE = frozenset({"NOT_STARTED", "UNKNOWN", "READY"})
+
+DEFAULT_HPC_SNAPSHOT_TTL_HOURS = 24.0
+
 ENTITY_DIRS = {
     "period": DATA_DIR / "periods",
     "run": DATA_DIR / "runs",
@@ -93,8 +121,21 @@ def parse_iso_date(value: str) -> date:
     return date.fromisoformat(value)
 
 
+def _transition_table(axis: str) -> dict[str, set[str]]:
+    tables = {
+        "execution": EXECUTION_TRANSITIONS,
+        "scientific": SCIENTIFIC_TRANSITIONS,
+        "task": TASK_TRANSITIONS,
+        "issue": ISSUE_TRANSITIONS,
+        "stage": EXECUTION_TRANSITIONS,  # reuse execution vocabulary for stages
+    }
+    if axis not in tables:
+        raise ValueError(f"Unknown transition axis: {axis}")
+    return tables[axis]
+
+
 def validate_transition(axis: str, previous: str, new: str) -> None:
-    table = EXECUTION_TRANSITIONS if axis == "execution" else SCIENTIFIC_TRANSITIONS
+    table = _transition_table(axis)
     if previous == new:
         return
     allowed = table.get(previous)
@@ -104,6 +145,186 @@ def validate_transition(axis: str, previous: str, new: str) -> None:
         raise ValueError(
             f"Illegal {axis} transition {previous} -> {new}; allowed={sorted(allowed)}"
         )
+
+
+def infer_transition_axis(previous: str, new: str) -> str | None:
+    """Return axis name if exactly one table accepts the transition."""
+    matches: list[str] = []
+    for axis in ("execution", "scientific", "task", "issue"):
+        table = _transition_table(axis)
+        if previous in table and (previous == new or new in table[previous]):
+            matches.append(axis)
+    if len(matches) == 1:
+        return matches[0]
+    if "execution" in matches and previous in EXECUTION_TRANSITIONS:
+        # Prefer execution when ambiguous with stage vocabulary.
+        return "execution"
+    return None
+
+
+def parse_datetime(value: str) -> datetime:
+    """Parse ISO-8601 timestamps; naive values are treated as UTC."""
+    text = value.strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    dt = datetime.fromisoformat(text)
+    if dt.tzinfo is None:
+        from datetime import timezone
+
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def get_hpc_ttl_hours(project: dict[str, Any]) -> float:
+    raw = project.get("hpc_snapshot_ttl_hours")
+    if raw is None:
+        raw = (project.get("metadata") or {}).get("hpc_snapshot_ttl_hours")
+    if raw is None:
+        return DEFAULT_HPC_SNAPSHOT_TTL_HOURS
+    return float(raw)
+
+
+def classify_hpc_snapshot(
+    snapshot: dict[str, Any] | None,
+    *,
+    now: datetime | None = None,
+    ttl_hours: float = DEFAULT_HPC_SNAPSHOT_TTL_HOURS,
+) -> dict[str, Any]:
+    """Classify snapshot as MISSING / MALFORMED / FAILED / STALE / FRESH."""
+    if snapshot is None:
+        return {
+            "state": "MISSING",
+            "collected_at": None,
+            "age_seconds": None,
+            "ttl_hours": ttl_hours,
+            "is_current": False,
+        }
+    if snapshot.get("collection_ok") is False:
+        return {
+            "state": "FAILED",
+            "collected_at": snapshot.get("collected_at"),
+            "age_seconds": None,
+            "ttl_hours": ttl_hours,
+            "is_current": False,
+            "snapshot_id": snapshot.get("id"),
+        }
+    collected_raw = snapshot.get("collected_at")
+    if not collected_raw:
+        return {
+            "state": "MALFORMED",
+            "collected_at": None,
+            "age_seconds": None,
+            "ttl_hours": ttl_hours,
+            "is_current": False,
+            "snapshot_id": snapshot.get("id"),
+        }
+    try:
+        collected = parse_datetime(str(collected_raw))
+    except Exception:  # noqa: BLE001
+        return {
+            "state": "MALFORMED",
+            "collected_at": collected_raw,
+            "age_seconds": None,
+            "ttl_hours": ttl_hours,
+            "is_current": False,
+            "snapshot_id": snapshot.get("id"),
+        }
+    now = now or datetime.now().astimezone()
+    age = (now - collected).total_seconds()
+    state = "STALE" if age > ttl_hours * 3600.0 else "FRESH"
+    return {
+        "state": state,
+        "collected_at": collected.isoformat(),
+        "age_seconds": age,
+        "ttl_hours": ttl_hours,
+        "is_current": state == "FRESH",
+        "snapshot_id": snapshot.get("id"),
+    }
+
+
+def select_latest_usable_snapshot(
+    snapshots: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    """Prefer latest successful snapshot; ignore failed collection records."""
+    usable = [s for s in snapshots if s.get("collection_ok", True) is not False]
+    if not usable:
+        return None
+    return max(usable, key=lambda s: s.get("collected_at") or "")
+
+
+def dataset_covers_year(dataset: dict[str, Any], year: int) -> str:
+    """Return YES / NO / UNKNOWN for whether dataset coverage includes year."""
+    cov = dataset.get("period_coverage") or {}
+    start = cov.get("start")
+    end = cov.get("end")
+    if not start or not end:
+        return "UNKNOWN"
+    try:
+        start_y = parse_iso_date(str(start)[:10]).year
+        end_y = parse_iso_date(str(end)[:10]).year
+    except Exception:  # noqa: BLE001
+        return "UNKNOWN"
+    if start_y <= year <= end_y:
+        return "YES"
+    return "NO"
+
+
+def period_output_assessment(
+    period: dict[str, Any],
+    datasets: list[dict[str, Any]],
+    required_products: list[str],
+) -> dict[str, Any]:
+    """Evidence-based output assessment for one period (no invented thresholds)."""
+    by_id = {d["id"]: d for d in datasets}
+    related_ids = list(period.get("related_dataset_ids") or [])
+    related = [by_id[i] for i in related_ids if i in by_id]
+    year = int(period["calendar_year"])
+
+    product_status: dict[str, str] = {}
+    for product in required_products:
+        candidates = [d for d in related if d.get("product") == product]
+        if not candidates:
+            product_status[product] = "MISSING"
+            continue
+        verified = []
+        unverified = []
+        for d in candidates:
+            cover = dataset_covers_year(d, year)
+            if cover == "NO":
+                continue
+            if d.get("integrity_status") == "VERIFIED" and cover == "YES":
+                verified.append(d)
+            else:
+                unverified.append(d)
+        if verified:
+            product_status[product] = "VERIFIED"
+        elif unverified:
+            product_status[product] = "NOT_VERIFIED"
+        else:
+            # Related datasets exist for product but none cover this year.
+            same_product = [d for d in related if d.get("product") == product]
+            product_status[product] = "NOT_VERIFIED" if same_product else "MISSING"
+
+    verified_count = sum(1 for s in product_status.values() if s == "VERIFIED")
+    missing_count = sum(1 for s in product_status.values() if s == "MISSING")
+    unverified_count = sum(1 for s in product_status.values() if s == "NOT_VERIFIED")
+    if not required_products:
+        completeness = "UNKNOWN"
+    elif verified_count == len(required_products):
+        completeness = "COMPLETE"
+    elif verified_count == 0 and missing_count == len(required_products):
+        completeness = "MISSING"
+    elif verified_count > 0:
+        completeness = "PARTIAL"
+    else:
+        completeness = "NOT_VERIFIED"
+
+    return {
+        "completeness": completeness,
+        "product_status": product_status,
+        "related_dataset_count": len(related),
+        "required_products": list(required_products),
+    }
 
 
 @dataclass
@@ -372,6 +593,145 @@ def validate_store(store: TrackingStore, root: Path | None = None) -> list[Valid
                     )
                 )
 
+    # F-01: enforce status transitions via activity-log ledger + bootstrap rules
+    issues.extend(_validate_status_transitions(store))
+
+    return issues
+
+
+def _activity_status_events(
+    store: TrackingStore, entity_id: str
+) -> list[dict[str, Any]]:
+    events = [
+        a
+        for a in store.activities
+        if a.get("entity_id") == entity_id
+        and a.get("previous_state")
+        and a.get("new_state")
+    ]
+    return sorted(events, key=lambda a: a.get("timestamp") or "")
+
+
+def _validate_status_transitions(store: TrackingStore) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+
+    # Validate every recorded previous->new step in the activity log.
+    for act in store.activities:
+        prev = act.get("previous_state")
+        new = act.get("new_state")
+        if not prev or not new:
+            continue
+        axis = infer_transition_axis(str(prev), str(new))
+        if axis is None:
+            issues.append(
+                ValidationIssue(
+                    "error",
+                    f"{act.get('id')}: illegal or ambiguous status transition "
+                    f"{prev} -> {new}",
+                )
+            )
+            continue
+        try:
+            validate_transition(axis, str(prev), str(new))
+        except ValueError as exc:
+            issues.append(ValidationIssue("error", f"{act.get('id')}: {exc}"))
+
+    def require_history(
+        entity_id: str,
+        current: str | None,
+        bootstrap: frozenset[str],
+        axis: str,
+        label: str,
+    ) -> None:
+        if current is None or current in bootstrap:
+            return
+        events = _activity_status_events(store, entity_id)
+        if not events:
+            issues.append(
+                ValidationIssue(
+                    "error",
+                    f"{entity_id}: {label} status {current} is not a bootstrap "
+                    f"state and has no activity-log transition history",
+                )
+            )
+            return
+        # Each step already validated above; ensure final state matches current.
+        if events[-1].get("new_state") != current:
+            issues.append(
+                ValidationIssue(
+                    "error",
+                    f"{entity_id}: {label} status {current} does not match latest "
+                    f"activity transition result {events[-1].get('new_state')}",
+                )
+            )
+            return
+        # Ensure a legal path exists from a bootstrap state through the chain.
+        cursor = events[0].get("previous_state")
+        if cursor not in bootstrap and cursor != current:
+            # Allow chains that start mid-flight only if first previous is known
+            # on the axis table (e.g. READY->RUNNING); still require first previous
+            # to be reachable conceptually — require bootstrap or UNKNOWN entry.
+            if cursor not in _transition_table(axis):
+                issues.append(
+                    ValidationIssue(
+                        "error",
+                        f"{entity_id}: {label} transition history starts at unknown "
+                        f"status {cursor}",
+                    )
+                )
+
+    for period in store.periods:
+        require_history(
+            period["id"],
+            period.get("execution_status"),
+            BOOTSTRAP_EXECUTION,
+            "execution",
+            "execution",
+        )
+        require_history(
+            period["id"],
+            period.get("scientific_status"),
+            BOOTSTRAP_SCIENTIFIC,
+            "scientific",
+            "scientific",
+        )
+
+    for run in store.runs:
+        require_history(
+            run["id"],
+            run.get("execution_status"),
+            BOOTSTRAP_EXECUTION,
+            "execution",
+            "execution",
+        )
+
+    for task in store.tasks:
+        require_history(
+            task["id"],
+            task.get("status"),
+            BOOTSTRAP_TASK,
+            "task",
+            "task",
+        )
+
+    for issue in store.issues:
+        require_history(
+            issue["id"],
+            issue.get("status"),
+            BOOTSTRAP_ISSUE,
+            "issue",
+            "issue",
+        )
+
+    for stage in store.workflow_stages.get("stages", []):
+        require_history(
+            stage["id"],
+            stage.get("status"),
+            BOOTSTRAP_STAGE,
+            "stage",
+            "stage",
+        )
+
     return issues
 
 
@@ -397,11 +757,14 @@ def _check_member(
         issues.append(ValidationIssue("error", f"{loc}: unknown member {member_id}"))
 
 
-def is_year_fully_complete(period: dict[str, Any], project: dict[str, Any]) -> str:
+def is_year_fully_complete(
+    period: dict[str, Any],
+    project: dict[str, Any],
+    datasets: list[dict[str, Any]] | None = None,
+) -> str:
     """Return YES / NO / UNKNOWN / NOT_VERIFIED for a period."""
     criteria = project.get("completion_criteria", {})
     if period.get("fully_complete") in {"YES", "NO", "UNKNOWN", "NOT_VERIFIED"}:
-        # Prefer explicit field but recompute when YES claimed without evidence layers
         explicit = period["fully_complete"]
     else:
         explicit = "UNKNOWN"
@@ -409,19 +772,28 @@ def is_year_fully_complete(period: dict[str, Any], project: dict[str, Any]) -> s
     checks: list[bool | None] = []
     if criteria.get("require_execution_verified"):
         if period.get("execution_status") == "COMPLETED":
-            # Without linked verified runs, treat as NOT_VERIFIED rather than YES
             checks.append(None if not period.get("related_run_ids") else True)
-        elif period.get("execution_status") in {"NOT_STARTED", "READY", "RUNNING", "FAILED", "BLOCKED", "CANCELLED"}:
+        elif period.get("execution_status") in {
+            "NOT_STARTED",
+            "READY",
+            "RUNNING",
+            "FAILED",
+            "BLOCKED",
+            "CANCELLED",
+        }:
             checks.append(False)
         else:
             checks.append(None)
 
     if criteria.get("require_outputs_verified"):
-        # Dataset links required; absence => NOT_VERIFIED
-        if not period.get("related_dataset_ids"):
-            checks.append(None)
+        required = list(criteria.get("required_products") or [])
+        assessment = period_output_assessment(period, datasets or [], required)
+        if assessment["completeness"] == "COMPLETE":
+            checks.append(True)
+        elif assessment["completeness"] in {"MISSING", "PARTIAL"}:
+            checks.append(False)
         else:
-            checks.append(None)  # integrity not auto-verified here
+            checks.append(None)
 
     if criteria.get("require_validations_verified"):
         if period.get("scientific_status") in {"VERIFIED", "ACCEPTED"}:
@@ -474,12 +846,18 @@ def compute_progress(store: TrackingStore) -> dict[str, Any]:
     rem_buckets = bucket(remaining_periods)
     hist_buckets = bucket(historical_periods)
 
-    fully_complete = {
-        p["calendar_year"]: is_year_fully_complete(p, store.project) for p in remaining_periods
+    required_products = list(
+        (store.project.get("completion_criteria") or {}).get("required_products") or []
+    )
+    output_assessments = {
+        p["calendar_year"]: period_output_assessment(p, store.datasets, required_products)
+        for p in remaining_periods
     }
-    accepted_years = [
-        y for y, v in fully_complete.items() if v == "YES"
-    ]
+    fully_complete = {
+        p["calendar_year"]: is_year_fully_complete(p, store.project, store.datasets)
+        for p in remaining_periods
+    }
+    accepted_years = [y for y, v in fully_complete.items() if v == "YES"]
 
     open_issues = [i for i in store.issues if i.get("status") in {"OPEN", "IN_PROGRESS", "BLOCKED"}]
     active_runs = [
@@ -504,9 +882,42 @@ def compute_progress(store: TrackingStore) -> dict[str, Any]:
                 }:
                     workload[owner] += 1
 
-    latest_snapshot = None
-    if store.hpc_snapshots:
-        latest_snapshot = max(store.hpc_snapshots, key=lambda s: s.get("collected_at", ""))
+    ttl_hours = get_hpc_ttl_hours(store.project)
+    latest_snapshot = select_latest_usable_snapshot(store.hpc_snapshots)
+    hpc_classification = classify_hpc_snapshot(
+        latest_snapshot, ttl_hours=ttl_hours
+    )
+
+    output_complete_years = [
+        y
+        for y, a in output_assessments.items()
+        if a["completeness"] == "COMPLETE"
+    ]
+    output_partial_years = [
+        y
+        for y, a in output_assessments.items()
+        if a["completeness"] == "PARTIAL"
+    ]
+    output_unverified_years = [
+        y
+        for y, a in output_assessments.items()
+        if a["completeness"] == "NOT_VERIFIED"
+    ]
+
+    by_product: dict[str, dict[str, int]] = {
+        product: {"verified": 0, "not_verified": 0, "missing": 0, "total": len(remaining_periods)}
+        for product in required_products
+    }
+    for assessment in output_assessments.values():
+        for product, status in assessment["product_status"].items():
+            if product not in by_product:
+                continue
+            if status == "VERIFIED":
+                by_product[product]["verified"] += 1
+            elif status == "NOT_VERIFIED":
+                by_product[product]["not_verified"] += 1
+            else:
+                by_product[product]["missing"] += 1
 
     result = {
         "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -521,17 +932,31 @@ def compute_progress(store: TrackingStore) -> dict[str, Any]:
         "historical_execution_buckets": hist_buckets,
         "remaining_fully_complete": fully_complete,
         "accepted_complete_years": accepted_years,
+        "output_assessments": output_assessments,
         "metrics": {
             "execution_coverage": _coverage(
                 remaining_periods,
                 lambda p: p.get("execution_status") == "COMPLETED",
                 confirmed is not None,
             ),
-            "output_coverage": _coverage(
-                remaining_periods,
-                lambda p: bool(p.get("related_dataset_ids")),
-                confirmed is not None,
-            ),
+            "output_coverage": {
+                **_coverage(
+                    remaining_periods,
+                    lambda p: output_assessments[p["calendar_year"]]["completeness"]
+                    == "COMPLETE",
+                    confirmed is not None,
+                ),
+                "partial_years": output_partial_years,
+                "not_verified_years": output_unverified_years,
+                "complete_years": output_complete_years,
+                "by_product": by_product,
+                "definition": (
+                    "Period counts as output-complete only when every configured "
+                    "required_product has a related dataset with integrity_status=VERIFIED "
+                    "whose period_coverage includes that calendar year. "
+                    "Sparse links or unverified integrity do not count."
+                ),
+            },
             "validation_coverage": _coverage(
                 remaining_periods,
                 lambda p: p.get("scientific_status") in {"VERIFIED", "ACCEPTED"},
@@ -539,7 +964,7 @@ def compute_progress(store: TrackingStore) -> dict[str, Any]:
             ),
             "acceptance_coverage": _coverage(
                 remaining_periods,
-                lambda p: is_year_fully_complete(p, store.project) == "YES",
+                lambda p: is_year_fully_complete(p, store.project, store.datasets) == "YES",
                 confirmed is not None,
             ),
         },
@@ -548,6 +973,8 @@ def compute_progress(store: TrackingStore) -> dict[str, Any]:
         "active_runs": active_runs,
         "workload": workload,
         "latest_hpc_snapshot": latest_snapshot,
+        "hpc_snapshot_status": hpc_classification,
+        "hpc_snapshot_ttl_hours": ttl_hours,
         "overall_percent": None
         if confirmed is None
         else _percent(len(accepted_years), len(remaining_periods)),

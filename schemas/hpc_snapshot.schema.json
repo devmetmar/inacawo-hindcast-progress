@@ -2,13 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://inacawo.local/schemas/hpc_snapshot.schema.json",
   "type": "object",
-  "required": ["id", "collected_at", "collector", "mode", "jobs"],
+  "required": ["id", "collected_at", "collector", "mode", "jobs", "collection_ok"],
   "additionalProperties": false,
   "properties": {
     "id": { "type": "string", "pattern": "^hpc_" },
     "collected_at": { "type": "string", "minLength": 1 },
     "collector": { "type": "string" },
     "mode": { "type": "string", "enum": ["manual", "readonly_slurm"] },
+    "collection_ok": {
+      "type": "boolean",
+      "description": "False means query failed; consumers must not treat jobs as authoritative."
+    },
     "hpc_user": { "type": ["string", "null"] },
     "commands_used": {
       "type": "array",

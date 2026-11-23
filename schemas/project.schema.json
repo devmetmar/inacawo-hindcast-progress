@@ -120,6 +120,11 @@
         "scheduler": { "type": "string" }
       }
     },
+    "hpc_snapshot_ttl_hours": {
+      "type": "number",
+      "minimum": 1,
+      "description": "Snapshots older than this many hours are STALE at read/display time."
+    },
     "metadata": {
       "type": "object",
       "additionalProperties": true

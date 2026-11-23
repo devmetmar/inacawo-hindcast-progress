@@ -3,31 +3,28 @@ name: CLS postprocessed ocean2d
 origin: cls_brazil
 product: ocean2d
 period_coverage:
-  start: "1995-01-01"
-  end: "2001-12-31"
+  start: '1995-01-01'
+  end: '2001-12-31'
   basis: directory_names
 location: $SCRATCH_HISTORICAL/data/postprocessed/ocean2d
 file_count: 2557
-size_bytes: null
-size_human: UNKNOWN
-manifest_ref: null
+size_bytes: 11040884524870
+size_human: 10.04 TiB
+manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
-validation_status: UNKNOWN
+validation_status: NOT_VALIDATED
 lifecycle_status: null
 owner: null
 created_at: null
 created_at_provenance: null
-catalogued_at: "2026-11-23"
+catalogued_at: '2026-11-23'
 verified_at: null
 accepted_at: null
-last_inventory_scan: "2026-11-23"
+last_inventory_scan: '2026-11-23'
 related_task_ids:
-  - task_historical_inventory_acceptance
-notes: >
-  Directory inventory: continuous daily fYYYYMMDD coverage 1995-01-01..2001-12-31
-  (2557 days). Earlier catalog marked this INCOMPLETE vs a claimed 1995-2014
-  delivery because only this folder was inspected. Re-inventory found the
-  2002+ continuation under postprocessed/ocean2d_with_tm01
-  (dataset_cls_post_ocean2d_with_tm01). Scientific creation date UNKNOWN.
-  Integrity NOT_VERIFIED.
+- task_historical_inventory_acceptance
+notes: 'Inventory 2026-11-23: 2557 day dirs (full years 1995-2001). Sample NC counts:
+  f19950101=25, f20000101=24, f20011231=24. Size from du -sb. file_count=day directories
+  (not NC file total). created_at/owner/checksums UNKNOWN — not inferred from mtime.
+  Integrity remains NOT_VERIFIED (no checksum campaign).'

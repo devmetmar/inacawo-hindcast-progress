@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+
+# Scientific outputs — never commit
+*.nc
+*.nc4
+*.cdf
+*.grb
+*.grib
+*.grib2
+*.hdf
+*.h5
+*.he5
+*.bin
+*.dat
+coawstM
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# HPC / sensitive logs
+*.out
+*.err
+slurm-*.out
+slurm-*.err
+core.*
+
+# Credentials and secrets
+*credential*
+*secret*
+*.pem
+*.key
+id_rsa*
+.cdsapirc
+**/vault-token*
+**/copernicusmarine-credentials*
+
+# Local scratch copies
+/local_scratch/
+/tmp_data/

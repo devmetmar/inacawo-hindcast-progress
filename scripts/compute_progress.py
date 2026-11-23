@@ -59,11 +59,16 @@ def main() -> int:
     for member_id, count in progress["workload"].items():
         print(f"  {member_id}: {count}")
 
-    snap = progress["latest_hpc_snapshot"]
+    hpc = progress.get("hpc_snapshot_status") or {}
+    snap = progress.get("latest_hpc_snapshot")
+    print(
+        f"\nHPC snapshot status: {hpc.get('state')} "
+        f"(TTL={progress.get('hpc_snapshot_ttl_hours')}h)"
+    )
     if snap:
-        print(f"\nLatest HPC snapshot: {snap['id']} at {snap['collected_at']}")
+        print(f"Latest usable snapshot: {snap.get('id')} at {snap.get('collected_at')}")
     else:
-        print("\nLatest HPC snapshot: NONE")
+        print("Latest usable snapshot: NONE (MISSING ≠ zero jobs)")
 
     return 0
 

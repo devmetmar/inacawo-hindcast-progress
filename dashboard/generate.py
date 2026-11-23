@@ -84,27 +84,59 @@ def render(store: TrackingStore, progress: dict) -> str:
         for i in progress["open_issues"]
     ) or '<tr><td colspan="5">None recorded</td></tr>'
 
-    metric_rows = "".join(
-        f"<tr><td>{_esc(name)}</td><td>{m['matched']}/{m['total']}</td>"
-        f"<td>{_esc(m['percent_display'])}</td><td>{_esc(m.get('note'))}</td></tr>"
-        for name, m in progress["metrics"].items()
-    )
+    metric_rows = []
+    for name, m in progress["metrics"].items():
+        note = m.get("note") or ""
+        if name == "output_coverage":
+            note = (
+                f"{note} | complete={m.get('complete_years')} "
+                f"partial={m.get('partial_years')} "
+                f"not_verified={m.get('not_verified_years')}"
+            ).strip(" |")
+        metric_rows.append(
+            f"<tr><td>{_esc(name)}</td><td>{m['matched']}/{m['total']}</td>"
+            f"<td>{_esc(m['percent_display'])}</td><td>{_esc(note)}</td></tr>"
+        )
+    metric_rows = "".join(metric_rows)
 
     workload_rows = "".join(
         f"<tr><td>{_esc(mid)}</td><td>{count}</td></tr>"
         for mid, count in progress["workload"].items()
     )
 
-    snap = progress["latest_hpc_snapshot"]
-    if snap:
+    hpc = progress.get("hpc_snapshot_status") or {"state": "MISSING"}
+    snap = progress.get("latest_hpc_snapshot")
+    ttl = progress.get("hpc_snapshot_ttl_hours")
+    state = hpc.get("state", "MISSING")
+    state_class = {
+        "FRESH": "ok",
+        "STALE": "warn",
+        "MISSING": "unk",
+        "MALFORMED": "bad",
+        "FAILED": "bad",
+    }.get(state, "unk")
+    if snap and state in {"FRESH", "STALE"}:
+        job_note = (
+            f"{len(snap.get('jobs', []))} queue job(s)"
+            if state == "FRESH"
+            else "job list must not be treated as current"
+        )
         snap_html = (
-            f"<p><strong>{_esc(snap['id'])}</strong> collected "
-            f"{_esc(snap['collected_at'])} ({_esc(snap['mode'])}) — "
-            f"{len(snap.get('jobs', []))} queue job(s). "
-            "Treat as stale if older than operational expectation.</p>"
+            f'<p><span class="pill {state_class}">{_esc(state)}</span> '
+            f"TTL={_esc(ttl)}h · <strong>{_esc(snap.get('id'))}</strong> collected "
+            f"{_esc(snap.get('collected_at'))} ({_esc(snap.get('mode'))}) — {job_note}."
+            f"</p>"
+        )
+    elif state == "MISSING":
+        snap_html = (
+            '<p class="unk"><span class="pill unk">MISSING</span> '
+            "No usable HPC snapshot recorded. Not equivalent to zero jobs.</p>"
         )
     else:
-        snap_html = "<p class=\"unk\">NONE — no HPC snapshot recorded.</p>"
+        snap_html = (
+            f'<p><span class="pill {state_class}">{_esc(state)}</span> '
+            f"HPC snapshot unavailable or invalid (TTL={_esc(ttl)}h).</p>"
+        )
 
     overall = (
         "NOT CONFIRMED — overall % suppressed"

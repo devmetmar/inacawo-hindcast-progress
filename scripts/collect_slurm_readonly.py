@@ -4,7 +4,8 @@
 Safety constraints:
 - Never submits, cancels, or modifies jobs.
 - Uses only user-scoped, lightweight queries.
-- Writes a timestamped YAML snapshot under data/hpc_snapshots/.
+- On query failure, does NOT write a misleading empty success snapshot
+  (leaves the previous successful snapshot as the latest usable record).
 """
 
 from __future__ import annotations
@@ -58,7 +59,6 @@ def main() -> int:
         "%.18i|%.9P|%j|%.2t|%.10M|%.6D",
         "--noheader",
     ]
-    # Bounded accounting: today only
     today = now.strftime("%Y-%m-%d")
     sacct_cmd = [
         "sacct",
@@ -81,7 +81,13 @@ def main() -> int:
     rc_q, out_q = _run(squeue_cmd)
     rc_a, out_a = _run(sacct_cmd)
     if rc_q != 0:
-        print(f"squeue failed ({rc_q}): {out_q}", file=sys.stderr)
+        # Do not overwrite last good snapshot with an empty "success" file.
+        print(
+            f"squeue failed ({rc_q}); not writing snapshot. "
+            f"Previous successful snapshot (if any) remains authoritative. "
+            f"detail={out_q[:500]}",
+            file=sys.stderr,
+        )
         return 1
 
     jobs = []
@@ -100,7 +106,6 @@ def main() -> int:
             }
         )
 
-    # Include today's sacct rows as notes only (avoid duplicating complex parsing)
     notes = f"sacct_rc={rc_a}; sacct_rows={len(out_a.splitlines()) if out_a else 0}"
 
     doc = {
@@ -108,6 +113,7 @@ def main() -> int:
         "collected_at": now.isoformat(timespec="seconds"),
         "collector": "scripts/collect_slurm_readonly.py",
         "mode": "readonly_slurm",
+        "collection_ok": True,
         "hpc_user": args.user,
         "commands_used": [" ".join(squeue_cmd), " ".join(sacct_cmd)],
         "jobs": jobs,

@@ -104,18 +104,72 @@ def _days_from_span_and_count(
     return expected[:count]
 
 
+def _merge_day_lists(*lists: list[str]) -> list[str]:
+    """Union YYYYMMDD lists, sorted."""
+    merged: set[str] = set()
+    for lst in lists:
+        merged.update(lst or [])
+    return sorted(merged)
+
+
+def normalize_presence_to_catalog_products(
+    presence: dict[str, Any],
+) -> dict[str, Any]:
+    """Fold disk-only folder keys into catalog products (ocean2d/3d, wrf2d/3d).
+
+    CLS stores ocean2d across ``ocean2d`` + ``ocean2d_with_tm01`` trees; the
+    daily table must expose a single ``ocean2d`` product like the catalog.
+    """
+    out = dict(presence)
+    streams_in = presence.get("streams") or {}
+    aliases = presence.get("product_aliases") or {}
+    streams_out: dict[str, dict[str, list[str]]] = {}
+
+    for stream, block in streams_in.items():
+        block = dict(block or {})
+        stream_aliases = aliases.get(stream) or {}
+        # Apply aliases into canonical keys first (e.g. ocean2d → ocean2d_with_tm01 days)
+        for catalog_product, disk_key in stream_aliases.items():
+            if disk_key in block and catalog_product != disk_key:
+                block[catalog_product] = _merge_day_lists(
+                    list(block.get(catalog_product) or []),
+                    list(block.get(disk_key) or []),
+                )
+        # Always merge CLS ocean2d folder split into catalog ocean2d
+        if "ocean2d_with_tm01" in block:
+            block["ocean2d"] = _merge_day_lists(
+                list(block.get("ocean2d") or []),
+                list(block.get("ocean2d_with_tm01") or []),
+            )
+            del block["ocean2d_with_tm01"]
+        # Keep only primary catalog products
+        streams_out[stream] = {
+            p: list(block.get(p) or []) for p in POSTPROCESSED_PRODUCTS
+        }
+
+    out["streams"] = streams_out
+    out["product_aliases"] = {}
+    return out
+
+
 def synthesize_presence_from_inventory(
     inventory: dict[str, Any], year: int
 ) -> dict[str, Any]:
     """Build a day_presence-like dict for one year from inventory_scan year counts."""
     cls_streams: dict[str, list[str]] = {}
-    # CLS postprocessed products live at top-level keys
+    # Disk folders may include ocean2d_with_tm01; fold into catalog ocean2d below.
     for product in ("ocean2d", "ocean2d_with_tm01", "ocean3d", "wrf2d", "wrf3d"):
         block = inventory.get(product) or {}
         years = block.get("years") or {}
         count = int(years.get(str(year), years.get(year, 0)) or 0)
         span = block.get("span")
         cls_streams[product] = _days_from_span_and_count(year, span, count)
+
+    # Single catalog ocean2d = legacy tree ∪ with_tm01 continuation
+    cls_streams["ocean2d"] = _merge_day_lists(
+        cls_streams.get("ocean2d") or [],
+        cls_streams.pop("ocean2d_with_tm01", []),
+    )
 
     internal_streams: dict[str, list[str]] = {}
     internal = inventory.get("internal_cawo_post") or {}
@@ -126,16 +180,7 @@ def synthesize_presence_from_inventory(
         span = block.get("span")
         internal_streams[product] = _days_from_span_and_count(year, span, count)
 
-    aliases: dict[str, dict[str, str]] = {}
-    # After ocean2d legacy ends, catalog ocean2d maps to ocean2d_with_tm01
-    if cls_streams.get("ocean2d_with_tm01") and not cls_streams.get("ocean2d"):
-        aliases["cls_brazil"] = {"ocean2d": "ocean2d_with_tm01"}
-    elif year >= 2002 and cls_streams.get("ocean2d_with_tm01"):
-        # Prefer with_tm01 when both exist for ocean2d alias in catalog matrix
-        if not cls_streams.get("ocean2d"):
-            aliases["cls_brazil"] = {"ocean2d": "ocean2d_with_tm01"}
-
-    return {
+    raw = {
         "scan_date": inventory.get("scan_date"),
         "basis": "directory_names",
         "source_inventory": "inventory_scan",
@@ -145,8 +190,9 @@ def synthesize_presence_from_inventory(
             "cls_brazil": cls_streams,
             "internal": internal_streams,
         },
-        "product_aliases": aliases,
+        "product_aliases": {},
     }
+    return normalize_presence_to_catalog_products(raw)
 
 
 def resolve_day_presence(
@@ -155,7 +201,7 @@ def resolve_day_presence(
     """Prefer explicit day_presence_YYYY.json; else synthesize from inventory scan."""
     explicit = load_day_presence(root, year)
     if explicit is not None:
-        return explicit
+        return normalize_presence_to_catalog_products(explicit)
     inv = inventory if inventory is not None else load_inventory_scan(root)
     if inv is None:
         return None
@@ -169,15 +215,9 @@ def _present_set(
         return None
     streams = presence.get("streams") or {}
     stream_block = streams.get(stream) or {}
-    aliases = (presence.get("product_aliases") or {}).get(stream) or {}
-    key = aliases.get(product, product)
-    if key not in stream_block and product in stream_block:
-        key = product
-    if key not in stream_block:
-        if product in stream_block:
-            return set(stream_block[product] or [])
+    if product not in stream_block:
         return set()
-    return set(stream_block.get(key) or [])
+    return set(stream_block.get(product) or [])
 
 
 def build_year_day_coverage(

@@ -18,7 +18,7 @@ related_period_ids: []
 evidence:
   - type: dataset_path
     reference: $SCRATCH_HISTORICAL/data/postprocessed
-    notes: See data/datasets/dataset_cls_post_*.yaml including ocean2d_with_tm01
+    notes: See data/datasets/dataset_cls_post_ocean2d.yaml (merged ocean2d + ocean2d_with_tm01 trees)
 notes: >
-  Folder layout split is operational (ocean2d vs ocean2d_with_tm01), not proof
-  of scientific acceptance.
+  Folder layout split on disk is operational (ocean2d vs ocean2d_with_tm01);
+  catalog product remains a single ocean2d row. Not proof of scientific acceptance.

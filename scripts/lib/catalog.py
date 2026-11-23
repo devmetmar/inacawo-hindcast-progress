@@ -220,16 +220,34 @@ def build_catalog_view(store: TrackingStore) -> dict[str, Any]:
             }
         )
 
-    def count_life(status: str) -> int:
-        return sum(1 for r in rows if r["lifecycle"] == status)
+    # Primary catalog = required postprocessed products only (ocean2d/3d, wrf2d/3d).
+    primary_rows = [r for r in rows if r.get("product") in POSTPROCESSED_PRODUCTS]
+    other_rows = [r for r in rows if r.get("product") not in POSTPROCESSED_PRODUCTS]
 
-    catalogued = len(rows)
-    created = sum(1 for r in rows if r["created_at"] != "UNKNOWN" or r["lifecycle"] in {"CREATED", "VERIFIED", "ACCEPTED"})
+    def count_life(status: str, source: list[dict[str, Any]] | None = None) -> int:
+        src = source if source is not None else primary_rows
+        return sum(1 for r in src if r["lifecycle"] == status)
+
+    catalogued = len(primary_rows)
+    created = sum(
+        1
+        for r in primary_rows
+        if r["created_at"] != "UNKNOWN"
+        or r["lifecycle"] in {"CREATED", "VERIFIED", "ACCEPTED"}
+    )
     # Created with evidence only:
-    created_evidenced = sum(1 for r in rows if r["created_at"] != "UNKNOWN")
-    verified = sum(1 for r in rows if r["integrity_status"] == "VERIFIED" or r["lifecycle"] == "VERIFIED")
-    accepted = sum(1 for r in rows if r["validation_status"] == "ACCEPTED" or r["lifecycle"] == "ACCEPTED")
-    incomplete = count_life("INCOMPLETE")
+    created_evidenced = sum(1 for r in primary_rows if r["created_at"] != "UNKNOWN")
+    verified = sum(
+        1
+        for r in primary_rows
+        if r["integrity_status"] == "VERIFIED" or r["lifecycle"] == "VERIFIED"
+    )
+    accepted = sum(
+        1
+        for r in primary_rows
+        if r["validation_status"] == "ACCEPTED" or r["lifecycle"] == "ACCEPTED"
+    )
+    incomplete = count_life("INCOMPLETE", primary_rows)
     outstanding_todos = open_todo_count(store.tasks)
 
     # Expected year×product cells (provisional denominators; not completion %).
@@ -299,19 +317,22 @@ def build_catalog_view(store: TrackingStore) -> dict[str, Any]:
             "expected_year_product_cells": expected_cells,
             "matrix_products": matrix_products,
             "by_origin": {
-                origin: sum(1 for r in rows if r["origin"] == origin)
-                for origin in sorted({r["origin"] for r in rows})
+                origin: sum(1 for r in primary_rows if r["origin"] == origin)
+                for origin in sorted({r["origin"] for r in primary_rows})
             },
             "by_product": {
-                product: sum(1 for r in rows if r["product"] == product)
-                for product in sorted({r["product"] for r in rows if r["product"]})
+                product: sum(1 for r in primary_rows if r["product"] == product)
+                for product in matrix_products
             },
             "lifecycle_counts": {
-                life: count_life(life)
-                for life in sorted({r["lifecycle"] for r in rows})
+                life: count_life(life, primary_rows)
+                for life in sorted({r["lifecycle"] for r in primary_rows})
             },
+            "other_dataset_count": len(other_rows),
         },
-        "datasets": rows,
+        "datasets": primary_rows,
+        "other_datasets": other_rows,
+        "all_datasets": rows,
         "historical_matrix": hist_matrix,
         "remaining_matrix": rem_matrix,
         "historical_matrix_counts": matrix_counts(hist_matrix),

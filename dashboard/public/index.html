@@ -254,7 +254,7 @@
   <a class="skip-link" href="#main">Skip to catalog</a>
   <header>
     <h1>INACAWO Hindcast Catalog &amp; Progress</h1>
-    <div class="muted">Updated 2026-11-23T16:31:48+00:00</div>
+    <div class="muted">Updated 2026-11-23T16:42:09+00:00</div>
   </header>
   <nav class="site-nav" aria-label="Catalog sections">
     <a href="#overview">Overview</a>
@@ -270,21 +270,21 @@
       <h2>Catalog overview</h2>
       <div class="cards">
         <div class="card"><div class="label">Expected cells</div><div class="stat">124</div><div class="muted">year × required product</div></div>
-        <div class="card"><div class="label">Catalogued</div><div class="stat">9</div><div class="muted">dataset records</div></div>
+        <div class="card"><div class="label">Catalogued</div><div class="stat">4</div><div class="muted">dataset records</div></div>
         <div class="card"><div class="label">Created (evidenced)</div><div class="stat">0</div><div class="muted">created_at recorded</div></div>
         <div class="card"><div class="label">Verified</div><div class="stat">0</div><div class="muted">integrity VERIFIED</div></div>
         <div class="card"><div class="label">Accepted</div><div class="stat">0</div><div class="muted">validation ACCEPTED</div></div>
-        <div class="card"><div class="label">Incomplete</div><div class="stat">2</div><div class="muted">lifecycle INCOMPLETE</div></div>
+        <div class="card"><div class="label">Incomplete</div><div class="stat">0</div><div class="muted">lifecycle INCOMPLETE</div></div>
         <div class="card"><div class="label">Open TODOs</div><div class="stat">3</div><div class="muted">tasks not completed</div></div>
       </div>
       <div class="chip-row" aria-label="Counts by origin">
-        <span class="chip-group-label">Origins</span><span class="chip"><span class="chip-k">cls_brazil</span><span class="chip-v">7</span></span><span class="chip"><span class="chip-k">internal</span><span class="chip-v">2</span></span>
+        <span class="chip-group-label">Origins</span><span class="chip"><span class="chip-k">cls_brazil</span><span class="chip-v">4</span></span>
       </div>
       <div class="chip-row" aria-label="Counts by product">
-        <span class="chip-group-label">Products</span><span class="chip"><span class="chip-k">forcing</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">ocean2d</span><span class="chip-v">2</span></span><span class="chip"><span class="chip-k">ocean3d</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">other</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">raw_output</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">run_dirs</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">wrf2d</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">wrf3d</span><span class="chip-v">1</span></span>
+        <span class="chip-group-label">Products</span><span class="chip"><span class="chip-k">ocean2d</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">ocean3d</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">wrf2d</span><span class="chip-v">1</span></span><span class="chip"><span class="chip-k">wrf3d</span><span class="chip-v">1</span></span>
       </div>
       <div class="chip-row" aria-label="Counts by lifecycle">
-        <span class="chip-group-label">Lifecycles</span><span class="chip"><span class="chip-k">CATALOGUED</span><span class="chip-v">7</span></span><span class="chip"><span class="chip-k">INCOMPLETE</span><span class="chip-v">2</span></span>
+        <span class="chip-group-label">Lifecycles</span><span class="chip"><span class="chip-k">CATALOGUED</span><span class="chip-v">4</span></span>
       </div>
     </section>
 
@@ -324,6 +324,22 @@
         <span class="leg MISSING"><span class="swatch" aria-hidden="true">·</span> Missing</span>
         <span class="leg OUT_OF_SPAN"><span class="swatch" aria-hidden="true">–</span> Out of span</span>
         <span class="leg PARTIAL"><span class="swatch" aria-hidden="true">~</span> Partial</span>
+      </div>
+      <div class="table-wrap">
+        <table id="day-product-summary" aria-label="Day inventory by catalog product">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>CLS present</th>
+              <th>CLS missing</th>
+              <th>CLS out of span</th>
+              <th>Internal present</th>
+            </tr>
+          </thead>
+          <tbody id="day-product-summary-body">
+            <tr data-product="ocean2d"><td>ocean2d</td><td colspan="4">Loading…</td></tr><tr data-product="ocean3d"><td>ocean3d</td><td colspan="4">Loading…</td></tr><tr data-product="wrf2d"><td>wrf2d</td><td colspan="4">Loading…</td></tr><tr data-product="wrf3d"><td>wrf3d</td><td colspan="4">Loading…</td></tr>
+          </tbody>
+        </table>
       </div>
       <div id="cal-cls" class="cal-stack" data-stream="cls_brazil"></div>
       <div id="cal-internal" class="cal-stack" data-stream="internal" hidden></div>
@@ -367,11 +383,12 @@
 
     <section id="inventory">
       <h2>Dataset inventory</h2>
+      <p class="muted">Primary catalog products only: ocean2d, ocean3d, wrf2d, wrf3d (one row each per origin stream as catalogued).</p>
       <div class="filters" id="inv-filters">
         <label>Search<input type="search" id="f-search" placeholder="id, name, product…"/></label>
-        <label>Origin<select id="f-origin"><option value="">All</option><option value="cls_brazil">cls_brazil</option><option value="internal">internal</option></select></label>
-        <label>Product<select id="f-product"><option value="">All</option><option value="forcing">forcing</option><option value="ocean2d">ocean2d</option><option value="ocean3d">ocean3d</option><option value="other">other</option><option value="raw_output">raw_output</option><option value="run_dirs">run_dirs</option><option value="wrf2d">wrf2d</option><option value="wrf3d">wrf3d</option></select></label>
-        <label>Lifecycle<select id="f-life"><option value="">All</option><option value="CATALOGUED">CATALOGUED</option><option value="INCOMPLETE">INCOMPLETE</option></select></label>
+        <label>Origin<select id="f-origin"><option value="">All</option><option value="cls_brazil">cls_brazil</option></select></label>
+        <label>Product<select id="f-product"><option value="">All</option><option value="ocean2d">ocean2d</option><option value="ocean3d">ocean3d</option><option value="wrf2d">wrf2d</option><option value="wrf3d">wrf3d</option></select></label>
+        <label>Lifecycle<select id="f-life"><option value="">All</option><option value="CATALOGUED">CATALOGUED</option></select></label>
         <input type="hidden" id="f-owner" value=""/>
         <label>Year<input type="number" id="f-year" placeholder="e.g. 2001" min="1900" max="2100"/></label>
         <label>TODOs<select id="f-todos"><option value="">All</option><option value="yes">Has outstanding</option><option value="no">None open</option></select></label>
@@ -393,7 +410,7 @@
               <th>Created</th><th>Catalogued</th><th>Verified</th><th>Files</th><th>Size</th><th>Owner</th><th>TODOs</th>
             </tr>
           </thead>
-          <tbody><tr data-id="dataset_cls_hindcast_run" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="run_dirs" data-lifecycle="INCOMPLETE" data-owner="UNKNOWN" data-todos="1" data-period-start="1996-12-30" data-period-end="2024-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_hindcast_run CLS cawo_hindcast_run directories run_dirs CLS_HISTORICAL"><td><a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a><div class="sub">CLS cawo_hindcast_run directories</div></td><td>CLS_HISTORICAL</td><td>run_dirs</td><td>1996-12-30 → 2024-12-31</td><td><span class="pill warn">INCOMPLETE</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>8403</td><td><span class="sentinel">UNKNOWN</span></td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2001-12-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d CLS postprocessed ocean2d ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a><div class="sub">CLS postprocessed ocean2d</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>1995-01-01 → 2001-12-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>2557</td><td>10.04 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_ocean2d_with_tm01" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="2002-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d_with_tm01 CLS postprocessed ocean2d with tm01 (2002+) ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d_with_tm01">dataset_cls_post_ocean2d_with_tm01</a><div class="sub">CLS postprocessed ocean2d with tm01 (2002+)</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>2002-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>4779</td><td>19.88 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_ocean3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean3d CLS postprocessed ocean3d ocean3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a><div class="sub">CLS postprocessed ocean3d</div></td><td>CLS_HISTORICAL</td><td>ocean3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>25.44 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_roms_rst" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="raw_output" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_roms_rst CLS postprocessed ROMS restart archive raw_output CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_roms_rst">dataset_cls_post_roms_rst</a><div class="sub">CLS postprocessed ROMS restart archive</div></td><td>CLS_HISTORICAL</td><td>raw_output</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td><span class="sentinel">UNKNOWN</span></td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_wrf2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf2d CLS postprocessed wrf2d wrf2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a><div class="sub">CLS postprocessed wrf2d</div></td><td>CLS_HISTORICAL</td><td>wrf2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>7.34 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_wrf3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf3d CLS postprocessed wrf3d wrf3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a><div class="sub">CLS postprocessed wrf3d</div></td><td>CLS_HISTORICAL</td><td>wrf3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>16.96 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_internal_input_scratch" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="forcing" data-lifecycle="INCOMPLETE" data-owner="UNKNOWN" data-todos="0" data-period-start="1995-05-01" data-period-end="2026-01-05" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_input_scratch Internal cawo_input scratch forcing INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_input_scratch">dataset_internal_input_scratch</a><div class="sub">Internal cawo_input scratch</div></td><td>INTERNAL_HINDCAST</td><td>forcing</td><td>1995-05-01 → 2026-01-05</td><td><span class="pill warn">INCOMPLETE</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>2737</td><td>69.83 GiB</td><td><span class="sentinel">UNKNOWN</span></td><td>0</td></tr><tr data-id="dataset_internal_post_sample_20150113" data-origin="internal" data-origin-label="INTERNAL_HINDCAST" data-product="other" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="0" data-period-start="2015-01-13" data-period-end="2015-01-13" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_internal_post_sample_20150113 Internal postprocessed sample f20150113 other INTERNAL_HINDCAST"><td><a href="#ds-dataset_internal_post_sample_20150113">dataset_internal_post_sample_20150113</a><div class="sub">Internal postprocessed sample f20150113</div></td><td>INTERNAL_HINDCAST</td><td>other</td><td>2015-01-13 → 2015-01-13</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>32</td><td>8.44 GiB</td><td><span class="sentinel">UNKNOWN</span></td><td>0</td></tr></tbody>
+          <tbody><tr data-id="dataset_cls_post_ocean2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean2d CLS postprocessed ocean2d ocean2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a><div class="sub">CLS postprocessed ocean2d</div></td><td>CLS_HISTORICAL</td><td>ocean2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td><span class="sentinel">UNKNOWN</span></td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_ocean3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="ocean3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_ocean3d CLS postprocessed ocean3d ocean3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a><div class="sub">CLS postprocessed ocean3d</div></td><td>CLS_HISTORICAL</td><td>ocean3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>25.44 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_wrf2d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf2d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf2d CLS postprocessed wrf2d wrf2d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a><div class="sub">CLS postprocessed wrf2d</div></td><td>CLS_HISTORICAL</td><td>wrf2d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>7.34 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr><tr data-id="dataset_cls_post_wrf3d" data-origin="cls_brazil" data-origin-label="CLS_HISTORICAL" data-product="wrf3d" data-lifecycle="CATALOGUED" data-owner="UNKNOWN" data-todos="1" data-period-start="1995-01-01" data-period-end="2015-01-31" data-created="UNKNOWN" data-catalogued="2026-11-23" data-verified="UNKNOWN" data-search="dataset_cls_post_wrf3d CLS postprocessed wrf3d wrf3d CLS_HISTORICAL"><td><a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a><div class="sub">CLS postprocessed wrf3d</div></td><td>CLS_HISTORICAL</td><td>wrf3d</td><td>1995-01-01 → 2015-01-31</td><td><span class="pill run">CATALOGUED</span></td><td><span class="sentinel">UNKNOWN</span></td><td>2026-11-23</td><td><span class="sentinel">UNKNOWN</span></td><td>7336</td><td>16.96 TiB</td><td><span class="sentinel">UNKNOWN</span></td><td>1</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -401,67 +418,13 @@
     <section id="todos">
       <h2>TODO / action tracker</h2>
       <p class="muted">Due dates shown only when explicitly recorded. Owners are member IDs from data/team.yaml — never invented names.</p>
-      <h3 id='todos-not_started'>Not started / Ready (3)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr id="todo-task_confirm_scope"><td>task_confirm_scope</td><td>Confirm final hindcast simulation period</td><td><span class="pill bad">CRITICAL</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td>—</td><td>2026-11-23</td></tr><tr id="todo-task_historical_inventory_acceptance"><td>task_historical_inventory_acceptance</td><td>Decide historical baseline acceptance rules</td><td><span class="pill warn">HIGH</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a>, <a href="#ds-dataset_cls_post_ocean2d_with_tm01">dataset_cls_post_ocean2d_with_tm01</a>, <a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a>, <a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a>, <a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a>, <a href="#ds-dataset_cls_post_roms_rst">dataset_cls_post_roms_rst</a>, <a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a></td><td>2026-11-23</td></tr><tr id="todo-task_register_team_roster"><td>task_register_team_roster</td><td>Replace team member placeholders with real roster</td><td><span class="pill run">MEDIUM</span></td><td><span class="pill muted">NOT_STARTED</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td>—</td><td><span class="sentinel">UNKNOWN</span></td></tr></tbody></table></div>
+      <h3 id='todos-not_started'>Not started / Ready (3)</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Owner</th><th>Due</th><th>Datasets</th><th>Updated</th></tr></thead><tbody><tr id="todo-task_confirm_scope"><td>task_confirm_scope</td><td>Confirm final hindcast simulation period</td><td><span class="pill bad">CRITICAL</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td>—</td><td>2026-11-23</td></tr><tr id="todo-task_historical_inventory_acceptance"><td>task_historical_inventory_acceptance</td><td>Decide historical baseline acceptance rules</td><td><span class="pill warn">HIGH</span></td><td><span class="pill ready">READY</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td><a href="#ds-dataset_cls_post_ocean2d">dataset_cls_post_ocean2d</a>, <a href="#ds-dataset_cls_post_ocean3d">dataset_cls_post_ocean3d</a>, <a href="#ds-dataset_cls_post_wrf2d">dataset_cls_post_wrf2d</a>, <a href="#ds-dataset_cls_post_wrf3d">dataset_cls_post_wrf3d</a>, <a href="#ds-dataset_cls_post_roms_rst">dataset_cls_post_roms_rst</a>, <a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a></td><td>2026-11-23</td></tr><tr id="todo-task_register_team_roster"><td>task_register_team_roster</td><td>Replace team member placeholders with real roster</td><td><span class="pill run">MEDIUM</span></td><td><span class="pill muted">NOT_STARTED</span></td><td>member_01</td><td><span class="sentinel">NOT_RECORDED</span></td><td>—</td><td><span class="sentinel">UNKNOWN</span></td></tr></tbody></table></div>
     </section>
 
     <section id="dataset-details">
       <h2>Dataset details</h2>
       <p class="muted">Expand a dataset for inventory, lifecycle timeline, evidence fields, and linked TODOs.</p>
       
-        <details class="dataset-detail" id="ds-dataset_cls_hindcast_run"
-          data-origin="cls_brazil" data-product="run_dirs">
-          <summary>
-            <strong>dataset_cls_hindcast_run</strong>
-            <span class="pill warn">INCOMPLETE</span>
-            <span class="muted">CLS_HISTORICAL · run_dirs</span>
-          </summary>
-          <div class="detail-grid">
-            <div>
-              <h4>Identity</h4>
-              <ul class="kv">
-                <li><span>Name</span><span>CLS cawo_hindcast_run directories</span></li>
-                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
-                <li><span>Product</span><span>run_dirs</span></li>
-                <li><span>Period</span><span>1996-12-30 → 2024-12-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Inventory 2026-11-23: 8403 day dirs; max span 1996-12-30..2024-12-31 but MISSING years 1997-2001 and only 2 days in 1996 — lifecycle INCOMPLETE. Run dirs are not scientific completion. Size UNKNOWN until du finishes if still pending. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Inventory</h4>
-              <ul class="kv">
-                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/cawo_hindcast_run</code></span></li>
-                <li><span>Files</span><span>8403</span></li>
-                <li><span>Size</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
-                <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
-                <li><span>Last scan</span><span>2026-11-23</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Lifecycle</h4>
-              <ul class="kv">
-                <li><span>Status</span><span><span class="pill warn">INCOMPLETE</span></span></li>
-                <li><span>Created</span><span><span class="sentinel">UNKNOWN</span> <span class="muted">(NOT_RECORDED)</span></span></li>
-                <li><span>Catalogued</span><span>2026-11-23</span></li>
-                <li><span>Verified</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Accepted</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Work tracking</h4>
-              <ul class="kv">
-                <li><span>Owner</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Open TODOs</span><span>1</span></li>
-              </ul>
-              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
-            </div>
-          </div>
-          <h4>Timeline</h4>
-          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
-        </details>
-            
         <details class="dataset-detail" id="ds-dataset_cls_post_ocean2d"
           data-origin="cls_brazil" data-product="ocean2d">
           <summary>
@@ -476,16 +439,17 @@
                 <li><span>Name</span><span>CLS postprocessed ocean2d</span></li>
                 <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
                 <li><span>Product</span><span>ocean2d</span></li>
-                <li><span>Period</span><span>1995-01-01 → 2001-12-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Inventory 2026-11-23: 2557 day dirs (full years 1995-2001). Sample NC counts: f19950101=25, f20000101=24, f20011231=24. Size from du -sb. file_count=day directories (not NC file total). created_at/owner/checksums UNKNOWN — not inferred from mtime. Integrity remains NOT_VERIFIED (no checksum campaign).</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Single ocean2d catalog product. On disk CLS stores two sequential trees: postprocessed/ocean2d (1995–2001) then postprocessed/ocean2d_with_tm01 (2002–2015-01-31).
+</span></li>
               </ul>
             </div>
             <div>
               <h4>Inventory</h4>
               <ul class="kv">
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean2d</code></span></li>
-                <li><span>Files</span><span>2557</span></li>
-                <li><span>Size</span><span>10.04 TiB</span></li>
+                <li><span>Files</span><span>7336</span></li>
+                <li><span>Size</span><span><span class="sentinel">UNKNOWN</span></span></li>
                 <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
@@ -513,61 +477,7 @@
             </div>
           </div>
           <h4>Timeline</h4>
-          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
-        </details>
-            
-        <details class="dataset-detail" id="ds-dataset_cls_post_ocean2d_with_tm01"
-          data-origin="cls_brazil" data-product="ocean2d">
-          <summary>
-            <strong>dataset_cls_post_ocean2d_with_tm01</strong>
-            <span class="pill run">CATALOGUED</span>
-            <span class="muted">CLS_HISTORICAL · ocean2d</span>
-          </summary>
-          <div class="detail-grid">
-            <div>
-              <h4>Identity</h4>
-              <ul class="kv">
-                <li><span>Name</span><span>CLS postprocessed ocean2d with tm01 (2002+)</span></li>
-                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
-                <li><span>Product</span><span>ocean2d</span></li>
-                <li><span>Period</span><span>2002-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Inventory 2026-11-23: 4779 day dirs 2002-01-01..2015-01-31. Sample NC counts all 24 on checked days. Size from du -sb. file_count=day directories. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Inventory</h4>
-              <ul class="kv">
-                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean2d_with_tm01</code></span></li>
-                <li><span>Files</span><span>4779</span></li>
-                <li><span>Size</span><span>19.88 TiB</span></li>
-                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
-                <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
-                <li><span>Last scan</span><span>2026-11-23</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Lifecycle</h4>
-              <ul class="kv">
-                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
-                <li><span>Created</span><span><span class="sentinel">UNKNOWN</span> <span class="muted">(NOT_RECORDED)</span></span></li>
-                <li><span>Catalogued</span><span>2026-11-23</span></li>
-                <li><span>Verified</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Accepted</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Work tracking</h4>
-              <ul class="kv">
-                <li><span>Owner</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Open TODOs</span><span>1</span></li>
-              </ul>
-              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
-            </div>
-          </div>
-          <h4>Timeline</h4>
-          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li><li><strong>2026-11-23T16:50:00+07:00</strong> — discovery_completed: act_20261123_ocean2d_reinventory: Read-only re-inventory found CLS ocean2d 2002-2015 under ocean2d_with_tm01 (separate from postprocessed/ocean2d 1995-2001). No files were modified. Integrity remains NOT_VERIFIED. Catalog record registered.</li></ol>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li><li><strong>2026-11-23T16:50:00+07:00</strong> — discovery_completed: act_20261123_ocean2d_reinventory: Read-only re-inventory found CLS ocean2d 2002-2015 under ocean2d_with_tm01 (continuation of postprocessed/ocean2d 1995-2001). Merged into single dataset_cls_post_ocean2d catalog product. Integrity remains NOT_VERIFIED.</li></ol>
         </details>
             
         <details class="dataset-detail" id="ds-dataset_cls_post_ocean3d"
@@ -594,61 +504,6 @@
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/ocean3d</code></span></li>
                 <li><span>Files</span><span>7336</span></li>
                 <li><span>Size</span><span>25.44 TiB</span></li>
-                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
-                <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
-                <li><span>Last scan</span><span>2026-11-23</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Lifecycle</h4>
-              <ul class="kv">
-                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
-                <li><span>Created</span><span><span class="sentinel">UNKNOWN</span> <span class="muted">(NOT_RECORDED)</span></span></li>
-                <li><span>Catalogued</span><span>2026-11-23</span></li>
-                <li><span>Verified</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Accepted</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
-                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Work tracking</h4>
-              <ul class="kv">
-                <li><span>Owner</span><span><span class="sentinel">UNKNOWN</span></span></li>
-                <li><span>Open TODOs</span><span>1</span></li>
-              </ul>
-              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
-            </div>
-          </div>
-          <h4>Timeline</h4>
-          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
-        </details>
-            
-        <details class="dataset-detail" id="ds-dataset_cls_post_roms_rst"
-          data-origin="cls_brazil" data-product="raw_output">
-          <summary>
-            <strong>dataset_cls_post_roms_rst</strong>
-            <span class="pill run">CATALOGUED</span>
-            <span class="muted">CLS_HISTORICAL · raw_output</span>
-          </summary>
-          <div class="detail-grid">
-            <div>
-              <h4>Identity</h4>
-              <ul class="kv">
-                <li><span>Name</span><span>CLS postprocessed ROMS restart archive</span></li>
-                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
-                <li><span>Product</span><span>raw_output</span></li>
-                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
-                <li><span>Description</span><span>Archived ROMS restart NetCDF files (cawo_g2.8.0_rst_YYYYMMDD_12.nc), one per day directory under postprocessed/roms_rst. Distinct from raw history under cawo_hindcast_outputs (where RSTNAME is written at run time but not retained).
-</span></li>
-              </ul>
-            </div>
-            <div>
-              <h4>Inventory</h4>
-              <ul class="kv">
-                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/roms_rst</code></span></li>
-                <li><span>Files</span><span>7336</span></li>
-                <li><span>Size</span><span><span class="sentinel">UNKNOWN</span></span></li>
                 <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
@@ -757,6 +612,115 @@
                 <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/wrf3d</code></span></li>
                 <li><span>Files</span><span>7336</span></li>
                 <li><span>Size</span><span>16.96 TiB</span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
+                <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill run">CATALOGUED</span></span></li>
+                <li><span>Created</span><span><span class="sentinel">UNKNOWN</span> <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Accepted</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_hindcast_run"
+          data-origin="cls_brazil" data-product="run_dirs">
+          <summary>
+            <strong>dataset_cls_hindcast_run</strong>
+            <span class="pill warn">INCOMPLETE</span>
+            <span class="muted">CLS_HISTORICAL · run_dirs</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS cawo_hindcast_run directories</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>run_dirs</span></li>
+                <li><span>Period</span><span>1996-12-30 → 2024-12-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Inventory 2026-11-23: 8403 day dirs; max span 1996-12-30..2024-12-31 but MISSING years 1997-2001 and only 2 days in 1996 — lifecycle INCOMPLETE. Run dirs are not scientific completion. Size UNKNOWN until du finishes if still pending. created_at/owner/checksums UNKNOWN. Integrity NOT_VERIFIED.</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/cawo_hindcast_run</code></span></li>
+                <li><span>Files</span><span>8403</span></li>
+                <li><span>Size</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
+                <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
+                <li><span>Last scan</span><span>2026-11-23</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Lifecycle</h4>
+              <ul class="kv">
+                <li><span>Status</span><span><span class="pill warn">INCOMPLETE</span></span></li>
+                <li><span>Created</span><span><span class="sentinel">UNKNOWN</span> <span class="muted">(NOT_RECORDED)</span></span></li>
+                <li><span>Catalogued</span><span>2026-11-23</span></li>
+                <li><span>Verified</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Accepted</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Integrity</span><span><span class="pill unk">NOT_VERIFIED</span></span></li>
+                <li><span>Validation</span><span><span class="pill unk">NOT_VALIDATED</span></span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Work tracking</h4>
+              <ul class="kv">
+                <li><span>Owner</span><span><span class="sentinel">UNKNOWN</span></span></li>
+                <li><span>Open TODOs</span><span>1</span></li>
+              </ul>
+              <ul><li><a href="#todo-task_historical_inventory_acceptance">task_historical_inventory_acceptance</a>: Decide historical baseline acceptance rules <span class="pill ready">READY</span></li></ul>
+            </div>
+          </div>
+          <h4>Timeline</h4>
+          <ol class="timeline"><li><strong>2026-11-23</strong> — CATALOGUED: catalog record registration</li><li><strong>2026-11-23</strong> — INVENTORY_SCAN: last_inventory_scan</li></ol>
+        </details>
+            
+        <details class="dataset-detail" id="ds-dataset_cls_post_roms_rst"
+          data-origin="cls_brazil" data-product="raw_output">
+          <summary>
+            <strong>dataset_cls_post_roms_rst</strong>
+            <span class="pill run">CATALOGUED</span>
+            <span class="muted">CLS_HISTORICAL · raw_output</span>
+          </summary>
+          <div class="detail-grid">
+            <div>
+              <h4>Identity</h4>
+              <ul class="kv">
+                <li><span>Name</span><span>CLS postprocessed ROMS restart archive</span></li>
+                <li><span>Origin</span><span>CLS_HISTORICAL</span></li>
+                <li><span>Product</span><span>raw_output</span></li>
+                <li><span>Period</span><span>1995-01-01 → 2015-01-31 (directory_names)</span></li>
+                <li><span>Description</span><span>Archived ROMS restart NetCDF files (cawo_g2.8.0_rst_YYYYMMDD_12.nc), one per day directory under postprocessed/roms_rst. Distinct from raw history under cawo_hindcast_outputs (where RSTNAME is written at run time but not retained).
+</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Inventory</h4>
+              <ul class="kv">
+                <li><span>Path</span><span><code>$SCRATCH_HISTORICAL/data/postprocessed/roms_rst</code></span></li>
+                <li><span>Files</span><span>7336</span></li>
+                <li><span>Size</span><span><span class="sentinel">UNKNOWN</span></span></li>
                 <li><span>Manifest</span><span>data/manifests/inventory_scan_20261123.json</span></li>
                 <li><span>Checksum</span><span><span class="sentinel">NOT_RECORDED</span></span></li>
                 <li><span>Last scan</span><span>2026-11-23</span></li>
@@ -908,8 +872,13 @@
     </section>
 
     <details class="secondary" id="secondary">
-      <summary><strong>Secondary project information</strong> (workflow, issues, HPC, workload)</summary>
+      <summary><strong>Secondary project information</strong> (other datasets, workflow, issues, HPC, workload)</summary>
       <h2 class="visually-hidden">Secondary project information</h2>
+      <div>
+        <h3>Other datasets (not primary products)</h3>
+        <p class="muted">Run dirs, forcing, ROMS rst archive, samples — tracked but excluded from the primary ocean/WRF catalog.</p>
+        <ul><li><a href="#ds-dataset_cls_hindcast_run">dataset_cls_hindcast_run</a> (run_dirs) <span class="pill warn">INCOMPLETE</span></li><li><a href="#ds-dataset_cls_post_roms_rst">dataset_cls_post_roms_rst</a> (raw_output) <span class="pill run">CATALOGUED</span></li><li><a href="#ds-dataset_internal_input_scratch">dataset_internal_input_scratch</a> (forcing) <span class="pill warn">INCOMPLETE</span></li><li><a href="#ds-dataset_internal_post_sample_20150113">dataset_internal_post_sample_20150113</a> (other) <span class="pill run">CATALOGUED</span></li></ul>
+      </div>
       <div style="display:grid;gap:1rem;margin-top:0.75rem">
         <div>
           <h3>Open issues</h3>
@@ -1052,6 +1021,21 @@
       });
       if (calCls) calCls.innerHTML = clsHtml || '<p class="muted">No CLS inventory for ' + year + '.</p>';
       if (calInt) calInt.innerHTML = intHtml || '<p class="muted">No internal inventory for ' + year + '.</p>';
+
+      const summaryBody = document.getElementById('day-product-summary-body');
+      if (summaryBody) {
+        let srows = '';
+        products.forEach(function (p) {
+          const pb = (cls.products || {})[p] || {};
+          const ib = (inn.products || {})[p] || {};
+          srows += '<tr data-product="' + p + '"><td>' + p + '</td>' +
+            '<td>' + (pb.present_count || 0) + '/' + (pb.expected_count || 0) + '</td>' +
+            '<td>' + (pb.missing_count || 0) + '</td>' +
+            '<td>' + (pb.out_count || 0) + '</td>' +
+            '<td>' + (ib.present_count || 0) + '/' + (ib.expected_count || 0) + '</td></tr>';
+        });
+        summaryBody.innerHTML = srows || '<tr><td colspan="5">None</td></tr>';
+      }
 
       const clsAll = cls.all_required || {};
       const intAll = inn.all_required || {};

@@ -276,6 +276,26 @@ def _day_progress_section(catalog: dict) -> str:
         <span class="leg OUT_OF_SPAN"><span class="swatch" aria-hidden="true">–</span> Out of span</span>
         <span class="leg PARTIAL"><span class="swatch" aria-hidden="true">~</span> Partial</span>
       </div>
+      <div class="table-wrap">
+        <table id="day-product-summary" aria-label="Day inventory by catalog product">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>CLS present</th>
+              <th>CLS missing</th>
+              <th>CLS out of span</th>
+              <th>Internal present</th>
+            </tr>
+          </thead>
+          <tbody id="day-product-summary-body">
+            {"".join(
+              f"<tr data-product=\"{_esc(p)}\"><td>{_esc(p)}</td>"
+              f"<td colspan=\"4\">Loading…</td></tr>"
+              for p in products
+            )}
+          </tbody>
+        </table>
+      </div>
       <div id="cal-cls" class="cal-stack" data-stream="cls_brazil"></div>
       <div id="cal-internal" class="cal-stack" data-stream="internal" hidden></div>
       <details class="a11y-table">
@@ -348,50 +368,19 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
 
     inv_rows = []
     detail_blocks = []
-    for ds in catalog["datasets"]:
-        inv_rows.append(
-            "<tr "
-            f'data-id="{_esc(ds["id"])}" '
-            f'data-origin="{_esc(ds["origin"])}" '
-            f'data-origin-label="{_esc(ds["origin_label"])}" '
-            f'data-product="{_esc(ds["product"])}" '
-            f'data-lifecycle="{_esc(ds["lifecycle"])}" '
-            f'data-owner="{_esc(ds["owner"])}" '
-            f'data-todos="{ds["todo_count"]}" '
-            f'data-period-start="{_esc(ds["period_start"])}" '
-            f'data-period-end="{_esc(ds["period_end"])}" '
-            f'data-created="{_esc(ds["created_at"])}" '
-            f'data-catalogued="{_esc(ds["catalogued_at"])}" '
-            f'data-verified="{_esc(ds["verified_at"])}" '
-            f'data-search="{_esc(ds["id"])} {_esc(ds["name"])} {_esc(ds["product"])} {_esc(ds["origin_label"])}">'
-            f'<td><a href="#ds-{_esc(ds["id"])}">{_esc(ds["id"])}</a><div class="sub">{_esc(ds["name"])}</div></td>'
-            f'<td>{_esc(ds["origin_label"])}</td>'
-            f'<td>{_esc(ds["product"])}</td>'
-            f'<td>{_cell_text(ds["period_start"] or "UNKNOWN")} → {_cell_text(ds["period_end"] or "UNKNOWN")}</td>'
-            f'<td>{_pill(ds["lifecycle"])}</td>'
-            f'<td>{_cell_text(ds["created_at"])}</td>'
-            f'<td>{_cell_text(ds["catalogued_at"])}</td>'
-            f'<td>{_cell_text(ds["verified_at"])}</td>'
-            f'<td>{_cell_text(ds["file_count"] if ds["file_count"] is not None else "UNKNOWN")}</td>'
-            f'<td>{_cell_text(ds["size_human"])}</td>'
-            f'<td>{_cell_text(ds["owner"])}</td>'
-            f'<td>{ds["todo_count"]}</td>'
-            "</tr>"
-        )
+    other_links: list[str] = []
 
+    def _dataset_detail_html(ds: dict) -> str:
         todo_list = "".join(
             f'<li><a href="#todo-{_esc(t["id"])}">{_esc(t["id"])}</a>: '
             f'{_esc(t["title"])} {_pill(t["status"])}</li>'
             for t in ds["todos"]
         ) or "<li>No linked TODOs</li>"
-
         timeline = "".join(
             f"<li><strong>{_esc(ev['when'])}</strong> — {_esc(ev['label'])}: {_esc(ev['detail'])}</li>"
             for ev in ds["timeline"]
         ) or "<li>No recorded events</li>"
-
-        detail_blocks.append(
-            f"""
+        return f"""
         <details class="dataset-detail" id="ds-{_esc(ds['id'])}"
           data-origin="{_esc(ds['origin'])}" data-product="{_esc(ds['product'])}">
           <summary>
@@ -446,7 +435,45 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
           <ol class="timeline">{timeline}</ol>
         </details>
             """
+
+    for ds in catalog["datasets"]:
+        inv_rows.append(
+            "<tr "
+            f'data-id="{_esc(ds["id"])}" '
+            f'data-origin="{_esc(ds["origin"])}" '
+            f'data-origin-label="{_esc(ds["origin_label"])}" '
+            f'data-product="{_esc(ds["product"])}" '
+            f'data-lifecycle="{_esc(ds["lifecycle"])}" '
+            f'data-owner="{_esc(ds["owner"])}" '
+            f'data-todos="{ds["todo_count"]}" '
+            f'data-period-start="{_esc(ds["period_start"])}" '
+            f'data-period-end="{_esc(ds["period_end"])}" '
+            f'data-created="{_esc(ds["created_at"])}" '
+            f'data-catalogued="{_esc(ds["catalogued_at"])}" '
+            f'data-verified="{_esc(ds["verified_at"])}" '
+            f'data-search="{_esc(ds["id"])} {_esc(ds["name"])} {_esc(ds["product"])} {_esc(ds["origin_label"])}">'
+            f'<td><a href="#ds-{_esc(ds["id"])}">{_esc(ds["id"])}</a><div class="sub">{_esc(ds["name"])}</div></td>'
+            f'<td>{_esc(ds["origin_label"])}</td>'
+            f'<td>{_esc(ds["product"])}</td>'
+            f'<td>{_cell_text(ds["period_start"] or "UNKNOWN")} → {_cell_text(ds["period_end"] or "UNKNOWN")}</td>'
+            f'<td>{_pill(ds["lifecycle"])}</td>'
+            f'<td>{_cell_text(ds["created_at"])}</td>'
+            f'<td>{_cell_text(ds["catalogued_at"])}</td>'
+            f'<td>{_cell_text(ds["verified_at"])}</td>'
+            f'<td>{_cell_text(ds["file_count"] if ds["file_count"] is not None else "UNKNOWN")}</td>'
+            f'<td>{_cell_text(ds["size_human"])}</td>'
+            f'<td>{_cell_text(ds["owner"])}</td>'
+            f'<td>{ds["todo_count"]}</td>'
+            "</tr>"
         )
+        detail_blocks.append(_dataset_detail_html(ds))
+
+    for ds in catalog.get("other_datasets") or []:
+        other_links.append(
+            f'<li><a href="#ds-{_esc(ds["id"])}">{_esc(ds["id"])}</a> '
+            f'({_esc(ds["product"])}) {_pill(ds["lifecycle"])}</li>'
+        )
+        detail_blocks.append(_dataset_detail_html(ds))
 
     todo_groups = catalog["todo_groups"]
     group_sections = []
@@ -821,6 +848,7 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
 
     <section id="inventory">
       <h2>Dataset inventory</h2>
+      <p class="muted">Primary catalog products only: ocean2d, ocean3d, wrf2d, wrf3d (one row each per origin stream as catalogued).</p>
       <div class="filters" id="inv-filters">
         <label>Search<input type="search" id="f-search" placeholder="id, name, product…"/></label>
         <label>Origin<select id="f-origin"><option value="">All</option>{origin_opts}</select></label>
@@ -875,8 +903,13 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     </section>
 
     <details class="secondary" id="secondary">
-      <summary><strong>Secondary project information</strong> (workflow, issues, HPC, workload)</summary>
+      <summary><strong>Secondary project information</strong> (other datasets, workflow, issues, HPC, workload)</summary>
       <h2 class="visually-hidden">Secondary project information</h2>
+      <div>
+        <h3>Other datasets (not primary products)</h3>
+        <p class="muted">Run dirs, forcing, ROMS rst archive, samples — tracked but excluded from the primary ocean/WRF catalog.</p>
+        <ul>{''.join(other_links) or '<li>None</li>'}</ul>
+      </div>
       <div style="display:grid;gap:1rem;margin-top:0.75rem">
         <div>
           <h3>Open issues</h3>
@@ -1018,6 +1051,21 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
       }});
       if (calCls) calCls.innerHTML = clsHtml || '<p class="muted">No CLS inventory for ' + year + '.</p>';
       if (calInt) calInt.innerHTML = intHtml || '<p class="muted">No internal inventory for ' + year + '.</p>';
+
+      const summaryBody = document.getElementById('day-product-summary-body');
+      if (summaryBody) {{
+        let srows = '';
+        products.forEach(function (p) {{
+          const pb = (cls.products || {{}})[p] || {{}};
+          const ib = (inn.products || {{}})[p] || {{}};
+          srows += '<tr data-product="' + p + '"><td>' + p + '</td>' +
+            '<td>' + (pb.present_count || 0) + '/' + (pb.expected_count || 0) + '</td>' +
+            '<td>' + (pb.missing_count || 0) + '</td>' +
+            '<td>' + (pb.out_count || 0) + '</td>' +
+            '<td>' + (ib.present_count || 0) + '/' + (ib.expected_count || 0) + '</td></tr>';
+        }});
+        summaryBody.innerHTML = srows || '<tr><td colspan="5">None</td></tr>';
+      }}
 
       const clsAll = cls.all_required || {{}};
       const intAll = inn.all_required || {{}};

@@ -34,17 +34,17 @@ def test_dataset_counts_by_origin_and_product() -> None:
     store = TrackingStore.load(ROOT)
     catalog = build_catalog_view(store)
     s = catalog["summary"]
-    assert s["catalogued_datasets"] == len(store.datasets) == 9
-    assert s["by_origin"]["cls_brazil"] == 7
-    assert s["by_origin"]["internal"] == 2
-    assert s["by_product"]["ocean2d"] == 2  # ocean2d + ocean2d_with_tm01
+    # Primary catalog = ocean2d/3d + wrf2d/3d only (one CLS row each)
+    assert s["catalogued_datasets"] == 4
+    assert len(catalog["datasets"]) == 4
+    assert set(s["by_product"]) == {"ocean2d", "ocean3d", "wrf2d", "wrf3d"}
+    assert s["by_product"]["ocean2d"] == 1
     assert s["by_product"]["ocean3d"] == 1
     assert s["by_product"]["wrf2d"] == 1
     assert s["by_product"]["wrf3d"] == 1
-    assert s["by_product"]["run_dirs"] == 1
-    assert s["by_product"]["raw_output"] == 1  # dataset_cls_post_roms_rst
-    assert s["by_product"]["forcing"] == 1
-    assert s["by_product"]["other"] == 1
+    assert s["by_origin"]["cls_brazil"] == 4
+    assert s["other_dataset_count"] == 4  # run_dirs, roms_rst, forcing, sample
+    assert "dataset_cls_post_ocean2d_with_tm01" not in {d["id"] for d in store.datasets}
 
 
 def test_missing_metadata_and_unknown_creation_dates() -> None:
@@ -163,12 +163,13 @@ def test_year_product_matrix_ocean2d_split_folders() -> None:
     catalog = build_catalog_view(store)
     row_1996 = next(r for r in catalog["historical_matrix"] if r["year"] == 1996)
     row_2005 = next(r for r in catalog["historical_matrix"] if r["year"] == 2005)
-    # 1995-2001 from ocean2d; 2002+ from ocean2d_with_tm01 — both catalogued, not verified
+    # Unified ocean2d covers legacy + tm01 trees through 2015-01-31
     assert row_1996["cells"]["ocean2d"] == "CATALOGUED"
     assert row_2005["cells"]["ocean2d"] == "CATALOGUED"
     assert row_2005["cells"]["ocean3d"] in {"CATALOGUED", "INCOMPLETE", "NOT_VERIFIED"}
     ids = {d["id"] for d in store.datasets}
-    assert "dataset_cls_post_ocean2d_with_tm01" in ids
+    assert "dataset_cls_post_ocean2d" in ids
+    assert "dataset_cls_post_ocean2d_with_tm01" not in ids
 
 
 def test_dashboard_header_omits_scope_and_acceptance_banner() -> None:
@@ -230,11 +231,17 @@ def test_dashboard_generation_determinism_excluding_timestamp(
 def test_no_false_completion_from_sparse_outputs() -> None:
     store = TrackingStore.load(ROOT)
     catalog = build_catalog_view(store)
+    # Sample is tracked as other (not a primary ocean/WRF product)
     sample = next(
-        r for r in catalog["datasets"] if r["id"] == "dataset_internal_post_sample_20150113"
+        r
+        for r in catalog["other_datasets"]
+        if r["id"] == "dataset_internal_post_sample_20150113"
     )
     assert sample["lifecycle"] != "ACCEPTED"
     assert sample["lifecycle"] != "VERIFIED"
+    assert all(
+        r["product"] in {"ocean2d", "ocean3d", "wrf2d", "wrf3d"} for r in catalog["datasets"]
+    )
     # Matrix cells for remaining years stay EXPECTED (not verified from sample)
     for row in catalog["remaining_matrix"]:
         for st in row["cells"].values():
@@ -259,7 +266,14 @@ def test_day_coverage_2015_cls_january_and_sparse_internal() -> None:
     feb1 = next(d for d in cls_o3["days"] if d["date"] == "20150201")
     assert jan1["state"] == "PRESENT"
     assert feb1["state"] == "OUT_OF_SPAN"
-    # ocean2d aliases to ocean2d_with_tm01 for CLS 2015
+    # ocean2d folds on-disk ocean2d_with_tm01 into the single catalog product
+    assert set(cov["products"]) == {"ocean2d", "ocean3d", "wrf2d", "wrf3d"}
+    assert set(cov["streams"]["cls_brazil"]["products"]) == {
+        "ocean2d",
+        "ocean3d",
+        "wrf2d",
+        "wrf3d",
+    }
     cls_o2 = cov["streams"]["cls_brazil"]["products"]["ocean2d"]
     assert cls_o2["present_count"] == 31
     internal = cov["streams"]["internal"]["products"]["wrf2d"]
@@ -281,7 +295,13 @@ def test_dashboard_includes_daily_progress_panel() -> None:
     assert 'id="daily-progress"' in html
     assert "Daily inventory" in html
     assert 'id="day-coverage-data"' in html
+    assert 'id="day-product-summary"' in html
     assert "day-present" in html  # CSS class for client-rendered cells
+    # Daily product filter / summary use catalog products only
+    day_section = html.split('id="daily-progress"', 1)[1].split("Dataset inventory", 1)[0]
+    assert "ocean2d_with_tm01" not in day_section
+    for p in ("ocean2d", "ocean3d", "wrf2d", "wrf3d"):
+        assert f'option value="{p}"' in day_section or f">{p}</option>" in day_section
     assert "Hindcast scope:" not in html
     assert catalog["day_coverage"]["available_years"][0] == 1995
     assert 2015 in catalog["day_coverage"]["available_years"]
@@ -357,7 +377,8 @@ def test_multi_year_day_coverage_from_inventory() -> None:
     cls_o3 = cov["streams"]["cls_brazil"]["products"]["ocean3d"]
     assert cls_o3["present_count"] == 365
     assert cls_o3["missing_count"] == 0
-    # ocean2d aliases to with_tm01 for 2005
+    # ocean2d merges with_tm01 inventory folder for 2005
+    assert "ocean2d_with_tm01" not in cov["streams"]["cls_brazil"]["products"]
     cls_o2 = cov["streams"]["cls_brazil"]["products"]["ocean2d"]
     assert cls_o2["present_count"] == 365
 

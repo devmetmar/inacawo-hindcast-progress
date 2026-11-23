@@ -78,7 +78,7 @@ Matrix rows are calendar years (historical CLS vs remaining internal, separate t
 
 The **Daily inventory coverage** panel is separate from year×product lifecycle cells and from the four remaining-stream metrics above.
 
-- Source: `data/manifests/day_presence_YYYY.json` (directory_names evidence; optional alias e.g. CLS `ocean2d` → `ocean2d_with_tm01`).
+- Source: `data/manifests/day_presence_YYYY.json` (directory_names evidence). Catalog products only: `ocean2d`, `ocean3d`, `wrf2d`, `wrf3d`. On-disk CLS `ocean2d_with_tm01` folders are folded into catalog `ocean2d`.
 - Per-day states: `PRESENT`, `MISSING`, `OUT_OF_SPAN` (plus aggregate `PARTIAL` when not all required products are present).
 - **Does not** imply integrity `VERIFIED` or scientific `ACCEPTED`.
 - Sparse internal sample days must not be treated as year completion (same rule as matrix cells).

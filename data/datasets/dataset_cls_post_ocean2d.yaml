@@ -2,14 +2,17 @@ id: dataset_cls_post_ocean2d
 name: CLS postprocessed ocean2d
 origin: cls_brazil
 product: ocean2d
+description: >
+  Single ocean2d catalog product. On disk CLS stores two sequential trees:
+  postprocessed/ocean2d (1995–2001) then postprocessed/ocean2d_with_tm01 (2002–2015-01-31).
 period_coverage:
   start: '1995-01-01'
-  end: '2001-12-31'
+  end: '2015-01-31'
   basis: directory_names
 location: $SCRATCH_HISTORICAL/data/postprocessed/ocean2d
-file_count: 2557
-size_bytes: 11040884524870
-size_human: 10.04 TiB
+file_count: 7336
+size_bytes: null
+size_human: UNKNOWN
 manifest_ref: data/manifests/inventory_scan_20261123.json
 checksum_ref: null
 integrity_status: NOT_VERIFIED
@@ -24,7 +27,10 @@ accepted_at: null
 last_inventory_scan: '2026-11-23'
 related_task_ids:
 - task_historical_inventory_acceptance
-notes: 'Inventory 2026-11-23: 2557 day dirs (full years 1995-2001). Sample NC counts:
-  f19950101=25, f20000101=24, f20011231=24. Size from du -sb. file_count=day directories
-  (not NC file total). created_at/owner/checksums UNKNOWN — not inferred from mtime.
-  Integrity remains NOT_VERIFIED (no checksum campaign).'
+notes: >
+  Inventory 2026-11-23: unified ocean2d product. Legacy tree ocean2d has 2557 day
+  dirs 1995-01-01..2001-12-31 (~10.04 TiB). Continuation ocean2d_with_tm01 has 4779
+  day dirs 2002-01-01..2015-01-31 (~19.88 TiB). file_count=7336 day dirs total.
+  Primary location path is the legacy root; continuation path is
+  $SCRATCH_HISTORICAL/data/postprocessed/ocean2d_with_tm01. created_at/owner/checksums
+  UNKNOWN. Integrity NOT_VERIFIED.

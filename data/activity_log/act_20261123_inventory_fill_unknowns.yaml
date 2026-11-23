@@ -1,0 +1,16 @@
+id: act_20261123_inventory_fill_unknowns
+timestamp: "2026-11-23T20:15:00+07:00"
+actor: tracking_setup
+entity_type: project
+entity_id: proj_inaca_hindcast
+action: inventory_updated
+previous_state: null
+new_state: ACTIVE
+evidence_reference: data/manifests/inventory_scan_20261123.json
+notes: >
+  Read-only re-inventory filled evidenced size_bytes/size_human, day-directory
+  file_count, manifest_ref, last_inventory_scan, and set validation_status to
+  NOT_VALIDATED where no validation records exist. created_at, owner,
+  verified_at, accepted_at, and checksum_ref left UNKNOWN/null (no evidence;
+  mtime not used). cawo_hindcast_run size still pending/UNKNOWN if du incomplete.
+  No NetCDF copied; no HPC jobs modified.

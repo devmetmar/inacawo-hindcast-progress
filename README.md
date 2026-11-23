@@ -22,7 +22,7 @@ This repository tracks **progress, evidence, issues, and readiness**. It does **
 5. Per-dataset detail + timeline
 6. Secondary project info (workflow, issues, HPC) in a collapsed panel
 
-See [docs/user_guide.md](docs/user_guide.md) and [CATALOG_DASHBOARD_REDESIGN_REPORT.md](CATALOG_DASHBOARD_REDESIGN_REPORT.md).
+See [docs/user_guide.md](docs/user_guide.md), [CATALOG_DASHBOARD_REDESIGN_REPORT.md](CATALOG_DASHBOARD_REDESIGN_REPORT.md), and [UNKNOWN_DATA.md](UNKNOWN_DATA.md) for fields that remain intentionally unknown.
 
 ## Quick start
 

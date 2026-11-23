@@ -32,8 +32,26 @@ A scheduler job completing does **not** automatically set scientific acceptance.
 
 `VERIFIED` requires technical evidence. `ACCEPTED` requires designated reviewer approval evidence.
 
+## Bootstrap vs advanced status
+
+Bootstrap statuses may exist without transition history:
+
+- Execution: `NOT_STARTED`, `UNKNOWN`
+- Scientific: `NOT_VALIDATED`, `UNKNOWN`
+- Task: `NOT_STARTED`, `READY`
+- Issue: `OPEN`
+- Stage: `NOT_STARTED`, `UNKNOWN`, `READY`
+
+Any other status **requires** activity-log entries (`previous_state` → `new_state`) that:
+
+1. Are individually legal under the transition tables.
+2. End at the entity’s current status.
+
 ## Enforcement
 
-- Documented here for operators.
-- `scripts/lib/tracking.py` exposes `validate_transition()` for tools/tests.
-- CI validates schema/referential integrity of checked-in data.
+- `scripts/validate_data.py` → `validate_store()` enforces the rules above (F-01).
+- CI runs `validate_data.py`, so illegal committed transitions fail CI.
+- Direct YAML edits that jump to non-bootstrap statuses without history are rejected.
+- `scripts/lib/tracking.py` also exposes `validate_transition()` for helpers/tests.
+
+Use `scripts/log_activity.py` when advancing status.

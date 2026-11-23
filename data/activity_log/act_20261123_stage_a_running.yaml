@@ -1,0 +1,12 @@
+id: act_20261123_stage_a_running
+timestamp: "2026-11-23T08:30:01+07:00"
+actor: tracking_setup
+entity_type: stage
+entity_id: stage_a_project_preparation
+action: status_change
+previous_state: UNKNOWN
+new_state: RUNNING
+evidence_reference: DISCOVERY_REPORT.md
+notes: >
+  Stage A advanced from inventory/bootstrap UNKNOWN to RUNNING after Phase 1
+  discovery completed. Scope confirmation remains open.

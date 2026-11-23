@@ -19,20 +19,39 @@ python scripts/collect_slurm_readonly.py
 python scripts/collect_slurm_readonly.py --dry-run
 ```
 
-Writes `data/hpc_snapshots/hpc_YYYYMMDDTHHMMSS.yaml` with `collected_at`.
+On **success**, writes `data/hpc_snapshots/hpc_YYYYMMDDTHHMMSS.yaml` with:
 
-Queries used:
+- `collected_at` (timezone-aware ISO-8601)
+- `collection_ok: true`
+- queue jobs from `squeue`
+
+On **squeue failure**, the collector exits non-zero and **does not write** a new snapshot, so the previous successful snapshot remains the latest usable record.
+
+Queries used (read-only):
 
 - `squeue -u <user> ...` (current queue)
 - `sacct -u <user> -S <today> ...` (bounded to today)
+
+## TTL / stale classification
+
+Configured by `hpc_snapshot_ttl_hours` in `data/project.yaml` (default **24**).
+
+Classification is computed at **read/display time** by `classify_hpc_snapshot()`:
+
+| State | Meaning |
+|-------|---------|
+| `FRESH` | Successful snapshot younger than TTL |
+| `STALE` | Successful snapshot older than TTL — not current |
+| `MISSING` | No usable snapshot |
+| `MALFORMED` | Missing/unparseable timestamp |
+| `FAILED` | Explicit failed collection record (`collection_ok: false`) |
+
+`MISSING` is **not** the same as “zero jobs.”
+
+Timezone rule: timestamps should include an offset or `Z`. Naive timestamps are interpreted as UTC.
 
 ## Hard constraints
 
 - Never `sbatch`, `scancel`, or mutate jobs from this repository.
 - Do not spam accounting queries.
-- Dashboard must show snapshot age; absence → `NONE`.
 - Tracking must remain usable without HPC connectivity.
-
-## Stale data
-
-A snapshot is informational only. If `collected_at` is old, treat job state as **stale**, not current.

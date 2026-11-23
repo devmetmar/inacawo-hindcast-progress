@@ -9,13 +9,16 @@
 
 ## Preferred practice
 
-- Store **path references** and checksum/manifest pointers in YAML
+- Store **portable path placeholders** (`$CAWO_HINDCAST_BASE`, `$SCRATCH_HISTORICAL`, `$HOME/...`) rather than absolute `/home/...` or `/scratch/...` paths
+- Store checksum/manifest pointers in YAML, not file contents
 - Use member IDs (`member_01` …) until a privacy-approved roster is provided
 - Keep secrets in existing operator credential locations outside this repo
 
 ## Repository visibility
 
 Remote is currently a **public** GitHub repository. Assume all committed content is world-readable.
+
+**History note:** Cleaning the working tree does not remove previously committed absolute paths from Git history. History rewrite/force-push requires explicit owner authorization and is out of scope for ordinary tracking updates.
 
 ## `.gitignore`
 

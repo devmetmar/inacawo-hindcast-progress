@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/workflow_stages.schema.json",
+  "type": "object",
+  "required": ["stages"],
+  "additionalProperties": false,
+  "properties": {
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "order", "description", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^stage_" },
+          "name": { "type": "string" },
+          "order": { "type": "integer", "minimum": 1 },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NOT_STARTED",
+              "READY",
+              "RUNNING",
+              "COMPLETED",
+              "BLOCKED",
+              "FAILED",
+              "CANCELLED",
+              "UNKNOWN"
+            ]
+          },
+          "evidence_layer": {
+            "type": "string",
+            "enum": ["reported", "verified", "accepted"]
+          },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

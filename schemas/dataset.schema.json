@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/dataset.schema.json",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "origin",
+    "location",
+    "integrity_status",
+    "validation_status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^dataset_" },
+    "name": { "type": "string", "minLength": 1 },
+    "origin": {
+      "type": "string",
+      "enum": ["cls_brazil", "internal", "shared_input", "unknown"]
+    },
+    "product": {
+      "type": ["string", "null"],
+      "enum": [
+        "ocean2d",
+        "ocean3d",
+        "wrf2d",
+        "wrf3d",
+        "raw_output",
+        "run_dirs",
+        "era5",
+        "forcing",
+        "validation",
+        "other",
+        null
+      ]
+    },
+    "period_coverage": {
+      "type": ["object", "null"],
+      "properties": {
+        "start": { "type": ["string", "null"] },
+        "end": { "type": ["string", "null"] },
+        "basis": {
+          "type": "string",
+          "enum": ["directory_names", "reported", "verified", "unknown"]
+        }
+      }
+    },
+    "location": { "type": "string", "minLength": 1 },
+    "file_count": { "type": ["integer", "null"], "minimum": 0 },
+    "size_bytes": { "type": ["integer", "null"], "minimum": 0 },
+    "size_human": { "type": ["string", "null"] },
+    "manifest_ref": { "type": ["string", "null"] },
+    "checksum_ref": { "type": ["string", "null"] },
+    "integrity_status": {
+      "type": "string",
+      "enum": ["UNKNOWN", "NOT_VERIFIED", "VERIFIED", "FAILED"]
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": [
+        "NOT_VALIDATED",
+        "NEEDS_REVIEW",
+        "VERIFIED",
+        "ACCEPTED",
+        "FAILED_VALIDATION",
+        "UNKNOWN"
+      ]
+    },
+    "notes": { "type": ["string", "null"] }
+  }
+}

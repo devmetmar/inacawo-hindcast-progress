@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/hpc_snapshot.schema.json",
+  "type": "object",
+  "required": ["id", "collected_at", "collector", "mode", "jobs"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^hpc_" },
+    "collected_at": { "type": "string", "minLength": 1 },
+    "collector": { "type": "string" },
+    "mode": { "type": "string", "enum": ["manual", "readonly_slurm"] },
+    "hpc_user": { "type": ["string", "null"] },
+    "commands_used": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["job_id", "state"],
+        "properties": {
+          "job_id": { "type": "string" },
+          "name": { "type": ["string", "null"] },
+          "partition": { "type": ["string", "null"] },
+          "state": { "type": "string" },
+          "elapsed": { "type": ["string", "null"] },
+          "nodes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "notes": { "type": ["string", "null"] }
+  }
+}

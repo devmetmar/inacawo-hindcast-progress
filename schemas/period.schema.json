@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/period.schema.json",
+  "type": "object",
+  "required": [
+    "id",
+    "calendar_year",
+    "start_date",
+    "end_date",
+    "stream",
+    "scope_basis",
+    "execution_status",
+    "scientific_status",
+    "owner"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^period_" },
+    "calendar_year": { "type": "integer", "minimum": 1900, "maximum": 2100 },
+    "start_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "end_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "stream": {
+      "type": "string",
+      "enum": ["historical_baseline", "remaining_internal"]
+    },
+    "scope_basis": {
+      "type": "string",
+      "enum": ["confirmed", "provisional"]
+    },
+    "execution_status": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "READY",
+        "RUNNING",
+        "COMPLETED",
+        "BLOCKED",
+        "FAILED",
+        "CANCELLED",
+        "UNKNOWN"
+      ]
+    },
+    "scientific_status": {
+      "type": "string",
+      "enum": [
+        "NOT_VALIDATED",
+        "NEEDS_REVIEW",
+        "VERIFIED",
+        "ACCEPTED",
+        "FAILED_VALIDATION",
+        "UNKNOWN"
+      ]
+    },
+    "owner": { "type": ["string", "null"], "pattern": "^member_[0-9]{2}$" },
+    "reviewer": { "type": ["string", "null"], "pattern": "^member_[0-9]{2}$" },
+    "configuration_id": { "type": ["string", "null"] },
+    "related_run_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^run_" },
+      "uniqueItems": true
+    },
+    "related_dataset_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^dataset_" },
+      "uniqueItems": true
+    },
+    "fully_complete": {
+      "type": "string",
+      "enum": ["YES", "NO", "UNKNOWN", "NOT_VERIFIED"]
+    },
+    "notes": { "type": ["string", "null"] }
+  }
+}

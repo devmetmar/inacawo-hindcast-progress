@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/issue.schema.json",
+  "type": "object",
+  "required": ["id", "title", "description", "severity", "status", "owner"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^issue_" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "impact": { "type": ["string", "null"] },
+    "owner": { "type": ["string", "null"], "pattern": "^member_[0-9]{2}$" },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "IN_PROGRESS", "BLOCKED", "RESOLVED", "CLOSED"]
+    },
+    "resolution": { "type": ["string", "null"] },
+    "related_task_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^task_" }
+    },
+    "related_run_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^run_" }
+    },
+    "related_period_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^period_" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "reference"],
+        "properties": {
+          "type": { "type": "string" },
+          "reference": { "type": "string" },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "notes": { "type": ["string", "null"] }
+  }
+}

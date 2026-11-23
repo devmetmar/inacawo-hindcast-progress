@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/activity.schema.json",
+  "type": "object",
+  "required": ["id", "timestamp", "actor", "entity_type", "entity_id", "action"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^act_" },
+    "timestamp": { "type": "string", "minLength": 1 },
+    "actor": { "type": "string", "minLength": 1 },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "project",
+        "period",
+        "run",
+        "dataset",
+        "task",
+        "issue",
+        "validation",
+        "stage",
+        "team"
+      ]
+    },
+    "entity_id": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "previous_state": { "type": ["string", "null"] },
+    "new_state": { "type": ["string", "null"] },
+    "evidence_reference": { "type": ["string", "null"] },
+    "notes": { "type": ["string", "null"] }
+  }
+}

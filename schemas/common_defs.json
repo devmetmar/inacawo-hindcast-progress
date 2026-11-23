@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inacawo.local/schemas/common_defs.json",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "isoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "isoDateTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z|[+-][0-9]{2}:[0-9]{2})?$"
+    },
+    "memberId": {
+      "type": "string",
+      "pattern": "^member_[0-9]{2}$"
+    },
+    "evidenceRef": {
+      "type": "object",
+      "required": ["type", "reference"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "slurm_job_id",
+            "slurm_accounting",
+            "log_path",
+            "config_id",
+            "git_commit",
+            "dataset_path",
+            "manifest",
+            "checksum",
+            "validation_report",
+            "review_approval",
+            "other"
+          ]
+        },
+        "reference": { "$ref": "#/$defs/nonEmptyString" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "evidenceLayer": {
+      "type": "string",
+      "enum": ["reported", "verified", "accepted"]
+    },
+    "executionStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "READY",
+        "RUNNING",
+        "COMPLETED",
+        "BLOCKED",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "scientificStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_VALIDATED",
+        "NEEDS_REVIEW",
+        "VERIFIED",
+        "ACCEPTED",
+        "FAILED_VALIDATION"
+      ]
+    },
+    "dateRange": {
+      "type": "object",
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "$ref": "#/$defs/isoDate" },
+        "end": { "$ref": "#/$defs/isoDate" }
+      }
+    },
+    "unknownString": {
+      "type": "string",
+      "enum": ["UNKNOWN", "NOT_VERIFIED", "NOT_CONFIRMED"]
+    }
+  }
+}

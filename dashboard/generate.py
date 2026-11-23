@@ -204,6 +204,18 @@ def _day_progress_section(catalog: dict) -> str:
         f'<option value="{y}"{" selected" if int(y) == year else ""}>{y}</option>'
         for y in years
     )
+    # Precompute option/summary HTML (no nested f-strings / backslashes — CI is 3.11)
+    product_opts = "".join(
+        '<option value="' + _esc(p) + '">' + _esc(p) + "</option>" for p in products
+    )
+    summary_rows = "".join(
+        '<tr data-product="'
+        + _esc(p)
+        + '"><td>'
+        + _esc(p)
+        + '</td><td colspan="4">Loading…</td></tr>'
+        for p in products
+    )
     compact_default = by_year.get(str(year)) or {}
     cls_all = (
         ((compact_default.get("streams") or {}).get("cls_brazil") or {}).get(
@@ -218,6 +230,15 @@ def _day_progress_section(catalog: dict) -> str:
         or {}
     )
     next_missing = _next_gap_iso(cls_all.get("states") or "", year)
+    disclaimer = _esc(
+        dc.get("disclaimer")
+        or "Directory inventory by calendar day — not verified or accepted."
+    )
+    scan_date = _esc(dc.get("scan_date") or "UNKNOWN")
+    cls_present = cls_all.get("present_count", 0)
+    cls_expected = cls_all.get("expected_count", 0)
+    int_present = int_all.get("present_count", 0)
+    int_expected = int_all.get("expected_count", 0)
 
     payload = {
         "default_year": year,
@@ -242,7 +263,7 @@ def _day_progress_section(catalog: dict) -> str:
     return f"""
     <section id="daily-progress" data-day-years="{_esc(years_csv)}">
       <h2>Daily inventory</h2>
-      <p class="banner-inline">{_esc(dc.get("disclaimer") or "Directory inventory by calendar day — not verified or accepted.")}</p>
+      <p class="banner-inline">{disclaimer}</p>
       <div class="sticky-bar" id="day-controls" role="region" aria-label="Daily inventory filters">
         <label>Year <select id="day-year">{year_opts}</select></label>
         <label>Stream <select id="day-stream">
@@ -251,17 +272,17 @@ def _day_progress_section(catalog: dict) -> str:
         </select></label>
         <label>Product <select id="day-product">
           <option value="all">All products</option>
-          {"".join(f'<option value="{_esc(p)}">{_esc(p)}</option>' for p in products)}
+          {product_opts}
         </select></label>
-        <span class="muted" id="day-meta">inventory scan · {_esc(dc.get("scan_date") or "UNKNOWN")}</span>
+        <span class="muted" id="day-meta">inventory scan · {scan_date}</span>
         <p id="day-year-notice" class="day-notice" hidden role="status" aria-live="polite"></p>
       </div>
       <div class="cards kpi-strip" id="day-kpi">
         <div class="card"><div class="label">CLS all-4 present</div>
-          <div class="stat" id="kpi-cls">{cls_all.get("present_count", 0)}/{cls_all.get("expected_count", 0)}</div>
+          <div class="stat" id="kpi-cls">{cls_present}/{cls_expected}</div>
           <div class="muted">dirs present</div></div>
         <div class="card"><div class="label">Internal all-4 present</div>
-          <div class="stat" id="kpi-int">{int_all.get("present_count", 0)}/{int_all.get("expected_count", 0)}</div>
+          <div class="stat" id="kpi-int">{int_present}/{int_expected}</div>
           <div class="muted">dirs present</div></div>
         <div class="card"><div class="label">Year</div>
           <div class="stat" id="kpi-year">{year}</div>
@@ -288,11 +309,7 @@ def _day_progress_section(catalog: dict) -> str:
             </tr>
           </thead>
           <tbody id="day-product-summary-body">
-            {"".join(
-              f"<tr data-product=\"{_esc(p)}\"><td>{_esc(p)}</td>"
-              f"<td colspan=\"4\">Loading…</td></tr>"
-              for p in products
-            )}
+            {summary_rows}
           </tbody>
         </table>
       </div>

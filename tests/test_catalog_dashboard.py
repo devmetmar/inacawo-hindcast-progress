@@ -297,6 +297,11 @@ def test_dashboard_includes_daily_progress_panel() -> None:
     assert 'id="day-coverage-data"' in html
     assert 'id="day-product-summary"' in html
     assert "day-present" in html  # CSS class for client-rendered cells
+    # display:grid must not defeat HTML hidden (would show CLS + internal calendars)
+    assert ".cal-stack[hidden]" in html
+    assert "display: none !important" in html
+    assert 'id="cal-internal"' in html and "hidden" in html.split('id="cal-internal"', 1)[1][:80]
+    assert 'id="cal-stream-label"' in html
     # Daily product filter / summary use catalog products only
     day_section = html.split('id="daily-progress"', 1)[1].split("Dataset inventory", 1)[0]
     assert "ocean2d_with_tm01" not in day_section

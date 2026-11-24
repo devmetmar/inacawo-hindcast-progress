@@ -313,8 +313,9 @@ def _day_progress_section(catalog: dict) -> str:
           </tbody>
         </table>
       </div>
-      <div id="cal-cls" class="cal-stack" data-stream="cls_brazil"></div>
-      <div id="cal-internal" class="cal-stack" data-stream="internal" hidden></div>
+      <p class="cal-stream-label" id="cal-stream-label">Showing: CLS historical</p>
+      <div id="cal-cls" class="cal-stack" data-stream="cls_brazil" aria-label="CLS historical day calendars"></div>
+      <div id="cal-internal" class="cal-stack" data-stream="internal" hidden aria-label="Internal hindcast day calendars"></div>
       <details class="a11y-table">
         <summary>Day table (sample, max 200 rows)</summary>
         <div class="table-wrap">
@@ -720,6 +721,12 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     .leg.PARTIAL .swatch {{ background: #fff6d6; color: var(--ready); }}
     .cal-hint {{ margin: 0 0 var(--space-2); }}
     .cal-stack {{ display: grid; gap: var(--space-3); }}
+    /* display:grid on .cal-stack otherwise overrides the HTML hidden attribute */
+    .cal-stack[hidden],
+    .product-cal[hidden] {{ display: none !important; }}
+    .cal-stream-label {{
+      margin: 0 0 var(--space-1); font-size: 0.85rem; font-weight: 650; color: var(--muted);
+    }}
     .product-cal {{ border: 1px solid var(--line); border-radius: 0.3rem; padding: var(--space-2); }}
     .cal-row {{ display: grid; grid-template-columns: 2.6rem 1fr; gap: var(--space-1); align-items: start; margin-bottom: 2px; }}
     .cal-month {{ font-size: 0.72rem; font-weight: 650; color: var(--muted); padding-top: 2px; }}
@@ -1066,6 +1073,7 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         if (pb) clsHtml += renderProductCal(p, pb, year, months);
         if (ib) intHtml += renderProductCal(p, ib, year, months);
       }});
+      // Keep both streams in DOM, but only one stack is shown (see applyDayFilters + CSS [hidden]).
       if (calCls) calCls.innerHTML = clsHtml || '<p class="muted">No CLS inventory for ' + year + '.</p>';
       if (calInt) calInt.innerHTML = intHtml || '<p class="muted">No internal inventory for ' + year + '.</p>';
 
@@ -1130,11 +1138,28 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
       if (!dayStream || !dayProduct) return;
       const stream = dayStream.value;
       const product = dayProduct.value;
-      if (calCls) calCls.hidden = stream !== 'cls_brazil';
-      if (calInt) calInt.hidden = stream !== 'internal';
+      const showCls = stream === 'cls_brazil';
+      const showInt = stream === 'internal';
+      if (calCls) {{
+        calCls.hidden = !showCls;
+        calCls.setAttribute('aria-hidden', showCls ? 'false' : 'true');
+      }}
+      if (calInt) {{
+        calInt.hidden = !showInt;
+        calInt.setAttribute('aria-hidden', showInt ? 'false' : 'true');
+      }}
+      const streamLabel = document.getElementById('cal-stream-label');
+      if (streamLabel) {{
+        streamLabel.textContent = showCls
+          ? 'Showing: CLS historical (one calendar per catalog product)'
+          : 'Showing: Internal hindcast (one calendar per catalog product)';
+      }}
+      // Only toggle product-cals inside the visible stream stack
+      const activeStack = showCls ? calCls : calInt;
       document.querySelectorAll('.product-cal').forEach(function (art) {{
-        const show = product === 'all' || art.getAttribute('data-product') === product;
-        art.hidden = !show;
+        const inActive = activeStack && activeStack.contains(art);
+        const showProd = product === 'all' || art.getAttribute('data-product') === product;
+        art.hidden = !(inActive && showProd);
       }});
     }}
 

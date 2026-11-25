@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -330,6 +331,214 @@ def _day_progress_section(catalog: dict) -> str:
     """
 
 
+def _inline_md(text: str) -> str:
+    escaped = _esc(text)
+    escaped = re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
+    escaped = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", escaped)
+    return escaped
+
+
+def _slug(name: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    return slug or "report"
+
+
+def _is_table_sep(line: str) -> bool:
+    cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells)
+
+
+def _report_meta(text: str) -> dict[str, str]:
+    title = "Report"
+    fields = {"date": "", "audience": "", "claim": "", "status": ""}
+    labels = {
+        "**Date:**": "date",
+        "**Audience:**": "audience",
+        "**Claim level:**": "claim",
+        "**Status:**": "status",
+    }
+    for line in text.splitlines():
+        if line.startswith("# "):
+            title = line[2:].strip()
+            break
+    for line in text.splitlines():
+        stripped = line.strip()
+        for prefix, key in labels.items():
+            if stripped.startswith(prefix):
+                fields[key] = stripped.split(prefix, 1)[1].strip()
+    fields["title"] = title
+    return fields
+
+
+def _markdown_to_html(text: str) -> str:
+    lines = text.splitlines()
+    parts: list[str] = []
+    index = 0
+    while index < len(lines) and not lines[index].startswith("# "):
+        index += 1
+    if index < len(lines) and lines[index].startswith("# "):
+        index += 1
+    paragraph: list[str] = []
+    bullets: list[str] = []
+    numbers: list[str] = []
+    meta_prefixes = ("**Date:**", "**Audience:**", "**Claim level:**", "**Status:**")
+
+    def flush_paragraph() -> None:
+        nonlocal paragraph
+        if paragraph:
+            parts.append(f"<p>{_inline_md(' '.join(paragraph))}</p>")
+            paragraph = []
+
+    def flush_bullets() -> None:
+        nonlocal bullets
+        if bullets:
+            items = "".join(f"<li>{_inline_md(item)}</li>" for item in bullets)
+            parts.append(f"<ul>{items}</ul>")
+            bullets = []
+
+    def flush_numbers() -> None:
+        nonlocal numbers
+        if numbers:
+            items = "".join(f"<li>{_inline_md(item)}</li>" for item in numbers)
+            parts.append(f"<ol>{items}</ol>")
+            numbers = []
+
+    def flush_lists() -> None:
+        flush_bullets()
+        flush_numbers()
+
+    while index < len(lines):
+        line = lines[index]
+        stripped = line.strip()
+        if stripped.startswith(meta_prefixes) or stripped == "---":
+            flush_paragraph()
+            flush_lists()
+            index += 1
+            continue
+        if stripped.startswith("```"):
+            flush_paragraph()
+            flush_lists()
+            fence: list[str] = []
+            index += 1
+            while index < len(lines) and not lines[index].strip().startswith("```"):
+                fence.append(lines[index])
+                index += 1
+            if index < len(lines):
+                index += 1
+            parts.append(f"<pre><code>{_esc(chr(10).join(fence))}</code></pre>")
+            continue
+        image = re.fullmatch(r"!\[([^\]]*)\]\(([^)]+)\)", stripped)
+        if image:
+            flush_paragraph()
+            flush_lists()
+            alt, src = image.group(1), image.group(2)
+            parts.append(
+                f'<img src="{_esc(src)}" alt="{_esc(alt)}" '
+                'style="max-width:100%;height:auto"/>'
+            )
+            index += 1
+            continue
+        if stripped.startswith("|") and index + 1 < len(lines) and _is_table_sep(lines[index + 1]):
+            flush_paragraph()
+            flush_lists()
+            header = [cell.strip() for cell in stripped.strip("|").split("|")]
+            index += 2
+            rows: list[list[str]] = []
+            while index < len(lines) and lines[index].strip().startswith("|"):
+                rows.append(
+                    [cell.strip() for cell in lines[index].strip().strip("|").split("|")]
+                )
+                index += 1
+            head_html = "".join(
+                f'<th scope="col">{_inline_md(cell)}</th>' for cell in header
+            )
+            body_rows = []
+            for row in rows:
+                cells = "".join(f"<td>{_inline_md(cell)}</td>" for cell in row)
+                body_rows.append(f"<tr>{cells}</tr>")
+            parts.append(
+                '<div class="table-wrap"><table>'
+                f"<thead><tr>{head_html}</tr></thead>"
+                f"<tbody>{''.join(body_rows)}</tbody></table></div>"
+            )
+            continue
+        if stripped.startswith("## "):
+            flush_paragraph()
+            flush_lists()
+            parts.append(f"<h4>{_inline_md(stripped[3:])}</h4>")
+            index += 1
+            continue
+        if stripped.startswith("### "):
+            flush_paragraph()
+            flush_lists()
+            parts.append(f"<h5>{_inline_md(stripped[4:])}</h5>")
+            index += 1
+            continue
+        if stripped.startswith("- "):
+            flush_paragraph()
+            flush_numbers()
+            bullets.append(stripped[2:])
+            index += 1
+            continue
+        numbered = re.fullmatch(r"\d+\.\s+(.*)", stripped)
+        if numbered:
+            flush_paragraph()
+            flush_bullets()
+            numbers.append(numbered.group(1))
+            index += 1
+            continue
+        if not stripped:
+            flush_paragraph()
+            flush_lists()
+            index += 1
+            continue
+        flush_lists()
+        paragraph.append(stripped)
+        index += 1
+    flush_paragraph()
+    flush_lists()
+    return "\n".join(parts)
+
+
+def _reports_section() -> str:
+    folder = ROOT / "docs" / "reports"
+    records = []
+    for path in sorted(folder.glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        meta = _report_meta(text)
+        meta["stem"] = path.stem
+        meta["text"] = text
+        records.append(meta)
+    records.sort(key=lambda item: item.get("date") or "", reverse=True)
+    cards = []
+    for meta in records:
+        facts = []
+        for key, label in (
+            ("date", "Date"),
+            ("audience", "Audience"),
+            ("claim", "Claim level"),
+            ("status", "Status"),
+        ):
+            if meta.get(key):
+                facts.append(f"<dt>{label}</dt><dd>{_inline_md(meta[key])}</dd>")
+        fact_html = f"<dl>{''.join(facts)}</dl>" if facts else ""
+        cards.append(
+            f'<article class="report-card" id="report-{_esc(_slug(meta["stem"]))}">'
+            f"<h3>{_inline_md(meta['title'])}</h3>"
+            f"{fact_html}"
+            f"{_markdown_to_html(meta['text'])}"
+            "</article>"
+        )
+    body = "\n".join(cards) or '<p class="muted">No reports recorded.</p>'
+    return (
+        '<section id="reports">'
+        "<h2>Reports</h2>"
+        "<p class=\"muted\">Operator findings. A report does not set catalog "
+        "VERIFIED or scientific ACCEPTED.</p>"
+        f"{body}</section>"
+    )
+
+
 def render(store: TrackingStore, progress: dict, catalog: dict | None = None) -> str:
     catalog = catalog or build_catalog_view(store)
     summary = catalog["summary"]
@@ -553,6 +762,7 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
         owner_filter = '<input type="hidden" id="f-owner" value=""/>'
 
     day_section = _day_progress_section(catalog)
+    reports_section = _reports_section()
     hist_matrix = _matrix_table(
         "Year × product — CLS historical (lifecycle overview)",
         catalog["historical_matrix"],
@@ -697,6 +907,13 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     }}
     h3 {{ margin: 0 0 var(--space-1); font-size: 0.92rem; }}
     h4 {{ margin: 0.35rem 0; font-size: 0.84rem; }}
+    h5 {{ margin: 0.3rem 0; font-size: 0.8rem; }}
+    .report-card {{ border-top: 1px solid var(--line); margin-top: 1rem; padding-top: 0.8rem; }}
+    .report-card:first-of-type {{ border-top: 0; margin-top: 0; padding-top: 0; }}
+    .report-card dl {{ display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.2rem 0.6rem; margin: 0 0 0.8rem; }}
+    .report-card dt {{ color: var(--muted); font-size: 0.75rem; text-transform: uppercase; }}
+    .report-card dd {{ margin: 0; }}
+    .report-card pre {{ overflow-x: auto; background: #f7f9fb; border: 1px solid var(--line); padding: 0.5rem; }}
     .muted {{ color: var(--muted); font-size: 0.86rem; }}
     .sub {{ font-size: 0.76rem; color: var(--muted); }}
     .sentinel {{ color: var(--muted); font-style: italic; font-size: 0.82rem; }}
@@ -836,6 +1053,7 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
   <nav class="site-nav" aria-label="Catalog sections">
     <a href="#overview">Overview</a>
     <a href="#daily-progress">Daily inventory</a>
+    <a href="#reports">Reports</a>
     <a href="#matrices">Year × product</a>
     <a href="#inventory">Datasets</a>
     <a href="#todos">TODOs</a>
@@ -866,6 +1084,8 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
     </section>
 
     {day_section}
+
+    {reports_section}
 
     {hist_matrix}
     {rem_matrix}

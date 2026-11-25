@@ -285,6 +285,25 @@ def test_day_coverage_2015_cls_january_and_sparse_internal() -> None:
     assert cov["streams"]["internal"]["all_required"]["present_count"] == 1
 
 
+def test_dashboard_includes_identity_report() -> None:
+    store = TrackingStore.load(ROOT)
+    progress = compute_progress(store)
+    catalog = build_catalog_view(store)
+    mod = _load_generate()
+    html = mod.render(store, progress, catalog)
+    assert 'id="reports"' in html
+    assert 'href="#reports"' in html
+    assert 'id="report-ft2-cls-20150101-identity"' in html
+    assert "not identical" in html
+    assert "7.127007" in html
+    assert "ft2_cls_20150101_timeseries.png" in html
+    assert "ft2_cls_20150101_spatial.png" in html
+    assert 'alt="Hourly domain mean' in html
+    report = html.split('id="reports"', 1)[1].split('id="matrices"', 1)[0]
+    assert "VERIFIED or scientific ACCEPTED" in report
+    assert ">ACCEPTED<" not in report
+
+
 def test_dashboard_includes_daily_progress_panel() -> None:
     store = TrackingStore.load(ROOT)
     progress = compute_progress(store)
@@ -303,7 +322,7 @@ def test_dashboard_includes_daily_progress_panel() -> None:
     assert 'id="cal-internal"' in html and "hidden" in html.split('id="cal-internal"', 1)[1][:80]
     assert 'id="cal-stream-label"' in html
     # Daily product filter / summary use catalog products only
-    day_section = html.split('id="daily-progress"', 1)[1].split("Dataset inventory", 1)[0]
+    day_section = html.split('id="daily-progress"', 1)[1].split('id="reports"', 1)[0]
     assert "ocean2d_with_tm01" not in day_section
     for p in ("ocean2d", "ocean3d", "wrf2d", "wrf3d"):
         assert f'option value="{p}"' in day_section or f">{p}</option>" in day_section

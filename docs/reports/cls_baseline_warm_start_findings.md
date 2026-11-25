@@ -21,7 +21,7 @@ Hindcast **submit** remains operator-deferred. The dashboard day-coverage panel,
 | Historical stream | Catalogued as `origin: cls_brazil` / `stream: historical_baseline` (~1995–2014) |
 | Product coverage | Uneven (e.g. legacy `ocean2d` ends 2001-12-31; `ocean2d_with_tm01` / `ocean3d` / `wrf2d` / `wrf3d` extend through **2015-01-31**) |
 | Acceptance | **Not** treated as scientifically ACCEPTED here — see `OPEN_QUESTIONS.md` Q2 / Q3 / Q6 |
-| Scratch root | `$SCRATCH_HISTORICAL` → `/scratch/cawohdcst/data` (read-only for ft2 continuation work) |
+| Scratch root | `$SCRATCH_HISTORICAL` (read-only for ft2 continuation work) |
 
 January 2015 on CLS is **inventory extension evidence**, not ft2 internal delivery acceptance.
 
@@ -29,7 +29,7 @@ January 2015 on CLS is **inventory extension evidence**, not ft2 internal delive
 
 ## 3. January 2015 inventory (CLS)
 
-Under `/scratch/cawohdcst/data` (read-only checks, 2026-11-23):
+Under `$SCRATCH_HISTORICAL` (read-only checks, 2026-11-23):
 
 | Layer | Result |
 |-------|--------|
@@ -43,7 +43,7 @@ Under `/scratch/cawohdcst/data` (read-only checks, 2026-11-23):
 
 **January 2025:** no `f202501*` run/output dirs on CLS — the finished month under discussion is **2015**.
 
-Tracking note: `period_2015` remains remaining-internal / not year-complete; directory presence ≠ VERIFIED ≠ ACCEPTED.
+Tracking note: the 2015 period record remains remaining-internal / not year-complete; directory presence ≠ VERIFIED ≠ ACCEPTED.
 
 ---
 
@@ -82,7 +82,7 @@ A broader search found the archived ROMS restarts here:
 
 Example (preferred prior day for Feb start):
 
-`/scratch/cawohdcst/data/postprocessed/roms_rst/f20150131/cawo_g2.8.0_rst_20150131_12.nc`
+`$SCRATCH_HISTORICAL/postprocessed/roms_rst/f20150131/cawo_g2.8.0_rst_20150131_12.nc`
 
 They are **not** retained next to history files under `cawo_hindcast_outputs/` (run-time `RSTNAME` path); they are **postprocessed/archived** under `roms_rst/`.
 
@@ -106,7 +106,7 @@ Other spots checked: `cawo_hindcast_run` (no ROMS nc rst), `mercator` (0), ft2/f
 |------|-------------|
 | User | `cawohdcst_ft2` only |
 | Workflow / model / deps | `$HOME/inacawo-iht`, `$HOME/inacawo-src`, `$HOME/inacawo-deps` |
-| Writable base | `$CAWO_HINDCAST_BASE` → `/scratch/cawohdcst_ft2/inacawo-iht` (`cawo_hindcast_run`, `cawo_output`, `cawo_post`) |
+| Writable base | `$CAWO_HINDCAST_BASE` (`cawo_hindcast_run`, `cawo_output`, `cawo_post`) |
 | Shared static / offline | Read or symlink **in** per `inacawo-iht` preprocess design (`SHARED_DATA`, offline roots) — **do not edit** shared trees |
 | CLS archive | **Read-only**; never `sbatch` into CLS run dirs; never overwrite CLS post/raw |
 

@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-23  
 **Audience:** `cawohdcst_ft2` operators continuing the hindcast after the CLS historical baseline  
-**Status:** ROMS restarts located under CLS `postprocessed/roms_rst` (2026-11-23 re-search). On 2026-11-25 an ft2 warm start of **20150101** was run and compared with CLS. The day is **not identical**. See `ft2_cls_20150101_identity.md`. A `20150201` continuation has not been submitted.  
+**Status:** ROMS restarts located under CLS `postprocessed/roms_rst` (2026-11-23 re-search). On 2026-11-25 an ft2 warm start of **20150101** was run and compared with CLS. The day is **not identical**. Days `20150102` through `20150107` were then chained from that ft2 restart and are in the same report. See `ft2_cls_20150101_identity.md`. A `20150201` continuation has not been submitted.  
 
 ---
 
@@ -144,7 +144,7 @@ Intended handoff (once unblocked):
 | Next | Operator decision to stage triad into ft2 and submit warm-start `20150201` |
 | Tracking | Keep day calendar / manifests updated; catalog `roms_rst` as a dataset when ready |
 | Policy | Resolve OPEN_QUESTIONS Q1–Q3 / Q6 before treating acceptance % as authoritative |
-| Done (reported) | ft2 warm start `20150101` compared with CLS; not identical. See `ft2_cls_20150101_identity.md` |
+| Done (reported) | ft2 warm start `20150101` through `20150107` compared with CLS; not identical. See `ft2_cls_20150101_identity.md` |
 | Deferred | `20150201` continuation is not submitted |
 
 ---

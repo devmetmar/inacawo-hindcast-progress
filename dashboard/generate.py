@@ -456,11 +456,19 @@ def _markdown_to_html(text: str) -> str:
             for row in rows:
                 cells = "".join(f"<td>{_inline_md(cell)}</td>" for cell in row)
                 body_rows.append(f"<tr>{cells}</tr>")
-            parts.append(
+            table_html = (
                 '<div class="table-wrap"><table>'
                 f"<thead><tr>{head_html}</tr></thead>"
                 f"<tbody>{''.join(body_rows)}</tbody></table></div>"
             )
+            header_key = " ".join(header).lower()
+            if "bias" in header_key and len(rows) > 8:
+                table_html = (
+                    '<details class="report-compare">'
+                    f"<summary>Comparison table, {len(rows)} rows. Show or hide.</summary>"
+                    f"{table_html}</details>"
+                )
+            parts.append(table_html)
             continue
         if stripped.startswith("## "):
             flush_paragraph()
@@ -1024,7 +1032,13 @@ def render(store: TrackingStore, progress: dict, catalog: dict | None = None) ->
       border: 1px solid var(--line); border-radius: 0.3rem; padding: 0.4rem 0.55rem;
       margin: 0.35rem 0; background: #fbfcfe;
     }}
-    details.dataset-detail > summary, details.a11y-table > summary, details.secondary > summary {{ cursor: pointer; }}
+    details.dataset-detail > summary, details.a11y-table > summary, details.secondary > summary,
+    details.report-compare > summary {{ cursor: pointer; }}
+    details.report-compare {{
+      margin: 0.45rem 0 0.9rem; border: 1px solid var(--line); border-radius: 0.35rem;
+      padding: 0.45rem 0.65rem; background: #fbfcfe;
+    }}
+    details.report-compare > summary {{ font-weight: 600; min-height: 36px; }}
     details.secondary {{ margin-top: 0.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.35rem; padding: var(--space-3); }}
     details.dataset-detail.hash-open {{
       border-color: var(--focus); box-shadow: 0 0 0 2px rgba(11,110,153,0.15);

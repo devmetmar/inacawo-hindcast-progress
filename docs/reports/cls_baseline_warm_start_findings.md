@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-23  
 **Audience:** `cawohdcst_ft2` operators continuing the hindcast after the CLS historical baseline  
-**Status:** ROMS restarts located under CLS `postprocessed/roms_rst` (2026-11-23 re-search). On 2026-11-25 an ft2 warm start of **20150101** was run and compared with CLS. The day is **not identical**. Days `20150102` through `20150107` were then chained from that ft2 restart and are in the same report. See `ft2_cls_20150101_identity.md`. A `20150201` continuation has not been submitted.  
+**Status:** ROMS restarts located under CLS `postprocessed/roms_rst` (2026-11-23 re-search). On 2026-11-25 an ft2 warm start of **20150101** was run and compared with CLS. The day is **not identical**. Days `20150102` through `20150107` were then chained from that ft2 restart and are in the same report. See `ft2_cls_20150101_identity.md`. On 2026-11-26 ft2 submitted a warm-start chain **20150201–20150228** from the CLS `20150131` triad (not from the diverged January ft2 restarts). Unified log: `$WORK_BASE/logs/hindcast/feb2015_cls_chain_*.log`. Claim level reported only. No CLS February history exists for identity comparison. On 2026-11-27 ft2 submitted a warm-start continuation **20150301–20150630** from the ft2 `20150228` triad (CLS forcing copy; no Mercator). Unified log: `$WORK_BASE/logs/hindcast/mar_jun2015_chain_*.log`. Cap is 30 Jun 2015. Claim level reported only. <!-- MAR_JUN2015_CHAIN_NOTE -->  
 
 ---
 
@@ -141,11 +141,12 @@ Intended handoff (once unblocked):
 | Priority | Action |
 |----------|--------|
 | Cleared | ROMS rst archive found: `$SCRATCH_HISTORICAL/data/postprocessed/roms_rst/` |
-| Next | Operator decision to stage triad into ft2 and submit warm-start `20150201` |
+| Next | Operator decision on postprocess / inventory for February 2015 outputs |
 | Tracking | Keep day calendar / manifests updated; catalog `roms_rst` as a dataset when ready |
 | Policy | Resolve OPEN_QUESTIONS Q1–Q3 / Q6 before treating acceptance % as authoritative |
 | Done (reported) | ft2 warm start `20150101` through `20150107` compared with CLS; not identical. See `ft2_cls_20150101_identity.md` |
-| Deferred | `20150201` continuation is not submitted |
+| Done (reported) | ft2 warm start `20150201`–`20150228` from CLS `20150131`; see unified hindcast log |
+| Done (reported) | ft2 warm start `20150301`–`20150630` from ft2 `20150228`; see unified hindcast log |
 
 ---
 
